@@ -214,11 +214,11 @@ package Vehicle
             Placement(transformation(origin = {30, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
           Vehicle.Chassis.Suspension.Linkages.CompliantLink lower_to_tie(r = r_lower_to_tie, animation = true) annotation(
             Placement(transformation(origin = {70, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
-          Vehicle.Chassis.Suspension.Linkages.CompliantLink lower_to_contact_patch(r = r_lower_to_contact_patch, animation = false) annotation(
+          Vehicle.Chassis.Suspension.Linkages.CompliantLink lower_to_contact_patch(r = r_lower_to_contact_patch, animation = true) annotation(
             Placement(transformation(origin = {30, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -180)));
-        Vehicle.Chassis.Suspension.Linkages.CompliantLink contact_patch_to_tie(r = r_lower_to_tie - r_lower_to_contact_patch, animation = false) annotation(
+        Vehicle.Chassis.Suspension.Linkages.CompliantLink contact_patch_to_tie(r = r_lower_to_tie - r_lower_to_contact_patch, animation = true) annotation(
                 Placement(transformation(origin = {10, -20}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-        Modelica.Mechanics.MultiBody.Parts.FixedTranslation contact_patch_to_upper(r = r_lower_to_upper - r_lower_to_contact_patch, animation = false) annotation(
+        Modelica.Mechanics.MultiBody.Parts.FixedTranslation contact_patch_to_upper(r = r_lower_to_upper - r_lower_to_contact_patch, animation = true) annotation(
             Placement(transformation(origin = {0, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
         Vehicle.Chassis.Suspension.Linkages.CompliantLink upper_to_tie(r = r_lower_to_tie - r_lower_to_upper, animation = true) annotation(
             Placement(transformation(origin = {70, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
@@ -283,7 +283,7 @@ package Vehicle
       
       Vehicle.Chassis.Suspension.Sources.ContactPatchSource contactPatchSource annotation(
           Placement(transformation(origin = {-30, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-      Modelica.Blocks.Sources.Sine constantSource(amplitude = 0, f = 1, offset = 0)  annotation(
+      Modelica.Blocks.Sources.Sine constantSource(amplitude = 0.25, f = 1, offset = 0)  annotation(
           Placement(transformation(origin = {-70, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
       
       Vehicle.Chassis.Suspension.Sources.RackSource rackSource annotation(
