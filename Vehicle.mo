@@ -46,24 +46,30 @@ package Vehicle
       end Tests;
 
       package Sources
-          model ContactPatchSource
+        model ContactPatchSource
+          import Modelica.Units.SI;
           Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
             Placement(transformation(origin = {100, 0}, extent = {{16, -16}, {-16, 16}}, rotation = -180), iconTransformation(origin = {100, 0}, extent = {{10, -10}, {-10, 10}})));
-          Modelica.Mechanics.Translational.Sources.Position position annotation(
-            Placement(transformation(origin = {30, 30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
+          Modelica.Mechanics.Translational.Sources.Position position(exact = false) annotation(
+            Placement(transformation(origin = {10, 54}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
           Modelica.Blocks.Interfaces.RealInput realInput annotation(
             Placement(transformation(origin = {-120, 60}, extent = {{20, -20}, {-20, 20}}, rotation = -180), iconTransformation(origin = {-100, 0}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
           Modelica.Mechanics.MultiBody.Parts.Fixed fixed annotation(
             Placement(transformation(origin = {-90, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-          Modelica.Mechanics.MultiBody.Joints.Prismatic prismaticX(animation = false)  annotation(
+          Modelica.Mechanics.MultiBody.Joints.Prismatic prismaticX(animation = false) annotation(
             Placement(transformation(origin = {-50, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
           Modelica.Mechanics.MultiBody.Joints.Prismatic prismaticY(n = {0, 1, 0}, animation = false) annotation(
             Placement(transformation(extent = {{10, -10}, {-10, 10}}, rotation = -180)));
           Modelica.Mechanics.MultiBody.Joints.Prismatic prismaticZ(n = {0, 0, 1}, useAxisFlange = true) annotation(
             Placement(transformation(origin = {50, 0}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
+          Modelica.Blocks.Math.Add add annotation(
+            Placement(transformation(origin = {-50, 54}, extent = {{-10, -10}, {10, 10}})));
+          Modelica.Blocks.Sources.RealExpression realExpression(y = z_initial) annotation(
+            Placement(transformation(origin = {-90, 48}, extent = {{-10, -10}, {10, 10}})));
+          SI.Position z_initial = 0;
+          //initial equation
+          //  z_initial = frame_b.r_0[3];
         equation
-          connect(position.s_ref, realInput) annotation(
-            Line(points = {{18, 30}, {0, 30}, {0, 60}, {-120, 60}}, color = {0, 0, 127}));
           connect(fixed.frame_b, prismaticX.frame_a) annotation(
             Line(points = {{-80, 0}, {-60, 0}}, color = {95, 95, 95}));
           connect(prismaticX.frame_b, prismaticY.frame_a) annotation(
@@ -72,22 +78,28 @@ package Vehicle
             Line(points = {{10, 0}, {40, 0}}, color = {95, 95, 95}));
           connect(prismaticZ.frame_b, frame_b) annotation(
             Line(points = {{60, 0}, {100, 0}}, color = {95, 95, 95}));
+          connect(realInput, add.u1) annotation(
+            Line(points = {{-120, 60}, {-62, 60}}, color = {0, 0, 127}));
+          connect(realExpression.y, add.u2) annotation(
+            Line(points = {{-78, 48}, {-62, 48}}, color = {0, 0, 127}));
+          connect(add.y, position.s_ref) annotation(
+            Line(points = {{-38, 54}, {-2, 54}}, color = {0, 0, 127}));
           connect(position.flange, prismaticZ.axis) annotation(
-            Line(points = {{40, 30}, {58, 30}, {58, 6}}, color = {0, 127, 0}));
+            Line(points = {{20, 54}, {58, 54}, {58, 6}}, color = {0, 127, 0}));
         end ContactPatchSource;
 
         model RackSource
-          parameter Real rack_axis[3]={0,1,0} "Axis specifying direction of rack travel";
-        Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
-          Placement(transformation(origin = {100, 0}, extent = {{16, -16}, {-16, 16}}, rotation = -180), iconTransformation(origin = {0, -100}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
-        Modelica.Mechanics.Translational.Sources.Position position annotation(
-          Placement(transformation(origin = {-50, 30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-        Modelica.Blocks.Interfaces.RealInput realInput annotation(
-          Placement(transformation(origin = {-120, 60}, extent = {{20, -20}, {-20, 20}}, rotation = -180), iconTransformation(origin = {-100, 0}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
-        Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
-          Placement(transformation(origin = {-60, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {100, 0}, extent = {{10, -10}, {-10, 10}})));
-        Modelica.Mechanics.MultiBody.Joints.Prismatic prismaticZ(n = rack_axis, useAxisFlange = true) annotation(
-          Placement(transformation(extent = {{-10, -10}, {10, 10}})));
+          parameter Real rack_axis[3] = {0, 1, 0} "Axis specifying direction of rack travel";
+          Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
+            Placement(transformation(origin = {100, 0}, extent = {{16, -16}, {-16, 16}}, rotation = -180), iconTransformation(origin = {0, -100}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
+          Modelica.Mechanics.Translational.Sources.Position position annotation(
+            Placement(transformation(origin = {-50, 30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
+          Modelica.Blocks.Interfaces.RealInput realInput annotation(
+            Placement(transformation(origin = {-120, 60}, extent = {{20, -20}, {-20, 20}}, rotation = -180), iconTransformation(origin = {-100, 0}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
+            Placement(transformation(origin = {-60, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {100, 0}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Joints.Prismatic prismaticZ(n = rack_axis, useAxisFlange = true) annotation(
+            Placement(transformation(extent = {{-10, -10}, {10, 10}})));
         equation
           connect(position.s_ref, realInput) annotation(
             Line(points = {{-62, 30}, {-62, 60}, {-120, 60}}, color = {0, 0, 127}));
@@ -95,7 +107,7 @@ package Vehicle
             Line(points = {{10, 0}, {100, 0}}, color = {95, 95, 95}));
           connect(position.flange, prismaticZ.axis) annotation(
             Line(points = {{-40, 30}, {8, 30}, {8, 6}}, color = {0, 127, 0}));
-  connect(frame_a, prismaticZ.frame_a) annotation(
+          connect(frame_a, prismaticZ.frame_a) annotation(
             Line(points = {{-60, -100}, {-60, 0}, {-10, 0}}));
         end RackSource;
       end Sources;
@@ -109,7 +121,7 @@ package Vehicle
           // Kinematic elements
           extends Modelica.Mechanics.MultiBody.Interfaces.PartialTwoFrames;
           // User parameters
-          parameter Boolean animation=true "Show link in animation";
+          parameter Boolean animation = true "Show link in animation";
           parameter SI.TranslationalSpringConstant axial_stiffness = 1e9 "Axial stiffness of link";
           parameter SI.Position r[3] = {1, 0, 0} "Vector from frame_a to frame_b, resolved in frame_a";
           parameter SI.Length diameter = 0.625*0.0254 "Diameter of link";
@@ -216,11 +228,11 @@ package Vehicle
             Placement(transformation(origin = {70, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
           Vehicle.Chassis.Suspension.Linkages.CompliantLink lower_to_contact_patch(r = r_lower_to_contact_patch, animation = true) annotation(
             Placement(transformation(origin = {30, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -180)));
-        Vehicle.Chassis.Suspension.Linkages.CompliantLink contact_patch_to_tie(r = r_lower_to_tie - r_lower_to_contact_patch, animation = true) annotation(
-                Placement(transformation(origin = {10, -20}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-        Modelica.Mechanics.MultiBody.Parts.FixedTranslation contact_patch_to_upper(r = r_lower_to_upper - r_lower_to_contact_patch, animation = true) annotation(
+          Vehicle.Chassis.Suspension.Linkages.CompliantLink contact_patch_to_tie(r = r_lower_to_tie - r_lower_to_contact_patch, animation = true) annotation(
+            Placement(transformation(origin = {10, -20}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation contact_patch_to_upper(r = r_lower_to_upper - r_lower_to_contact_patch, animation = true) annotation(
             Placement(transformation(origin = {0, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-        Vehicle.Chassis.Suspension.Linkages.CompliantLink upper_to_tie(r = r_lower_to_tie - r_lower_to_upper, animation = true) annotation(
+          Vehicle.Chassis.Suspension.Linkages.CompliantLink upper_to_tie(r = r_lower_to_tie - r_lower_to_upper, animation = true) annotation(
             Placement(transformation(origin = {70, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
         equation
           connect(frame_a_lower, lower_to_upper.frame_a) annotation(
@@ -248,51 +260,291 @@ package Vehicle
           connect(contact_patch_to_tie.frame_b, frame_a_tie) annotation(
             Line(points = {{10, -10}, {10, 0}, {100, 0}}, color = {95, 95, 95}));
         end CompliantWheel;
+
+        model SphericalBearing
+          import Modelica.Mechanics.MultiBody.Frames;
+          import Modelica.Math.Vectors.normalize;
+          import Modelica.Math.Vectors.norm;
+          import Modelica.Units.SI;
+          // Kinematic elements
+          extends Modelica.Mechanics.MultiBody.Interfaces.PartialTwoFrames;
+          // User parameters
+          parameter Boolean animation = true "Show link in animation";
+          parameter SI.TranslationalSpringConstant radial_stiffness = 1e9 "Radial stiffness";
+          parameter SI.Length diameter = 0.825*0.0254 "Diameter of bearing";
+          parameter SI.Mass mass = 1 "Mass of bearing";
+          // Internal force and torque
+          Modelica.Mechanics.MultiBody.Forces.Force force(animation = false) annotation(
+            Placement(transformation(origin = {0, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
+          Modelica.Mechanics.MultiBody.Forces.Torque torque(animation = false) annotation(
+            Placement(transformation(origin = {30, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
+          Modelica.Blocks.Sources.RealExpression forceExpression[3](y = -forceInternal) annotation(
+            Placement(transformation(origin = {-6, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          Modelica.Blocks.Sources.RealExpression torqueExpression[3](y = -torqueInternal) annotation(
+            Placement(transformation(origin = {24, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          // Visualization
+          Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_a(shapeType = "sphere", length = diameter, width = diameter, height = diameter, animation = animation, r_shape = {-diameter/2, 0, 0}) annotation(
+            Placement(transformation(origin = {-70, 20}, extent = {{-10, -10}, {10, 10}})));
+          // Force and torque variables
+          SI.Force forceInternal[3];
+          SI.Torque torqueInternal[3];
+          // Kinematic variables
+          SI.Length r_rel[3];
+        equation
+          r_rel = frame_b.r_0 - frame_a.r_0;
+          forceInternal = normalize(r_rel)*radial_stiffness;
+          torqueInternal = {0, 0, 0};
+          connect(forceExpression.y, force.force) annotation(
+            Line(points = {{-6, -49}, {-6, -42}}, color = {0, 0, 127}, thickness = 0.5));
+          connect(torqueExpression.y, torque.torque) annotation(
+            Line(points = {{24, -39}, {24, -12}}, color = {0, 0, 127}, thickness = 0.5));
+          connect(frame_a, force.frame_a) annotation(
+            Line(points = {{-100, 0}, {-60, 0}, {-60, -30}, {-10, -30}}));
+          connect(force.frame_b, frame_b) annotation(
+            Line(points = {{10, -30}, {60, -30}, {60, 0}, {100, 0}}, color = {95, 95, 95}));
+          connect(frame_a, torque.frame_a) annotation(
+            Line(points = {{-100, 0}, {20, 0}}));
+          connect(torque.frame_b, frame_b) annotation(
+            Line(points = {{40, 0}, {100, 0}}, color = {95, 95, 95}));
+          connect(shape_a.frame_a, frame_a) annotation(
+            Line(points = {{-80, 20}, {-80, 19.5}, {-100, 19.5}, {-100, 0}}, color = {95, 95, 95}));
+          annotation(
+            Icon(graphics = {Rectangle(extent = {{-99, 5}, {101, -5}}, fillPattern = FillPattern.Solid, fillColor = {255, 0, 255}), Text(extent = {{-150, 85}, {150, 45}}, textString = "%name", textColor = {0, 0, 255})}),
+            Diagram(coordinateSystem(extent = {{-120, 40}, {120, -80}})));
+        end SphericalBearing;
       end Linkages;
+
+      package Wheels
+  model Wheel
+    import Modelica.Units.SI;
+    
+    parameter SI.Length tire_diameter=16*0.0254 "Tire diameter";
+    parameter SI.Length rim_diameter=10*0.0254 "Rim diameter";
+    parameter SI.Length rim_width=7*0.0254 "Rim width";
+    parameter SI.Angle static_gamma "Static inclination angle";
+    
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
+            Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  Modelica.Mechanics.MultiBody.Visualizers.FixedShape fixedShape(shapeType = "cylinder", r_shape = {0, -rim_width/2, 0}, length = rim_width, width = tire_diameter, height = tire_diameter, lengthDirection = {0, 1, 0}, widthDirection = {1, 0, 0})  annotation(
+            Placement(transformation(origin = {30, -10}, extent = {{-10, -10}, {10, 10}})));
+  Modelica.Mechanics.MultiBody.Parts.FixedRotation fixedRotation(r = {0, 0, tire_diameter/2}, n = {1, 0, 0}, angle = static_gamma)  annotation(
+            Placement(transformation(origin = {0, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+        equation
+  connect(frame_b, fixedRotation.frame_a) annotation(
+            Line(points = {{0, -100}, {0, -80}}));
+  connect(fixedShape.frame_a, fixedRotation.frame_b) annotation(
+            Line(points = {{20, -10}, {0, -10}, {0, -60}}, color = {95, 95, 95}));
+        end Wheel;
+      end Wheels;
+
+      package KinFMU
+        model KinCorner
+          import Modelica.Units.SI;
+          parameter SI.Position upper_fore_i[3] = {0.5, 0, 1} "Position of upper-fore-inboard pickup";
+          parameter SI.Position upper_aft_i[3] = {0, 0, 1} "Position of upper-aft-inboard pickup";
+          parameter SI.Position upper_o[3] = {0, 1, 1} "Position of upper-outboard pickup";
+          parameter SI.Position tie_i[3] = {0.5, 0, 0.5} "Position of tie-inboard pickup";
+          parameter SI.Position tie_o[3] = {0.5, 1, 0.5} "Position of tie-outboard pickup";
+          parameter SI.Position lower_fore_i[3] = {0.5, 0, 0} "Position of lower-fore-inboard pickup";
+          parameter SI.Position lower_aft_i[3] = {0, 0, 0} "Position of lower-aft-inboard pickup";
+          parameter SI.Position lower_o[3] = {0, 1, 0} "Position of lower-fore-inboard pickup";
+          parameter SI.Mass small_mass = 1e-3 "Mass of bodies inserted for state selection";
+          parameter SI.Length link_diameter = 0.625*0.0254 "Diameter of links";
+          parameter SI.Length spherical_diameter = 0.825*0.0254 "Diameter of spherical bearings";
+          Modelica.Mechanics.MultiBody.Parts.Fixed upper_fore_i_pos(r = upper_fore_i, animation = false) annotation(
+            Placement(transformation(origin = {110, 110}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Parts.Fixed upper_aft_i_pos(r = upper_aft_i, animation = false) annotation(
+            Placement(transformation(origin = {110, 70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Parts.Fixed tie_i_pos(r = tie_i, animation = false) annotation(
+            Placement(transformation(origin = {110, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Parts.Fixed lower_fore_i_pos(r = lower_fore_i, animation = true) annotation(
+            Placement(transformation(origin = {130, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1}) annotation(
+            Placement(transformation(origin = {-110, -110}, extent = {{-10, -10}, {10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = upper_o - upper_fore_i, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {70, 110}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation1(r = upper_o - upper_aft_i, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {70, 70}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation2(r = tie_o - tie_i, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {70, 0}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation3(r = lower_o - lower_fore_i, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {70, -70}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation4(r = lower_o - lower_aft_i, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {70, -110}, extent = {{10, -10}, {-10, 10}})));
+          Linkages.SphericalBearing sphericalBearing annotation(
+            Placement(transformation(origin = {40, 90}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          Vehicle.Chassis.Suspension.Linkages.SphericalBearing sphericalBearing1 annotation(
+            Placement(transformation(origin = {30, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = 1) annotation(
+            Placement(transformation(origin = {-10, -110}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Parts.Body body1(m = 1, r_CM = {0, 0, 0}) annotation(
+            Placement(transformation(origin = {-10, 70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Vehicle.Chassis.Suspension.Linkages.SphericalBearing sphericalBearing11 annotation(
+            Placement(transformation(origin = {100, -70}, extent = {{-10, -10}, {10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.Fixed lower_aft_i_pos(r = lower_aft_i, animation = false) annotation(
+            Placement(transformation(origin = {110, -110}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Parts.Body body2(m = 10, r_CM = {0, 0, 0}) annotation(
+            Placement(transformation(origin = {90, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+        equation
+          connect(upper_fore_i_pos.frame_b, fixedTranslation.frame_a) annotation(
+            Line(points = {{100, 110}, {80, 110}}, color = {95, 95, 95}));
+          connect(upper_aft_i_pos.frame_b, fixedTranslation1.frame_a) annotation(
+            Line(points = {{100, 70}, {80, 70}}, color = {95, 95, 95}));
+          connect(fixedTranslation2.frame_a, tie_i_pos.frame_b) annotation(
+            Line(points = {{80, 0}, {100, 0}}, color = {95, 95, 95}));
+          connect(fixedTranslation4.frame_a, lower_aft_i_pos.frame_b) annotation(
+            Line(points = {{80, -110}, {100, -110}}, color = {95, 95, 95}));
+          connect(fixedTranslation1.frame_b, sphericalBearing.frame_a) annotation(
+            Line(points = {{60, 70}, {40, 70}, {40, 80}}, color = {95, 95, 95}));
+          connect(sphericalBearing.frame_b, fixedTranslation.frame_b) annotation(
+            Line(points = {{40, 100}, {40, 110}, {60, 110}}, color = {95, 95, 95}));
+          connect(fixedTranslation4.frame_b, sphericalBearing1.frame_a) annotation(
+            Line(points = {{60, -110}, {30, -110}, {30, -100}}, color = {95, 95, 95}));
+          connect(sphericalBearing1.frame_b, fixedTranslation3.frame_b) annotation(
+            Line(points = {{30, -80}, {30, -70}, {60, -70}}, color = {95, 95, 95}));
+          connect(body.frame_a, sphericalBearing1.frame_a) annotation(
+            Line(points = {{0, -110}, {30, -110}, {30, -100}}, color = {95, 95, 95}));
+          connect(body1.frame_a, sphericalBearing.frame_a) annotation(
+            Line(points = {{0, 70}, {40, 70}, {40, 80}}, color = {95, 95, 95}));
+          connect(fixedTranslation3.frame_a, sphericalBearing11.frame_a) annotation(
+            Line(points = {{80, -70}, {90, -70}}, color = {95, 95, 95}));
+          connect(sphericalBearing11.frame_b, lower_fore_i_pos.frame_b) annotation(
+            Line(points = {{110, -70}, {120, -70}}, color = {95, 95, 95}));
+          connect(body2.frame_a, sphericalBearing11.frame_a) annotation(
+            Line(points = {{90, -40}, {90, -70}}, color = {95, 95, 95}));
+        end KinCorner;
+
+        model KinCornerV2
+          import Modelica.Math.Vectors.normalize;
+          import Modelica.Math.Vectors.norm;
+          import Modelica.Units.SI;
+          parameter SI.Length wheel_diameter=16*0.0254 "Nominal diameter of tire";
+          parameter SI.Position contact_patch[3] = {0, 0.609600, 0} "Position of contact patch";
+          parameter SI.Position upper_fore_i[3] = {0.086868, 0.215900, 0.200000} "Position of upper-fore-inboard pickup";
+          parameter SI.Position upper_aft_i[3] = {-0.095250, 0.215900, 0.200000} "Position of upper-aft-inboard pickup";
+          parameter SI.Position upper_o[3] = {-0.006347, 0.523240, 0.287020} "Position of upper-outboard pickup";
+          parameter SI.Position tie_i[3] = {0.041128, 0.215900, 0.117856} "Position of tie-inboard pickup";
+          parameter SI.Position tie_o[3] = {0.056000, 0.532333, 0.164821} "Position of tie-outboard pickup";
+          parameter SI.Position lower_fore_i[3] = {0.087376, 0.215900, 0.090000} "Position of lower-fore-inboard pickup";
+          parameter SI.Position lower_aft_i[3] = {-0.095250, 0.215900, 0.090000} "Position of lower-aft-inboard pickup";
+          parameter SI.Position lower_o[3] = {0, 0.556499, 0.124998} "Position of lower-fore-inboard pickup";
+          parameter SI.Mass small_mass = 1e-3 "Mass of bodies inserted for state selection";
+          parameter SI.Length link_diameter = 0.625*0.0254 "Diameter of links";
+          parameter SI.Length joint_diameter = 0.825*0.0254 "Diameter of joints";
+          final parameter SI.Position r_upper_mount[3] = (upper_fore_i + upper_aft_i)/2;
+          final parameter SI.Position r_lower_mount[3] = (lower_fore_i + lower_aft_i)/2;
+          final parameter SI.Position r_upper_mount_to_fore[3] = (upper_fore_i - upper_aft_i)/2 annotation(
+            Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
+          final parameter SI.Position r_lower_mount_to_fore[3] = (upper_fore_i - upper_aft_i)/2 annotation(
+            Placement(visible = false, transformation(origin = {nan, nan}, extent = {{nan, nan}, {nan, nan}})));
+          inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1}) annotation(
+            Placement(transformation(origin = {-110, -90}, extent = {{-10, -10}, {10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.Fixed fixedUpper(r = r_upper_mount, animation = false) annotation(
+            Placement(transformation(origin = {110, 70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Parts.Fixed fixedLower(r = r_lower_mount, animation = false) annotation(
+            Placement(transformation(origin = {110, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+          Modelica.Mechanics.MultiBody.Joints.Revolute revoluteUpper(n = normalize(upper_fore_i - upper_aft_i), cylinderLength = joint_diameter, cylinderDiameter = joint_diameter) annotation(
+            Placement(transformation(origin = {70, 70}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Joints.Revolute revoluteLower(n = normalize(lower_fore_i - lower_aft_i), cylinderLength = joint_diameter, cylinderDiameter = joint_diameter) annotation(
+            Placement(transformation(origin = {70, -70}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslationUpper(r = (upper_o - upper_fore_i) + r_upper_mount_to_fore, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {30, 70}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslationLower(r = (lower_o - lower_fore_i) + r_lower_mount_to_fore, width = link_diameter, height = link_diameter) annotation(
+            Placement(transformation(origin = {30, -70}, extent = {{10, -10}, {-10, 10}})));
+          Modelica.Mechanics.MultiBody.Joints.SphericalSpherical sphericalSpherical(rodLength = norm(upper_o - lower_o), sphereDiameter = joint_diameter, rodDiameter = link_diameter) annotation(
+            Placement(transformation(extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          Sources.RackSource rackSource annotation(
+            Placement(transformation(origin = {90, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
+          Modelica.Mechanics.MultiBody.Parts.Fixed fixedRack(animation = false, r = tie_i) annotation(
+            Placement(transformation(origin = {90, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+          Modelica.Blocks.Sources.Sine sine1(amplitude = 1.5*0.0254, f = 1) annotation(
+            Placement(transformation(origin = {129, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslationUpper1(height = link_diameter, r = tie_o - tie_i, width = link_diameter) annotation(
+            Placement(transformation(origin = {60, 0}, extent = {{10, -10}, {-10, 10}})));
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslationContactPatch(r = contact_patch - lower_o)  annotation(
+            Placement(transformation(origin = {-30, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+  Sources.ContactPatchSource contactPatchSource annotation(
+            Placement(transformation(origin = {-90, -50}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+  Modelica.Blocks.Sources.Sine sine(amplitude = 2*0.0254, f = 1)  annotation(
+            Placement(transformation(origin = {-110, -10}, extent = {{-10, -10}, {10, 10}})));
+  Modelica.Mechanics.MultiBody.Joints.Spherical spherical(sphereDiameter = joint_diameter)  annotation(
+            Placement(transformation(origin = {-70, -70}, extent = {{-10, -10}, {10, 10}})));
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = {0, 0, wheel_diameter})  annotation(
+            Placement(transformation(origin = {-70, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  Wheels.Wheel wheel(static_gamma = 0.2617993877991494)  annotation(
+            Placement(transformation(origin = {-40, -10}, extent = {{-10, -10}, {10, 10}})));
+        equation
+          connect(fixedUpper.frame_b, revoluteUpper.frame_a) annotation(
+            Line(points = {{100, 70}, {80, 70}}, color = {95, 95, 95}));
+          connect(fixedLower.frame_b, revoluteLower.frame_a) annotation(
+            Line(points = {{100, -70}, {80, -70}}, color = {95, 95, 95}));
+          connect(fixedTranslationUpper.frame_a, revoluteUpper.frame_b) annotation(
+            Line(points = {{40, 70}, {60, 70}}, color = {95, 95, 95}));
+          connect(fixedTranslationLower.frame_a, revoluteLower.frame_b) annotation(
+            Line(points = {{40, -70}, {60, -70}}, color = {95, 95, 95}));
+          connect(sphericalSpherical.frame_a, fixedTranslationLower.frame_b) annotation(
+            Line(points = {{0, -10}, {0, -70}, {20, -70}}, color = {95, 95, 95}));
+          connect(sphericalSpherical.frame_b, fixedTranslationUpper.frame_b) annotation(
+            Line(points = {{0, 10}, {0, 70}, {20, 70}, {20, 70}}, color = {95, 95, 95}));
+          connect(fixedRack.frame_b, rackSource.frame_b) annotation(
+            Line(points = {{90, -20}, {90, -10}}, color = {95, 95, 95}));
+          connect(sine1.y, rackSource.realInput) annotation(
+            Line(points = {{118, 0}, {100, 0}}, color = {0, 0, 127}));
+          connect(rackSource.frame_a, fixedTranslationUpper1.frame_a) annotation(
+            Line(points = {{80, 0}, {70, 0}}, color = {95, 95, 95}));
+  connect(fixedTranslationLower.frame_b, fixedTranslationContactPatch.frame_a) annotation(
+            Line(points = {{20, -70}, {-20, -70}}, color = {95, 95, 95}));
+  connect(sine.y, contactPatchSource.realInput) annotation(
+            Line(points = {{-99, -10}, {-90.75, -10}, {-90.75, -42}, {-90.375, -42}, {-90.375, -40}, {-90, -40}}, color = {0, 0, 127}));
+  connect(spherical.frame_b, fixedTranslationContactPatch.frame_b) annotation(
+            Line(points = {{-60, -70}, {-40, -70}}, color = {95, 95, 95}));
+  connect(contactPatchSource.frame_b, spherical.frame_a) annotation(
+            Line(points = {{-90, -60}, {-90, -70}, {-80, -70}}, color = {95, 95, 95}));
+  connect(fixedTranslationContactPatch.frame_b, fixedTranslation.frame_a) annotation(
+            Line(points = {{-40, -70}, {-50, -70}, {-50, -40}, {-70, -40}, {-70, -20}}, color = {95, 95, 95}));
+  connect(wheel.frame_b, fixedTranslationContactPatch.frame_b) annotation(
+            Line(points = {{-40, -20}, {-40, -70}}, color = {95, 95, 95}));
+        annotation(
+            Diagram(coordinateSystem(extent = {{-120, 100}, {140, -100}})));
+end KinCornerV2;
+      end KinFMU;
 
       model DoubleWishbone
         inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1}) annotation(
           Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
-      
         Modelica.Mechanics.MultiBody.Parts.Fixed fixed1(r = {0.5, 0, 1}, animation = false) annotation(
           Placement(transformation(origin = {90, 90}, extent = {{10, -10}, {-10, 10}})));
         Modelica.Mechanics.MultiBody.Parts.Fixed fixed2(r = {0, 0, 1}, animation = false) annotation(
           Placement(transformation(origin = {90, 50}, extent = {{10, -10}, {-10, 10}})));
-      Modelica.Mechanics.MultiBody.Parts.Fixed fixed3(r = {0.5, 0, 0.5}, animation = false) annotation(
+        Modelica.Mechanics.MultiBody.Parts.Fixed fixed3(r = {0.5, 0, 0.5}, animation = false) annotation(
           Placement(transformation(origin = {90, -20}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
         Modelica.Mechanics.MultiBody.Parts.Fixed fixed4(r = {0.5, 0, 0}, animation = false) annotation(
           Placement(transformation(origin = {90, -50}, extent = {{10, -10}, {-10, 10}})));
         Modelica.Mechanics.MultiBody.Parts.Fixed fixed5(r = {0, 0, 0}, animation = false) annotation(
           Placement(transformation(origin = {90, -90}, extent = {{10, -10}, {-10, 10}})));
-      
         Vehicle.Chassis.Suspension.Linkages.CompliantWishbone upperWishbone(fore_inboard_outboard = {-0.5, 1, 0}, aft_inboard_outboard = {0, 1, 0}) annotation(
           Placement(transformation(origin = {30, 70}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
         Vehicle.Chassis.Suspension.Linkages.CompliantWishbone lowerWishbone(fore_inboard_outboard = {-0.5, 1, 0}, aft_inboard_outboard = {0, 1, 0}) annotation(
           Placement(transformation(origin = {50, -70}, extent = {{-10, -10}, {10, 10}})));
-      Vehicle.Chassis.Suspension.Linkages.CompliantLink tieRod(r = {-0.25, 1, 0}) annotation(
+        Vehicle.Chassis.Suspension.Linkages.CompliantLink tieRod(r = {-0.25, 1, 0}) annotation(
           Placement(transformation(origin = {50, 0}, extent = {{10, -10}, {-10, 10}})));
-      Vehicle.Chassis.Suspension.Linkages.CompliantWheel wheel annotation(
+        Vehicle.Chassis.Suspension.Linkages.CompliantWheel wheel annotation(
           Placement(transformation(extent = {{-10, -10}, {10, 10}})));
-      
-      Modelica.Mechanics.MultiBody.Parts.Body body1(r_CM = {0, 0, 0}, m = 1)  annotation(
+        Modelica.Mechanics.MultiBody.Parts.Body body1(r_CM = {0, 0, 0}, m = 1) annotation(
           Placement(transformation(origin = {-10, 70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-      Modelica.Mechanics.MultiBody.Parts.Body body2(r_CM = {0, 0, 0}, m = 1) annotation(
+        Modelica.Mechanics.MultiBody.Parts.Body body2(r_CM = {0, 0, 0}, m = 1) annotation(
           Placement(transformation(origin = {50, -30}, extent = {{-10, -10}, {10, 10}})));
-      Modelica.Mechanics.MultiBody.Parts.Body body3(r_CM = {0, 0, 0}, m = 1)  annotation(
+        Modelica.Mechanics.MultiBody.Parts.Body body3(r_CM = {0, 0, 0}, m = 1) annotation(
           Placement(transformation(origin = {20, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-      
-      Vehicle.Chassis.Suspension.Sources.ContactPatchSource contactPatchSource annotation(
+        Vehicle.Chassis.Suspension.Sources.ContactPatchSource contactPatchSource annotation(
           Placement(transformation(origin = {-30, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-      Modelica.Blocks.Sources.Sine constantSource(amplitude = 0.25, f = 1, offset = 0)  annotation(
+        Modelica.Blocks.Sources.Sine constantSource(amplitude = 0.25, f = 1, offset = 0) annotation(
           Placement(transformation(origin = {-70, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-      
-      Vehicle.Chassis.Suspension.Sources.RackSource rackSource annotation(
+        Vehicle.Chassis.Suspension.Sources.RackSource rackSource annotation(
           Placement(transformation(origin = {90, 10}, extent = {{10, -10}, {-10, 10}})));
-      Modelica.Blocks.Sources.Sine constantSource2(amplitude = 0.125, f = 1, offset = 0)   annotation(
+        Modelica.Blocks.Sources.Sine constantSource2(amplitude = 0.125, f = 1, offset = 0) annotation(
           Placement(transformation(origin = {130, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-      
-      
-      Modelica.Mechanics.MultiBody.Parts.Body body21(m = 1, r_CM = {0, 0, 0}) annotation(
+        Modelica.Mechanics.MultiBody.Parts.Body body21(m = 1, r_CM = {0, 0, 0}) annotation(
           Placement(transformation(origin = {-10, -70}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
       equation
         connect(fixed1.frame_b, upperWishbone.frame_a_fore) annotation(
@@ -325,9 +577,9 @@ package Vehicle
           Line(points = {{120, 10}, {100, 10}}, color = {0, 0, 127}));
         connect(rackSource.frame_a, tieRod.frame_a) annotation(
           Line(points = {{80, 10}, {70, 10}, {70, 0}, {60, 0}}, color = {95, 95, 95}));
-  connect(contactPatchSource.frame_b, lowerWishbone.frame_b_outer) annotation(
+        connect(contactPatchSource.frame_b, lowerWishbone.frame_b_outer) annotation(
           Line(points = {{-20, -30}, {20, -30}, {20, -70}, {40, -70}}, color = {95, 95, 95}));
-  connect(body21.frame_a, wheel.frame_b_contact_patch) annotation(
+        connect(body21.frame_a, wheel.frame_b_contact_patch) annotation(
           Line(points = {{-10, -60}, {0, -60}, {0, -10}}, color = {95, 95, 95}));
       end DoubleWishbone;
     end Suspension;
