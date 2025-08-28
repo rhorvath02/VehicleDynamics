@@ -422,30 +422,59 @@ package Vehicle
           parameter Real alpha = 0.5 "Fraction along the link from frame_a to frame_b";
           parameter Real upper_o[3] = {0, 1, 1} "Lorem Ipsum";
           parameter Real lower_o[3] = {0, 1, 0} "Lorem Ipsum";
-        
+          
           Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_C annotation(
             Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
-        
+          
         protected
           SI.Position r_rel[3];
           // vector from frame_a to frame_b
           SI.Position r_C[3];
           // position of new frame_C
           Modelica.Mechanics.MultiBody.Frames.Orientation R_C;
-          Real n[3];
+          Real n_x[3];
+          Real n_y[3];
           Real nx_guess[3] = {0, 0, 1};
-        
+          
         equation
         // Relative vector between joints
           r_rel = frame_b.r_0 - frame_a.r_0;
-          n = normalize(r_rel);
-        // Position of new frame along the connecting rod
+          n_x = normalize(r_rel);
+        
+          // Position of new frame along the connecting rod
           r_C = frame_a.r_0 + alpha*r_rel;
-          R_C = Frames.from_nxy(n, nx_guess);
-        // Assign to frame_C
+          if not r_rel[3] == 0 then
+            n_y = {r_rel[1], 1, -(r_rel[1]^2 + r_rel[2]) / r_rel[3]};
+          elseif (r_rel[3] == 0) and (not r_rel[2] == 0) then
+            n_y = {r_rel[1], -(r_rel[1]^2 + r_rel[3]) / r_rel[2], 1};
+          else
+            n_y = {r_rel[1], 0, 1};
+          end if;
+          R_C = Frames.from_nxy(n_x, n_y);
+        
+          // Assign to frame_C
           frame_C.r_0 = r_C;
           frame_C.R = R_C;
+        
         end SphericalSpherical;
+
+        model SetRotation
+          import Modelica.Mechanics.MultiBody.Frames;
+          import Modelica.Units.SI;
+          
+          extends Modelica.Mechanics.MultiBody.Interfaces.PartialTwoFrames;  
+          
+          parameter SI.Position vec_rot[3] "Vector in rotated reference frame";
+          parameter Frames.Orientation R "Orientation object from world to rotated reference frame";
+          SI.Position vec_w[3] "Vector in world frame";
+        
+        initial equation
+          vec_w = transpose(R.T) * vec_rot;
+  
+        equation
+          frame_b.r_0 = frame_a.r_0 + vec_w;
+          
+        end SetRotation;
       end Linkages;
 
       package Wheels
@@ -728,12 +757,13 @@ package Vehicle
             Placement(transformation(origin = {-1530, 130}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
           Modelica.Mechanics.MultiBody.Parts.Body body1(m = 1, r_CM = {0, 0, 0}, sphereDiameter = joint_diameter) annotation(
             Placement(transformation(origin = {-1550, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation11211111(animation = true, height = constraint_diameter, r = {1, 0, 0}, width = constraint_diameter) annotation(
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation11211111(animation = true, height = constraint_diameter, r = {1, 0, 0}, width = constraint_diameter) annotation(
             Placement(transformation(origin = {-1590, 190}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-        
-        Frames.Orientation local_frame = Modelica.Mechanics.MultiBody.Frames.from_nxy(tie_o - lower_o, upper_o - lower_o) annotation(
-            Placement(transformation(origin = {-1554, 162}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-        
+        //Modelica.Mechanics.MultiBody.Frames.resolveRelative(v1=upper_o - lower_o, R1=Modelica.Mechanics.MultiBody.Frames.from_nxy(normalize(upper_o - lower_o)), R2=Modelica.Mechanics.MultiBody.Frames.from_nxy(normalize(tie_o - lower_o)));
+          Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation112111111(animation = true, height = constraint_diameter, r = {0, 0, 1}, width = constraint_diameter) annotation(
+            Placement(transformation(origin = {-1570, 190}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+        Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation1121111111(animation = true, height = constraint_diameter, r = {0, 1, 0}, width = constraint_diameter) annotation(
+            Placement(transformation(origin = {-1550, 190}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
         equation
           track_length = norm(fixedTranslation1121.frame_b.r_0 - fixedTranslationUpper.frame_b.r_0)/0.0254;
           connect(fixedTranslationUpper.frame_a, revoluteUpper.frame_b) annotation(
@@ -774,16 +804,20 @@ package Vehicle
             Line(points = {{-1540, 50}, {-1550, 50}, {-1550, 68}, {-1530, 68}, {-1530, 120}}, color = {95, 95, 95}));
           connect(body1.frame_a, fixedTranslationLower.frame_b) annotation(
             Line(points = {{-1540, 10}, {-1540, 50}}, color = {95, 95, 95}));
-  connect(fixedTranslation11211111.frame_a, sphericalSpherical.frame_C) annotation(
-            Line(points = {{-1590, 180}, {-1590, 130}, {-1540, 130}}, color = {95, 95, 95}));
-  connect(sphericalSpherical.frame_C, fixedTranslation11211.frame_a) annotation(
+        connect(sphericalSpherical.frame_C, fixedTranslation112111111.frame_a) annotation(
+            Line(points = {{-1540, 130}, {-1570, 130}, {-1570, 180}}, color = {95, 95, 95}));
+        connect(sphericalSpherical.frame_C, fixedTranslation11211111.frame_a) annotation(
+            Line(points = {{-1540, 130}, {-1590, 130}, {-1590, 180}}, color = {95, 95, 95}));
+        connect(sphericalSpherical.frame_C, fixedTranslation11211.frame_a) annotation(
             Line(points = {{-1540, 130}, {-1590, 130}, {-1590, 40}, {-1630, 40}, {-1630, 20}}, color = {95, 95, 95}));
+        connect(fixedTranslation1121111111.frame_a, sphericalSpherical.frame_C) annotation(
+            Line(points = {{-1550, 180}, {-1550, 130}, {-1540, 130}}, color = {95, 95, 95}));
           annotation(
             Diagram(coordinateSystem(extent = {{-1780, 260}, {-1380, 0}})));
         end KinCornerV3;
 
         function invRotation
-    import Modelica.Mechanics.MultiBody.Frames;
+          import Modelica.Mechanics.MultiBody.Frames;
           import Modelica.Math.Matrices;
           input Frames.Orientation R "Orientation to be unapplied";
           input Real v_rotated[3] "Vector in rotated frame";
