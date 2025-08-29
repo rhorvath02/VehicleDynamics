@@ -17,7 +17,7 @@ model ContactPatch
     Placement(transformation(origin = {40, 0}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Math.Add add annotation(
     Placement(transformation(origin = {-50, 54}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.RealExpression realExpression(y = frame_a.r_0[3]) annotation(
+  Modelica.Blocks.Sources.RealExpression realExpression(y = 0) annotation(
     Placement(transformation(origin = {-90, 48}, extent = {{-10, -10}, {10, 10}})));
 equation
   connect(position.flange, prismaticZ.axis) annotation(

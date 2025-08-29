@@ -10,7 +10,7 @@ model SphericalCompliant
   // User parameters
   parameter Boolean animation = true "Show sphere in animation";
   parameter SI.TranslationalSpringConstant radial_stiffness = 1e9 "Radial stiffness";
-  parameter SI.TranslationalDampingConstant radial_damping = 1e3 "Radial damping";
+  parameter SI.TranslationalDampingConstant radial_damping = 1e9 "Radial damping";
   parameter SI.Length diameter = 0.825*0.0254 "Diameter of bearing";
   parameter SI.Mass mass = 1 "Mass of bearing";
   // Internal force and torque
