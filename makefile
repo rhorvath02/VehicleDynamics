@@ -9,11 +9,11 @@
 FS_PATH := $(subst .,/,$(path))
 
 ifndef path
-	$(error You must provide 'path', e.g., path=MyLib.Components)
+$(error You must provide 'path', e.g., path=MyLib.Components)
 endif
 
 ifndef name
-	$(error You must provide 'name', e.g., name=SpringDamper)
+$(error You must provide 'name', e.g., name=SpringDamper)
 endif
 
 # Helper: parent directory of FS_PATH

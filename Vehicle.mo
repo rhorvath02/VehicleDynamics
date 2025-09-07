@@ -1,4 +1,4 @@
-package Vehicle
+package VehicleOld
   package Chassis
     package Suspension
       package Tests
@@ -1063,4 +1063,4 @@ package Vehicle
   end Chassis;
   annotation(
     uses(Modelica(version = "4.1.0")));
-end Vehicle;
+end VehicleOld;
