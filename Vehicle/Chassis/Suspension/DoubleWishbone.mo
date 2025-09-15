@@ -35,7 +35,7 @@ model DoubleWishbone
   inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1}) annotation(
     Placement(transformation(origin = {-190, -190}, extent = {{-10, -10}, {10, 10}})));
   // ===========================
-// === Mechanical elements ===
+  // === Mechanical elements ===
   // ===========================
 protected
   // Inboard pickups
@@ -51,7 +51,7 @@ protected
     Placement(transformation(origin = {150, -90}, extent = {{10, -10}, {-10, 10}})));
 
 // Linkages
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation upperLink(r = (upper_o - upper_fore_i) + r_upper_mount_to_fore, width = link_diameter, height = link_diameter) annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation upperLink(r = (upper_o - upper_fore_i) + r_upper_mount_to_fore, width = link_diameter, height = link_diameter, animation = false) annotation(
     Placement(transformation(origin = {110, 90}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation lowerLink(r = (lower_o - lower_fore_i) + r_lower_mount_to_fore, width = link_diameter, height = link_diameter, animation = false) annotation(
     Placement(transformation(origin = {110, -90}, extent = {{10, -10}, {-10, 10}})));

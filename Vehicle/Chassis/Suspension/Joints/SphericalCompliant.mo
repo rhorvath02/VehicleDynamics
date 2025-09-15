@@ -12,7 +12,7 @@ model SphericalCompliant
   parameter SI.TranslationalSpringConstant radial_stiffness = 1e9 "Radial stiffness";
   parameter SI.TranslationalDampingConstant radial_damping = 1e9 "Radial damping";
   parameter SI.Length diameter = 0.825*0.0254 "Diameter of bearing";
-  parameter SI.Mass mass = 1 "Mass of bearing";
+  parameter SI.Mass mass = 2.48e-3 "Mass of bearing";
   // Internal force and torque
   Modelica.Blocks.Sources.RealExpression forceExpression[3](y = -forceInternal) annotation(
     Placement(transformation(origin = {-16, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
