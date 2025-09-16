@@ -24,7 +24,7 @@ model DoubleWishbonePushPush
   Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = 1, sphereDiameter = 0.050) annotation(
     Placement(transformation(origin = {-70, -60}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
   
-  inner ExternData.JSONFile hdpts(fileName = "/home/rhorvath/Documents/Github/VehicleDynamics/Model Definitions/Nightwatch.json")  annotation(
+  inner ExternData.JSONFile hdpts(fileName = "C:/Users/rober/Documents/Github/VehicleDynamics/JSONs/Nightwatch.json")  annotation(
     Placement(transformation(origin = {-90, 90}, extent = {{10, -10}, {-10, 10}})));
   
   final parameter Real upper_fore_i[3] = hdpts.getRealArray1D("Hardpoints.Front.left.upper.fore_i", 3);
@@ -35,10 +35,6 @@ model DoubleWishbonePushPush
   final parameter Real lower_o[3] = hdpts.getRealArray1D("Hardpoints.Front.left.lower.outboard", 3);
   final parameter Real tie_i[3] = hdpts.getRealArray1D("Hardpoints.Front.left.tie.inboard", 3);
   final parameter Real tie_o[3] = hdpts.getRealArray1D("Hardpoints.Front.left.tie.outboard", 3);
-  
-  Body.Frame frame annotation(
-    Placement(transformation(origin = {-61, 19}, extent = {{-7, -7}, {7, 7}})));
-
 equation
   connect(fixed.frame_b, wishbone.fore_i_frame) annotation(
     Line(points = {{40, 90}, {20, 90}, {20, 66}, {10, 66}}, color = {95, 95, 95}));
