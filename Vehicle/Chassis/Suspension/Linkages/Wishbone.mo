@@ -1,13 +1,13 @@
 within Vehicle.Chassis.Suspension.Linkages;
 model Wishbone
-  import Modelica.Units.SI;
+  import Modelica.SIunits;
   
-  parameter SI.Position fore_i[3] "Fore inboard node coordinates";
-  parameter SI.Position aft_i[3] "Aft inboard node coordinates";
-  parameter SI.Position outboard[3] "Outboard node coordinates";
+  parameter SIunits.Position fore_i[3] "Fore inboard node coordinates";
+  parameter SIunits.Position aft_i[3] "Aft inboard node coordinates";
+  parameter SIunits.Position outboard[3] "Outboard node coordinates";
   
-  parameter SI.Length link_diameter "Link diameter";
-  parameter SI.Length joint_diameter "Joint diameter";
+  parameter SIunits.Length link_diameter "Link diameter";
+  parameter SIunits.Length joint_diameter "Joint diameter";
   
   // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a fore_i_frame annotation(
@@ -16,6 +16,9 @@ model Wishbone
     Placement(transformation(origin = {100, -60}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {100, -66}, extent = {{-16, -16}, {16, 16}})));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b outboard_frame annotation(
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_b link_frame annotation(
+    Placement(transformation(origin = {-60, 100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {-66, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
+
 
   // Links
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation fore_link(r = outboard - fore_i, width = link_diameter, height = link_diameter)  annotation(
@@ -46,6 +49,8 @@ equation
     Line(points = {{100, 60}, {80, 60}}));
   connect(outboard_joint.frame_a, outboard_frame) annotation(
     Line(points = {{-80, 0}, {-100, 0}}, color = {95, 95, 95}));
+  connect(fore_link.frame_b, link_frame) annotation(
+    Line(points = {{-10, 60}, {-60, 60}, {-60, 100}}, color = {95, 95, 95}));
 
 annotation(
   Icon(
@@ -57,6 +62,11 @@ annotation(
         ),
     Line(
           points = {{-80, 0}, {80, -66}},
+          color = {0, 0, 0},
+          thickness = 5
+        ),
+    Line(
+          points = {{-66, 5}, {-66, 100}},
           color = {0, 0, 0},
           thickness = 5
         ),

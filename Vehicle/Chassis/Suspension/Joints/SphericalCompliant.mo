@@ -4,15 +4,18 @@ model SphericalCompliant
   import Modelica.Mechanics.MultiBody.Frames;
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
-  import Modelica.Units.SI;
+  import Modelica.SIunits;
+  
   // Kinematic elements
   extends Modelica.Mechanics.MultiBody.Interfaces.PartialTwoFrames;
+  
   // User parameters
   parameter Boolean animation = true "Show sphere in animation";
-  parameter SI.TranslationalSpringConstant radial_stiffness = 1e9 "Radial stiffness";
-  parameter SI.TranslationalDampingConstant radial_damping = 1e9 "Radial damping";
-  parameter SI.Length diameter = 0.825*0.0254 "Diameter of bearing";
-  parameter SI.Mass mass = 2.48e-3 "Mass of bearing";
+  parameter SIunits.TranslationalSpringConstant radial_stiffness = 1e9 "Radial stiffness";
+  parameter SIunits.TranslationalDampingConstant radial_damping = 1e9 "Radial damping";
+  parameter SIunits.Length diameter = 0.825*0.0254 "Diameter of bearing";
+  parameter SIunits.Mass mass = 2.48e-3 "Mass of bearing";
+  
   // Internal force and torque
   Modelica.Blocks.Sources.RealExpression forceExpression[3](y = -forceInternal) annotation(
     Placement(transformation(origin = {-16, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
@@ -23,27 +26,29 @@ model SphericalCompliant
   Modelica.Mechanics.MultiBody.Forces.Internal.BasicTorque basicTorque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameAB.world)  annotation(
     Placement(transformation(origin = {30, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
 
-// Visualization
+  // Visualization
   Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_a(shapeType = "sphere", length = diameter, width = diameter, height = diameter, animation = animation, r_shape = {-diameter/2, 0, 0}) annotation(
     Placement(transformation(origin = {-70, 20}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_b(animation = animation, height = diameter, length = diameter, r_shape = {-diameter/2, 0, 0}, shapeType = "sphere", width = diameter) annotation(
     Placement(transformation(origin = {70, 20}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
 
-// Force and torque variables
-  SI.Force forceInternal[3];
-  SI.Torque torqueInternal[3];
+  // Force and torque variables
+  Real forceInternal[3];
+  Real torqueInternal[3];
   
-  SI.Position r_rel[3](start = {0, 0, 0}) "Spring elongation vector (state)";
-  SI.Position v_rel[3](start = {0, 0, 0}) "Derivative of spring elongation vector";
+  SIunits.Position r_rel[3](start = {0, 0, 0}) "Spring elongation vector (state)";
+  SIunits.Position v_rel[3](start = {0, 0, 0}) "Derivative of spring elongation vector";
   Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = mass, animation = false)  annotation(
     Placement(transformation(origin = {-70, -50}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Interfaces.ZeroPosition zeroPosition annotation(
     Placement(transformation(origin = {50, -70}, extent = {{-10, -10}, {10, 10}})));
+
 equation
   r_rel = frame_b.r_0 - frame_a.r_0;
   v_rel = der(r_rel);
   forceInternal = radial_stiffness*r_rel + radial_damping * v_rel;
-// No torque applied in spherical joint
+  
+  // No torque applied in spherical joint
   torqueInternal = {0, 0, 0};
   connect(shape_a.frame_a, frame_a) annotation(
     Line(points = {{-80, 20}, {-80, 19.5}, {-100, 19.5}, {-100, 0}}, color = {95, 95, 95}));

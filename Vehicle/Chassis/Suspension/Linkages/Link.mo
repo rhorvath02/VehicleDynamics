@@ -1,12 +1,12 @@
 within Vehicle.Chassis.Suspension.Linkages;
 model Link
-  import Modelica.Units.SI;
+  import Modelica.SIunits;
   
-  parameter SI.Position inboard[3] "Inboard node coordinates";
-  parameter SI.Position outboard[3] "Outboard node coordinates";
+  parameter SIunits.Position inboard[3] "Inboard node coordinates";
+  parameter SIunits.Position outboard[3] "Outboard node coordinates";
     
-  parameter SI.Length link_diameter "Link diameter";
-  parameter SI.Length joint_diameter "Joint diameter" annotation(
+  parameter SIunits.Length link_diameter "Link diameter";
+  parameter SIunits.Length joint_diameter "Joint diameter" annotation(
     Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
   
   // Frames

@@ -32,8 +32,8 @@ equation
     Line(points = {{-78, 48}, {-62, 48}}, color = {0, 0, 127}));
   connect(add.y, position.s_ref) annotation(
     Line(points = {{-38, 54}, {-12, 54}}, color = {0, 0, 127}));
-  connect(prismaticZ.frame_b, frame_b) annotation(
-    Line(points = {{50, 0}, {100, 0}}, color = {95, 95, 95}));
   connect(realInput, add.u1) annotation(
     Line(points = {{-80, 120}, {-80, 60}, {-62, 60}}, color = {0, 0, 127}));
+  connect(prismaticZ.frame_b, frame_b) annotation(
+    Line(points = {{50, 0}, {100, 0}}, color = {95, 95, 95}));
 end ContactPatch;

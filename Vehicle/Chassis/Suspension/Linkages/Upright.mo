@@ -1,10 +1,10 @@
 within Vehicle.Chassis.Suspension.Linkages;
 model Upright
-  import Modelica.Units.SI;
+  import Modelica.SIunits;
   
-  parameter SI.Position lower[3] "Lower node coordinates";
-  parameter SI.Position upper[3] "Upper node coordinates";
-  parameter SI.Position tie[3] "Tie node coordinates";
+  parameter SIunits.Position lower[3] "Lower node coordinates";
+  parameter SIunits.Position upper[3] "Upper node coordinates";
+  parameter SIunits.Position tie[3] "Tie node coordinates";
   
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a lower_frame annotation(
     Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
