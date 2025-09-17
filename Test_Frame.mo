@@ -6,7 +6,6 @@ model Test_Frame
   parameter SIunits.Position FR_contact_patch[3] = {FL_contact_patch[1], -FL_contact_patch[2], FL_contact_patch[3]} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position RL_contact_patch[3] = {-1.5494, 0.609600, 0} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position RR_contact_patch[3] = {RL_contact_patch[1], -RL_contact_patch[2], RL_contact_patch[3]} annotation(Dialog(group="Geometry"));
-  
   // FL node parameters
   parameter SIunits.Position FL_upper_fore_i[3] = {0.086868, 0.215900, 0.200000} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position FL_upper_aft_i[3] = {-0.095250, 0.215900, 0.200000} annotation(Dialog(group="Geometry"));
@@ -16,7 +15,6 @@ model Test_Frame
   parameter SIunits.Position FL_lower_fore_i[3] = {0.087376, 0.215900, 0.090000} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position FL_lower_aft_i[3] = {-0.095250, 0.215900, 0.090000} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position FL_lower_o[3] = {0, 0.556499, 0.124998} annotation(Dialog(group="Geometry"));
-  
   // FR node parameters
   parameter SIunits.Position FR_upper_fore_i[3] = {FL_upper_fore_i[1], -FL_upper_fore_i[2], FL_upper_fore_i[3]} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position FR_upper_aft_i[3] = {FL_upper_aft_i[1], -FL_upper_aft_i[2], FL_upper_aft_i[3]} annotation(Dialog(group="Geometry"));
@@ -27,7 +25,7 @@ model Test_Frame
 parameter SIunits.Position FR_lower_aft_i[3] = {FL_lower_aft_i[1], -FL_lower_aft_i[2], FL_lower_aft_i[3]} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position FR_lower_o[3] = {FL_lower_o[1], -FL_lower_o[2], FL_lower_o[3]} annotation(Dialog(group="Geometry"));
 
-  // RL node parameters
+// RL node parameters
   parameter SIunits.Position RL_upper_fore_i[3] = {-1.298905, 0.282999, 0.217500} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position RL_upper_aft_i[3] = {-1.490977, 0.282999, 0.217500} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position RL_upper_o[3] = {-1.574797, 0.554998, 0.289560} annotation(Dialog(group="Geometry"));
@@ -36,7 +34,6 @@ parameter SIunits.Position FR_lower_aft_i[3] = {FL_lower_aft_i[1], -FL_lower_aft
   parameter SIunits.Position RL_lower_fore_i[3] = {-1.298905, 0.282999, 0.090000} annotation(Dialog(group="Geometry"));
   parameter SIunits.Position RL_lower_aft_i[3] = {-1.490977, 0.282999, 0.090000} annotation(Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
   parameter SIunits.Position RL_lower_o[3] = {-1.554983, 0.579999, 0.113030} annotation(Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
-  
   // RR node parameters
   // FR node parameters
   parameter SIunits.Position RR_upper_fore_i[3] = {RL_upper_fore_i[1], -RL_upper_fore_i[2], RL_upper_fore_i[3]} annotation(Dialog(group="Geometry"));
@@ -52,7 +49,7 @@ parameter SIunits.Position RR_lower_aft_i[3] = {RL_lower_aft_i[1], -RL_lower_aft
     Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}})));
   Vehicle.Chassis.Body.FrameFrSteer frameFrSteer(FL_upper_fore_i = FL_upper_fore_i, FL_upper_aft_i = FL_upper_aft_i, FL_tie_i = FL_tie_i, FL_lower_fore_i = FL_lower_fore_i, FL_lower_aft_i = FL_lower_aft_i, RL_upper_fore_i = RL_upper_fore_i, RL_upper_aft_i = RL_upper_aft_i, RL_tie_i = RL_tie_i, RL_lower_fore_i = RL_lower_fore_i, RL_lower_aft_i = RL_lower_aft_i, CG_location = CG_location)  annotation(
     Placement(transformation(extent = {{-30, -60}, {30, 60}})));
-  Modelica.Blocks.Sources.Sine sine(amplitude = 0*1.5*0.0254, freqHz = 1)  annotation(
+  Modelica.Blocks.Sources.Sine sine(amplitude = 1.5*0.0254, freqHz = 1)  annotation(
     Placement(transformation(origin = {-30, 80}, extent = {{-10, -10}, {10, 10}})));
   Vehicle.Chassis.Suspension.Linkages.Wishbone wishbone(aft_i = FL_upper_aft_i, fore_i = FL_upper_fore_i, joint_diameter = 0.030, link_diameter = 0.010, outboard = FL_upper_o) annotation(
     Placement(transformation(origin = {-50, 50}, extent = {{-10, -10}, {10, 10}})));
@@ -67,7 +64,7 @@ parameter SIunits.Position RR_lower_aft_i[3] = {RL_lower_aft_i[1], -RL_lower_aft
   Modelica.Mechanics.MultiBody.Parts.Fixed FL_contact_patch_fixed(r = FL_contact_patch, animation = false)  annotation(
     Placement(transformation(origin = {-150, 10}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.Fixed fixed(r = CG_location, animation = false)  annotation(
-    Placement(transformation(origin = {0, -90}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+    Placement(transformation(origin = {0, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Vehicle.GroundPhysics groundPhysics annotation(
     Placement(transformation(origin = {-122, 10}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = 16, sphereDiameter = 0.025)  annotation(
@@ -219,6 +216,8 @@ equation
     Line(points = {{30, -44}, {40, -44}}, color = {95, 95, 95}));
   connect(frameFrSteer.RR_lower_aft_i_frame, wishbone111.aft_i_frame) annotation(
     Line(points = {{30, -56}, {40, -56}}, color = {95, 95, 95}));
+  connect(fixed.frame_b, frameFrSteer.frame_a) annotation(
+    Line(points = {{0, -20}, {0, 0}}, color = {95, 95, 95}));
   annotation(
     uses(Modelica(version = "3.2.3")));
 end Test_Frame;
