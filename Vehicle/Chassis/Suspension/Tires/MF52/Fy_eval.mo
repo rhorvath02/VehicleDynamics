@@ -114,38 +114,67 @@ protected
   Real mu_y_adj;
 
 algorithm
-  IA_y := gamma * LGAY;
-  df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
-  mu_y := (PDY1 + PDY2 * df_z) * (1 - PDY3 * IA_y^2) * LMUY;
-
-  C_y := PCY1 * LCY;
-  D_y := mu_y * Fz;
-  K_y := PKY1 * FNOMIN * sin(2 * atan(Fz / (PKY2 * FNOMIN * LFZO))) * (1 - PKY3 * abs(IA_y)) * LFZO * LKY;
-  B_y := K_y / (C_y * D_y) * sign(PDY1);
-
-  S_Hy := (PHY1 + PHY2 * df_z) * LHY + PHY3 * IA_y;
-  S_Vy := Fz * ((PVY1 + PVY2 * df_z) * LVY + (PVY3 + PVY4 * df_z) * IA_y) * LMUY;
-  SA_y := alpha + S_Hy;
-
-  E_y := (PEY1 + PEY2 * df_z) * (1 - (PEY3 + PEY4 * IA_y) * sign(SA_y)) * LEY;
-
-  Fy_pure := D_y * sin(C_y * atan(B_y * SA_y - E_y * (B_y * SA_y - atan(B_y * SA_y)))) + S_Vy;
-    
-  C_ySR := RCY1;
-  B_ySR := RBY1 * cos(atan(RBY2 * (alpha - RBY3))) * LYKA;
-  E_ySR := REY1 + REY2 * df_z;
-  S_HySR := RHY1 + RHY2 * df_z;
-
-  D_VySR := mu_y * Fz * (RVY1 + RVY2 * df_z + RVY3 * gamma) * cos(atan(RVY4 * alpha));
-  S_VySR := D_VySR * sin(RVY5 * atan(RVY6 * kappa)) * LVYKA;
-
-  SR_s := kappa + S_HySR;
-
-  G_ySR := (cos(C_ySR * atan(B_ySR * SR_s - E_ySR * (B_ySR * SR_s - atan(B_ySR * SR_s))))) / (cos(C_ySR * atan(B_ySR * S_HySR - E_ySR * (B_ySR * S_HySR - atan(B_ySR * S_HySR)))));
-
-  Fy_comb := Fy_pure * G_ySR + S_VySR;
-  mu_y_adj := mu_y * G_ySR;
+  if Fz > 1e-3 then
+    IA_y := gamma * LGAY;
+    df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
+    mu_y := (PDY1 + PDY2 * df_z) * (1 - PDY3 * IA_y^2) * LMUY;
   
-  Fy := Fy_comb;
+    C_y := PCY1 * LCY;
+    D_y := mu_y * Fz;
+    K_y := PKY1 * FNOMIN * sin(2 * atan(Fz / (PKY2 * FNOMIN * LFZO))) * (1 - PKY3 * abs(IA_y)) * LFZO * LKY;
+    B_y := K_y / (C_y * D_y) * sign(PDY1);
+  
+    S_Hy := (PHY1 + PHY2 * df_z) * LHY + PHY3 * IA_y;
+    S_Vy := Fz * ((PVY1 + PVY2 * df_z) * LVY + (PVY3 + PVY4 * df_z) * IA_y) * LMUY;
+    SA_y := alpha + S_Hy;
+  
+    E_y := (PEY1 + PEY2 * df_z) * (1 - (PEY3 + PEY4 * IA_y) * sign(SA_y)) * LEY;
+  
+    Fy_pure := D_y * sin(C_y * atan(B_y * SA_y - E_y * (B_y * SA_y - atan(B_y * SA_y)))) + S_Vy;
+      
+    C_ySR := RCY1;
+    B_ySR := RBY1 * cos(atan(RBY2 * (alpha - RBY3))) * LYKA;
+    E_ySR := REY1 + REY2 * df_z;
+    S_HySR := RHY1 + RHY2 * df_z;
+  
+    D_VySR := mu_y * Fz * (RVY1 + RVY2 * df_z + RVY3 * gamma) * cos(atan(RVY4 * alpha));
+    S_VySR := D_VySR * sin(RVY5 * atan(RVY6 * kappa)) * LVYKA;
+  
+    SR_s := kappa + S_HySR;
+  
+    G_ySR := (cos(C_ySR * atan(B_ySR * SR_s - E_ySR * (B_ySR * SR_s - atan(B_ySR * SR_s))))) / (cos(C_ySR * atan(B_ySR * S_HySR - E_ySR * (B_ySR * S_HySR - atan(B_ySR * S_HySR)))));
+  
+    Fy_comb := Fy_pure * G_ySR + S_VySR;
+    mu_y_adj := mu_y * G_ySR;
+    
+    Fy := Fy_comb;
+  
+  else
+    IA_y := 0;
+    df_z := 0;
+    mu_y := 0;
+    C_y := 0;
+    D_y := 0;
+    K_y := 0;
+    B_y := 0;
+    S_Hy := 0;
+    S_Vy := 0;
+    SA_y := 0;
+    E_y := 0;
+    Fy_pure := 0;
+    
+    C_ySR := 0;
+    B_ySR := 0;
+    E_ySR := 0;
+    S_HySR := 0;
+    D_VySR := 0;
+    S_VySR := 0;
+    SR_s := 0;
+    G_ySR := 0;
+    Fy_comb := 0;
+    mu_y_adj := 0;
+    
+    Fy := 0;
+  end if;
   
 end Fy_eval;

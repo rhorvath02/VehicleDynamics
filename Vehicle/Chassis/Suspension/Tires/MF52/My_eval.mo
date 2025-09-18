@@ -72,13 +72,22 @@ protected
   Real S_Vx;
   
 algorithm
-  df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
-
-  K_x := Fz * (PKX1 + PKX2 * df_z) * exp(PKX3 * df_z) * LKX;
-
-  S_Hx := (PHX1 + PHX2 * df_z) * LHX;
-  S_Vx := Fz * (PVX1 + PVX2 * df_z) * LVX * LMUX;
-
-  My := R0 * (S_Vx + K_x * S_Hx);
-
+  if Fz > 1e-3 then
+    df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
+  
+    K_x := Fz * (PKX1 + PKX2 * df_z) * exp(PKX3 * df_z) * LKX;
+  
+    S_Hx := (PHX1 + PHX2 * df_z) * LHX;
+    S_Vx := Fz * (PVX1 + PVX2 * df_z) * LVX * LMUX;
+  
+    My := R0 * (S_Vx + K_x * S_Hx);
+  else
+    df_z := 0;
+    K_x := 0;
+    S_Hx := 0;
+    S_Vx := 0;
+    
+    My := 0;
+  end if;
+  
 end My_eval;

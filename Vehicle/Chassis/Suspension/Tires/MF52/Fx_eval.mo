@@ -101,38 +101,63 @@ protected
   Real mu_x_adj;
 
 algorithm
+  if Fz > 1e-3 then
+    // Pure slip calculations
+    IA_x := gamma * LGAX;
+    df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
+    mu_x := (PDX1 + PDX2 * df_z) * (1 - PDX3 * IA_x^2) * LMUX;
   
-  // Pure slip calculations
-  IA_x := gamma * LGAX;
-  df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
-  mu_x := (PDX1 + PDX2 * df_z) * (1 - PDX3 * IA_x^2) * LMUX;
-
-  C_x := PCX1 * LCX;
-  D_x := mu_x * Fz;
-  K_x := Fz * (PKX1 + PKX2 * df_z) * exp(PKX3 * df_z) * LKX;
-  B_x := K_x / (C_x * D_x);
-
-  S_Hx := (PHX1 + PHX2 * df_z) * LHX;
-  S_Vx := Fz * (PVX1 + PVX2 * df_z) * LVX * LMUX;
-  SR_x := kappa + S_Hx;
-
-  E_x := (PEX1 + PEX2 * df_z + PEX3 * df_z^2) * (1 - PEX4 * sign(SR_x)) * LEX;
-
-  Fx_pure := D_x * sin(C_x * atan(B_x * SR_x - E_x * (B_x * SR_x - atan(B_x * SR_x)))) + S_Vx;
+    C_x := PCX1 * LCX;
+    D_x := mu_x * Fz;
+    K_x := Fz * (PKX1 + PKX2 * df_z) * exp(PKX3 * df_z) * LKX;
+    B_x := K_x / (C_x * D_x);
   
-  // Combined slip calculations
-  C_xSA := RCX1;
-  B_xSA := RBX1 * cos(atan(RBX2 * kappa)) * LXAL;
-  E_xSA := REX1 + REX2 * df_z;
-  S_HxSA := RHX1;
-
-  SA_s := alpha + S_HxSA;
-
-  G_xSA := (cos(C_xSA * atan(B_xSA * SA_s - E_xSA * (B_xSA * SA_s - atan(B_xSA * SA_s))))) / (cos(C_xSA * atan(B_xSA * S_HxSA - E_xSA * (B_xSA * S_HxSA - atan(B_xSA * S_HxSA)))));
+    S_Hx := (PHX1 + PHX2 * df_z) * LHX;
+    S_Vx := Fz * (PVX1 + PVX2 * df_z) * LVX * LMUX;
+    SR_x := kappa + S_Hx;
   
-  Fx_comb := Fx_pure * G_xSA;
-  mu_x_adj := mu_x * G_xSA;
+    E_x := (PEX1 + PEX2 * df_z + PEX3 * df_z^2) * (1 - PEX4 * sign(SR_x)) * LEX;
   
-  Fx := Fx_comb;
+    Fx_pure := D_x * sin(C_x * atan(B_x * SR_x - E_x * (B_x * SR_x - atan(B_x * SR_x)))) + S_Vx;
+    
+    // Combined slip calculations
+    C_xSA := RCX1;
+    B_xSA := RBX1 * cos(atan(RBX2 * kappa)) * LXAL;
+    E_xSA := REX1 + REX2 * df_z;
+    S_HxSA := RHX1;
+  
+    SA_s := alpha + S_HxSA;
+  
+    G_xSA := (cos(C_xSA * atan(B_xSA * SA_s - E_xSA * (B_xSA * SA_s - atan(B_xSA * SA_s))))) / (cos(C_xSA * atan(B_xSA * S_HxSA - E_xSA * (B_xSA * S_HxSA - atan(B_xSA * S_HxSA)))));
+    
+    Fx_comb := Fx_pure * G_xSA;
+    mu_x_adj := mu_x * G_xSA;
+    
+    Fx := Fx_comb;
+  else
+    IA_x := 0;
+    df_z := 0;
+    mu_x := 0;
+    C_x := 0;
+    D_x := 0;
+    K_x := 0;
+    B_x := 0;
+    S_Hx := 0;
+    S_Vx := 0;
+    SR_x := 0;
+    E_x := 0;
+    Fx_pure := 0;
+    
+    C_xSA := 0;
+    B_xSA := 0;
+    E_xSA := 0;
+    S_HxSA := 0;
+    SA_s := 0;
+    G_xSA := 0;
+    Fx_comb := 0;
+    mu_x_adj := 0;
+    
+    Fx := 0;
+  end if;
   
 end Fx_eval;

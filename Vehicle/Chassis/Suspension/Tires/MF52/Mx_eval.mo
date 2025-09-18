@@ -57,6 +57,10 @@ function Mx_eval
   output SIunits.Force Mx;
 
 algorithm
-  Mx := R0 * Fz * (QSX1 * LVMX + (-1 * QSX2 * gamma + QSX3 * Fy / FNOMIN) * LMX);
-
+  if Fz > 1e-3 then
+    Mx := R0 * Fz * (QSX1 * LVMX + (-1 * QSX2 * gamma + QSX3 * Fy / FNOMIN) * LMX);
+  else
+    Mx := 0;
+  end if;
+  
 end Mx_eval;

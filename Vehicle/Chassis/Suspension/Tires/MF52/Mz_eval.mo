@@ -136,59 +136,96 @@ protected
   Real s;
   
 algorithm
-  df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
-  IA_z := gamma * LGAZ;
-
-  // Lateral Dependencies
-  IA_y := gamma * LGAY;
-  mu_y := (PDY1 + PDY2 * df_z) * (1 - PDY3 * IA_y^2) * LMUY;
-  S_Hy := (PHY1 + PHY2 * df_z) * LHY + PHY3 * IA_y;
-  S_Vy := Fz * ((PVY1 + PVY2 * df_z) * LVY + (PVY3 + PVY4 * df_z) * IA_y) * LMUY;
-
-  K_y := PKY1 * FNOMIN * sin(2 * atan(Fz / (PKY2 * FNOMIN * LFZO))) * (1 - PKY3 * abs(IA_y)) * LFZO * LKY;
-  C_y := PCY1 * LCY;
-  D_y := mu_y * Fz;
-  B_y := K_y / (C_y * D_y);
-
-  // Longitudinal
-  K_x := Fz * (PKX1 + PKX2 * df_z) * exp(PKX3 * df_z) * LKX;
+  if Fz > 1e-3 then
+    df_z := (Fz - FNOMIN * LFZO) / (FNOMIN * LFZO);
+    IA_z := gamma * LGAZ;
   
-  // Aligning
-  D_t := Fz * (QDZ1 + QDZ2 * df_z) * (1 + QDZ3 * IA_z + QDZ4 * IA_z^2) * (R0 / FNOMIN) * LTR;
-  C_t := QCZ1;
-  B_t := (QBZ1 + QBZ2 * df_z + QBZ3 * df_z^2) * (1 + QBZ4 * IA_z + QBZ5 * abs(IA_z)) * LKY / LMUY;
+    // Lateral Dependencies
+    IA_y := gamma * LGAY;
+    mu_y := (PDY1 + PDY2 * df_z) * (1 - PDY3 * IA_y^2) * LMUY;
+    S_Hy := (PHY1 + PHY2 * df_z) * LHY + PHY3 * IA_y;
+    S_Vy := Fz * ((PVY1 + PVY2 * df_z) * LVY + (PVY3 + PVY4 * df_z) * IA_y) * LMUY;
   
-  D_VySR := mu_y * Fz * (RVY1 + RVY2 * df_z + RVY3 * gamma) * cos(atan(RVY4 * alpha));
-  S_VySR := D_VySR * sin(RVY5 * atan(RVY6 * kappa)) * LVYKA;
-
-  S_Ht := QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * IA_z;
-  SA_t := alpha + S_Ht;
-
-  E_t := (QEZ1 + QEZ2 * df_z + QEZ3 * df_z^2) * (1 + (QEZ4 + QEZ5 * IA_z) * (2 / Modelica.Constants.pi) * atan(B_t * C_t * SA_t));
-
-  S_Hf := S_Hy + S_Vy / K_y;
-  SA_r := alpha + S_Hf;
-
-  // Adjusted SA values
-  SA_t_eq := atan(sqrt((tan(SA_t))^2 + (K_x / K_y)^2 * kappa^2)) * sign(SA_t);
-  SA_r_eq := atan(sqrt((tan(SA_r))^2 + (K_x / K_y)^2 * kappa^2)) * sign(SA_r);
-
-  // Pneumatic trail
-  t_adj := D_t * cos(C_t * atan(B_t * SA_t_eq - E_t * (B_t * SA_t_eq - atan(B_t * SA_t_eq)))) * cos(alpha);
-
-  // Aligning moment calculation
-  F_y_IA_adj := Fy - S_VySR;
-
-  D_r := Fz * ((QDZ6 + QDZ7 * df_z) * LRES + (QDZ8 + QDZ9 * df_z) * IA_z) * R0 * LMUY;
-  B_r := QBZ9 * LKY / LMUY + QBZ10 * B_y * C_y;
-
-  M_zr := D_r * cos(atan(B_r * SA_r_eq)) * cos(alpha);
-
-  s := (SSZ1 + SSZ2 * (Fy / FNOMIN) + (SSZ3 + SSZ4 * df_z) * gamma) * R0 * LS;
+    K_y := PKY1 * FNOMIN * sin(2 * atan(Fz / (PKY2 * FNOMIN * LFZO))) * (1 - PKY3 * abs(IA_y)) * LFZO * LKY;
+    C_y := PCY1 * LCY;
+    D_y := mu_y * Fz;
+    B_y := K_y / (C_y * D_y);
   
-  pneu_trail := t_adj;
-  pneu_scrub := s;
+    // Longitudinal
+    K_x := Fz * (PKX1 + PKX2 * df_z) * exp(PKX3 * df_z) * LKX;
+    
+    // Aligning
+    D_t := Fz * (QDZ1 + QDZ2 * df_z) * (1 + QDZ3 * IA_z + QDZ4 * IA_z^2) * (R0 / FNOMIN) * LTR;
+    C_t := QCZ1;
+    B_t := (QBZ1 + QBZ2 * df_z + QBZ3 * df_z^2) * (1 + QBZ4 * IA_z + QBZ5 * abs(IA_z)) * LKY / LMUY;
+    
+    D_VySR := mu_y * Fz * (RVY1 + RVY2 * df_z + RVY3 * gamma) * cos(atan(RVY4 * alpha));
+    S_VySR := D_VySR * sin(RVY5 * atan(RVY6 * kappa)) * LVYKA;
   
-  Mz := -t_adj * F_y_IA_adj + M_zr + s * Fx;
+    S_Ht := QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * IA_z;
+    SA_t := alpha + S_Ht;
+  
+    E_t := (QEZ1 + QEZ2 * df_z + QEZ3 * df_z^2) * (1 + (QEZ4 + QEZ5 * IA_z) * (2 / Modelica.Constants.pi) * atan(B_t * C_t * SA_t));
+  
+    S_Hf := S_Hy + S_Vy / K_y;
+    SA_r := alpha + S_Hf;
+  
+    // Adjusted SA values
+    SA_t_eq := atan(sqrt((tan(SA_t))^2 + (K_x / K_y)^2 * kappa^2)) * sign(SA_t);
+    SA_r_eq := atan(sqrt((tan(SA_r))^2 + (K_x / K_y)^2 * kappa^2)) * sign(SA_r);
+  
+    // Pneumatic trail
+    t_adj := D_t * cos(C_t * atan(B_t * SA_t_eq - E_t * (B_t * SA_t_eq - atan(B_t * SA_t_eq)))) * cos(alpha);
+  
+    // Aligning moment calculation
+    F_y_IA_adj := Fy - S_VySR;
+  
+    D_r := Fz * ((QDZ6 + QDZ7 * df_z) * LRES + (QDZ8 + QDZ9 * df_z) * IA_z) * R0 * LMUY;
+    B_r := QBZ9 * LKY / LMUY + QBZ10 * B_y * C_y;
+  
+    M_zr := D_r * cos(atan(B_r * SA_r_eq)) * cos(alpha);
+  
+    s := (SSZ1 + SSZ2 * (Fy / FNOMIN) + (SSZ3 + SSZ4 * df_z) * gamma) * R0 * LS;
+    
+    pneu_trail := t_adj;
+    pneu_scrub := s;
+    
+    Mz := -t_adj * F_y_IA_adj + M_zr + s * Fx;
+  else
+    df_z := 0;
+    IA_z := 0;
+    
+    IA_y := 0;
+    mu_y := 0;
+    S_Hy := 0;
+    S_Vy := 0;
+    K_y := 0;
+    C_y := 0;
+    D_y := 0;
+    B_y := 0;
+    
+    K_x := 0;
+    
+    D_t := 0;
+    C_t := 0;
+    B_t := 0;
+    D_VySR := 0;
+    S_VySR := 0;
+    S_Ht := 0;
+    SA_t := 0;
+    E_t := 0;
+    S_Hf := 0;
+    SA_r := 0;
+    SA_t_eq := 0;
+    SA_r_eq := 0;
+    t_adj := 0;
+    F_y_IA_adj := 0;
+    D_r := 0;
+    B_r := 0;
+    M_zr := 0;
+    s := 0;
+    
+    Mz := 0;
+  end if;
   
 end Mz_eval;
