@@ -4,6 +4,10 @@ partial model PartialFrame
   
   parameter SIunits.Position CG_location[3] annotation(Dialog(group="Geometry"));
   
+  // Mass parameters
+  parameter SIunits.Mass front_mass annotation(Dialog(group="Mass"));
+  parameter SIunits.Mass rear_mass annotation(Dialog(group="Mass"));
+  
   // FL node parameters
   parameter SIunits.Position FL_upper_fore_i[3] annotation(Dialog(group="Geometry"));
   parameter SIunits.Position FL_upper_aft_i[3] annotation(Dialog(group="Geometry"));
@@ -35,6 +39,13 @@ partial model PartialFrame
   // Fr/Rr reference points
   final parameter Real Fr_avg[3] = (FL_upper_fore_i + FL_upper_aft_i + FL_lower_fore_i + FL_lower_aft_i + FR_upper_fore_i + FR_upper_aft_i + FR_lower_fore_i + FR_lower_aft_i) / 8;
   final parameter Real Rr_avg[3] = (RL_upper_fore_i + RL_upper_aft_i + RL_lower_fore_i + RL_lower_aft_i + RR_upper_fore_i + RR_upper_aft_i + RR_lower_fore_i + RR_lower_aft_i) / 8;
+  
+  // Masses
+  Modelica.Mechanics.MultiBody.Parts.Body front_body(r_CM = {0, 0, 0}, m = front_mass)  annotation(
+    Placement(transformation(origin = {-20, 70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+  Modelica.Mechanics.MultiBody.Parts.Body rear_body(r_CM = {0, 0, 0}, m = rear_mass)  annotation(
+    Placement(transformation(origin = {-20, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
+
   
   // CG Frame
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
@@ -89,9 +100,9 @@ partial model PartialFrame
     Placement(transformation(origin = {100, -220}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {300, -566}, extent = {{-16, -16}, {16, 16}})));
   
   // Fr/Rr translations
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation CG_to_Fr(r = Fr_avg - CG_location, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation CG_to_Fr(r = Fr_avg - CG_location, animation = true)  annotation(
     Placement(transformation(origin = {0, 30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation CG_to_Rr(r = Rr_avg - CG_location, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation CG_to_Rr(r = Rr_avg - CG_location, animation = true)  annotation(
     Placement(transformation(origin = {0, -30}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   
   // FL translations
@@ -119,27 +130,27 @@ partial model PartialFrame
     Placement(transformation(origin = {70, 220}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   
   // RL translations
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_lower_aft_i(r = RL_lower_aft_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_lower_aft_i(r = RL_lower_aft_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {-70, -220}, extent = {{10, -10}, {-10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_lower_fore_i(r = RL_lower_fore_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_lower_fore_i(r = RL_lower_fore_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {-70, -180}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_tie_i(animation = false)  annotation(
     Placement(transformation(origin = {-70, -120}, extent = {{10, -10}, {-10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_upper_aft_i(r = RL_upper_aft_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_upper_aft_i(r = RL_upper_aft_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {-70, -60}, extent = {{10, -10}, {-10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_upper_fore_i(r = RL_upper_fore_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RL_upper_fore_i(r = RL_upper_fore_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {-70, -20}, extent = {{10, -10}, {-10, 10}})));
   
   // RR translations
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_lower_aft_i(r = RR_lower_aft_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_lower_aft_i(r = RR_lower_aft_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {70, -220}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_lower_fore_i(r = RR_lower_fore_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_lower_fore_i(r = RR_lower_fore_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {70, -180}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_tie_i(animation = false)  annotation(
     Placement(transformation(origin = {70, -120}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_upper_aft_i(r = RR_upper_aft_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_upper_aft_i(r = RR_upper_aft_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {70, -60}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_upper_fore_i(r = RR_upper_fore_i - Rr_avg, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation Rr_to_RR_upper_fore_i(r = RR_upper_fore_i - Rr_avg, animation = true)  annotation(
     Placement(transformation(origin = {70, -20}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
 
 equation
@@ -219,6 +230,10 @@ equation
     Line(points = {{-60, 220}, {-40, 220}, {-40, 60}, {0, 60}, {0, 40}}, color = {95, 95, 95}));
   connect(frame_a, CG_to_Rr.frame_a) annotation(
     Line(points = {{0, 0}, {0, -20}}));
+  connect(rear_body.frame_a, CG_to_Rr.frame_b) annotation(
+    Line(points = {{-10, -70}, {0, -70}, {0, -40}}, color = {95, 95, 95}));
+  connect(front_body.frame_a, CG_to_Fr.frame_b) annotation(
+    Line(points = {{-10, 70}, {0, 70}, {0, 40}}, color = {95, 95, 95}));
   annotation(
     Icon(
       coordinateSystem(

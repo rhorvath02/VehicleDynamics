@@ -1,14 +1,19 @@
 within Vehicle.Chassis.Suspension.Tires;
 
 model BaseMF52
+  import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
   import Modelica.SIunits;
-  //  parameter String tir_path = "/home/rhorvath/Documents/Github/VehicleDynamics/JSONs/Modified_Round_8_Hoosier_R25B_16x7p5_10_on_7in_12psi_PAC02_UM2.tir";
-  //  inner ExternData.TIRFile tir_file(fileName=tir_path)  annotation(
-  //    Placement(transformation(origin = {-90, -90}, extent = {{10, -10}, {-10, 10}})));
+  
+  // Read tir file
+  parameter String tir_path = "/home/rhorvath/Documents/Github/VehicleDynamics/JSONs/Modified_Round_8_Hoosier_R25B_16x7p5_10_on_7in_12psi_PAC02_UM2.tir";
+  inner ExternData.TIRFile tir_file(fileName=tir_path)  annotation(
+      Placement(transformation(origin = {-90, -90}, extent = {{10, -10}, {-10, 10}})));
+  
+  // Static angles
   parameter SIunits.Angle static_gamma;
   parameter SIunits.Angle static_alpha;
-  SIunits.DimensionlessRatio kappa = 0;
+  
   SIunits.Angle gamma = 0;
   SIunits.Force Fx;
   SIunits.Force Fy;
@@ -17,12 +22,20 @@ model BaseMF52
   SIunits.Torque Mz;
   SIunits.Length pneu_trail;
   SIunits.Length pneu_scrub;
+  
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
     Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
+    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
+
   Real Fz;
   Real wheel_vel[3];
   Real wheel_heading[3];
   Real alpha;
+  Real kappa;
+  
+  Real v_x_wheel;
+  
   // Pure longitudinal slip coefficients
   parameter Real PCX1 = tir_file.getReal("PCX1", "LONGITUDINAL_COEFFICIENTS") annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
@@ -272,6 +285,7 @@ model BaseMF52
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
   parameter Real LIP = tir_file.getReal("LIP", "SCALING_COEFFICIENTS") annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
+  
   parameter SIunits.Force FNOMIN = tir_file.getReal("FNOMIN", "VERTICAL") annotation(
     Dialog(group = "Conditions"));
   parameter SIunits.Length R0 = tir_file.getReal("UNLOADED_RADIUS", "DIMENSION") annotation(
@@ -280,12 +294,13 @@ model BaseMF52
     Dialog(group = "Dimensions"));
   parameter SIunits.Length rim_R0 = tir_file.getReal("RIM_RADIUS", "DIMENSION") annotation(
     Dialog(group = "Dimensions"));
-  Modelica.Mechanics.MultiBody.Parts.FixedRotation set_toe(rotationType = Modelica.Mechanics.MultiBody.Types.RotationTypes.PlanarRotationSequence, angles = {-static_alpha, 0, -static_gamma}) annotation(
-    Placement(transformation(origin = {0, -10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  
+  Modelica.Mechanics.MultiBody.Parts.FixedRotation set_toe(rotationType = Modelica.Mechanics.MultiBody.Types.RotationTypes.PlanarRotationSequence, angles = {static_gamma, 0, static_alpha}) annotation(
+    Placement(transformation(origin = {0, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = {0, 0, R0*0.95}) annotation(
-    Placement(transformation(origin = {0, 30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+    Placement(transformation(origin = {0, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Visualizers.VoluminousWheel voluminousWheel(rTire = R0, rRim = rim_R0, width = rim_width) annotation(
-    Placement(transformation(origin = {-50, 50}, extent = {{10, -10}, {-10, 10}})));
+    Placement(transformation(origin = {-50, 30}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation heading_reference(r = {1, 0, 0}) annotation(
     Placement(transformation(origin = {30, -70}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Forces.WorldForceAndTorque forceAndTorque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.frame_resolve) annotation(
@@ -294,25 +309,36 @@ model BaseMF52
     Placement(transformation(origin = {-70, -44}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   Modelica.Blocks.Sources.RealExpression tire_torques[3](y = {Mx, My, Mz}) annotation(
     Placement(transformation(origin = {-70, -56}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-  Modelica.Mechanics.MultiBody.Parts.Body body12(m = 8, r_CM = {0, 0, 0}, sphereDiameter = 0.025) annotation(
-    Placement(transformation(origin = {30, -30}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
+  Modelica.Mechanics.MultiBody.Joints.Revolute revolute(animation = false, n = {0, 1, 0}, useAxisFlange = false) annotation(
+    Placement(transformation(origin = {-20, 30}, extent = {{-10, -10}, {10, 10}})));
+
+  Modelica.Mechanics.MultiBody.Parts.Body wheel_inertia(r_CM = {0, 0, 0}, m = 8)  annotation(
+    Placement(transformation(origin = {-90, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
 equation
   Fz = frame_a.f[3];
-//  wheel_vel = der(frame_a.r_0);
-  wheel_vel = {1, 0, 0};
-  wheel_heading = heading_reference.frame_b.r_0 - heading_reference.frame_a.r_0;
+  wheel_vel = der(frame_a.r_0);
+//  wheel_heading = heading_reference.frame_b.r_0 - heading_reference.frame_a.r_0;
+  wheel_heading = {1, 0, 0};
   alpha = Utilities.Math.Vector.angle_between(wheel_vel, wheel_heading, {0, 0, 1});
+  v_x_wheel = Utilities.Math.Vector.dot(wheel_vel, wheel_heading);
+  
+  kappa = 0;
+    
+//  if norm({wheel_vel[1], wheel_vel[2], 0}) < 1 then
+//    kappa = 0;
+//  else
+//    kappa = (der(revolute.phi)*R0 - v_x_wheel)/v_x_wheel;
+//  end if;
+  
   Fx = MF52.Fx_eval(Fz, alpha, kappa, gamma, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, RBX1, RBX2, RCX1, REX1, REX2, RHX1, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
   Fy = MF52.Fy_eval(Fz, alpha, kappa, gamma, PCY1, PDY1, PDY2, PDY3, PEY1, PEY2, PEY3, PEY4, PKY1, PKY2, PKY3, PHY1, PHY2, PHY3, PVY1, PVY2, PVY3, PVY4, RBY1, RBY2, RBY3, RCY1, REY1, REY2, RHY1, RHY2, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
   Mx = MF52.Mx_eval(Fz, Fy, alpha, kappa, gamma, QSX1, QSX2, QSX3, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
   My = MF52.My_eval(Fz, alpha, kappa, gamma, QSY1, QSY2, QSY3, QSY4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
   (Mz, pneu_trail, pneu_scrub) = MF52.Mz_eval(Fz, Fx, Fy, alpha, kappa, gamma, QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ9, QBZ10, QCZ1, QDZ1, QDZ2, QDZ3, QDZ4, QDZ6, QDZ7, QDZ8, QDZ9, QEZ1, QEZ2, QEZ3, QEZ4, QEZ5, QHZ1, QHZ2, QHZ3, QHZ4, SSZ1, SSZ2, SSZ3, SSZ4, PCY1, PDY1, PDY2, PDY3, PKY1, PKY2, PKY3, PHY1, PHY2, PHY3, PVY1, PVY2, PVY3, PVY4, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, PKX1, PKX2, PKX3, LFZO, LKX, LCY, LMUY, LKY, LHY, LVY, LGAY, LTR, LRES, LGAZ, LVYKA, LS, FNOMIN, R0);
   connect(frame_a, set_toe.frame_a) annotation(
-    Line(points = {{0, -100}, {0, -20}}));
+    Line(points = {{0, -100}, {0, -40}}));
   connect(set_toe.frame_b, fixedTranslation.frame_a) annotation(
-    Line(points = {{0, 0}, {0, 20}}, color = {95, 95, 95}));
-  connect(voluminousWheel.frame_a, fixedTranslation.frame_b) annotation(
-    Line(points = {{-40, 50}, {0, 50}, {0, 40}}, color = {95, 95, 95}));
+    Line(points = {{0, -20}, {0, 0}}, color = {95, 95, 95}));
   connect(heading_reference.frame_a, frame_a) annotation(
     Line(points = {{20, -70}, {0, -70}, {0, -100}}, color = {95, 95, 95}));
   connect(forceAndTorque.frame_b, frame_a) annotation(
@@ -323,6 +349,12 @@ equation
     Line(points = {{-58, -44}, {-42, -44}}, color = {0, 0, 127}, thickness = 0.5));
   connect(tire_torques.y, forceAndTorque.torque) annotation(
     Line(points = {{-58, -56}, {-42, -56}}, color = {0, 0, 127}, thickness = 0.5));
-  connect(body12.frame_a, frame_a) annotation(
-    Line(points = {{20, -30}, {0, -30}, {0, -100}}, color = {95, 95, 95}));
+  connect(voluminousWheel.frame_a, revolute.frame_a) annotation(
+    Line(points = {{-40, 30}, {-30, 30}}, color = {95, 95, 95}));
+  connect(revolute.frame_b, fixedTranslation.frame_b) annotation(
+    Line(points = {{-10, 30}, {0, 30}, {0, 20}}, color = {95, 95, 95}));
+  connect(frame_b, revolute.frame_a) annotation(
+    Line(points = {{-100, 0}, {-34, 0}, {-34, 30}, {-30, 30}}));
+  connect(wheel_inertia.frame_a, revolute.frame_a) annotation(
+    Line(points = {{-80, 50}, {-35, 50}, {-35, 30}, {-30, 30}}, color = {95, 95, 95}));
 end BaseMF52;
