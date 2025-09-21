@@ -19,7 +19,7 @@ protected
 
 algorithm
   
-  if norm(a) < 1 or norm(b) < 1 then
+  if norm(a) < 0.25 or norm(b) < 0.25 then
     dot_ab := 0;
     cross_ab := {0, 0, 0};
     sign_theta := 1;
