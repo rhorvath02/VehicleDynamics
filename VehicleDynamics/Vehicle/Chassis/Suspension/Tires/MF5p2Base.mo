@@ -11,6 +11,7 @@ model MF5p2Base
   // Static angles
   parameter SIunits.Angle static_gamma;
   parameter SIunits.Angle static_alpha;
+  parameter SIunits.Inertia wheel_J;
   
   parameter Real mu_s "Static friction coefficient" annotation(Dialog(group="Coulomb Friction Parameters"));
   parameter SIunits.Velocity v_rel[3] "Initial translational velocity" annotation(Dialog(tab="Initialization"));
@@ -37,7 +38,7 @@ model MF5p2Base
   Real v_x_wheel;
   Real force_in[3];
 
-  // Pure longitudinal slip coefficients
+// Pure longitudinal slip coefficients
   parameter Real PCX1 = tir_file.getReal("PCX1", "LONGITUDINAL_COEFFICIENTS") annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
   parameter Real PDX1 = tir_file.getReal("PDX1", "LONGITUDINAL_COEFFICIENTS") annotation(
@@ -308,30 +309,20 @@ model MF5p2Base
     Placement(transformation(origin = {-90, -56}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
   Modelica.Mechanics.MultiBody.Joints.Revolute revolute(animation = false, n = {0, 1, 0}, useAxisFlange = false, w(each start = -v_rel[1]/R0, each fixed = true)) annotation(
     Placement(transformation(origin = {-22, 40}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-  Modelica.Mechanics.MultiBody.Parts.Body wheel_inertia(r_CM = {0, 0, 0}, m = 1, I_22 = 1, v_0(start = v_rel, each fixed = true)) annotation(
+  Modelica.Mechanics.MultiBody.Parts.Body wheel_inertia(r_CM = {0, 0, 0}, m = 0, I_22 = wheel_J, v_0(start = v_rel, each fixed = true)) annotation(
     Placement(transformation(origin = {-90, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-  Modelica.Blocks.Interfaces.RealInput u annotation(
-    Placement(transformation(origin = {-120, 0}, extent = {{-20, -20}, {20, 20}}), iconTransformation(origin = {-100, 0}, extent = {{-20, -20}, {20, 20}})));
   Modelica.Mechanics.MultiBody.Forces.WorldForce force(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)  annotation(
     Placement(transformation(origin = {-30, -80}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression realExpression[3](y = {Fx_c, Fy_c, 0})  annotation(
     Placement(transformation(origin = {-70, -80}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedRotation fixedRotation(n = {0, 0, 1}, angle = static_alpha)  annotation(
     Placement(transformation(origin = {-20, -50}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
-  Modelica.Mechanics.MultiBody.Forces.WorldTorque torque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.frame_b) annotation(
-    Placement(transformation(origin = {-50, 0}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.RealExpression zero_input1 annotation(
-    Placement(transformation(origin = {-90, 20}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.RealExpression zero_input2 annotation(
-    Placement(transformation(origin = {-90, -20}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Forces.WorldTorque torque1(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.frame_b) annotation(
     Placement(transformation(origin = {-50, 90}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.RealExpression zero_input11 annotation(
-    Placement(transformation(origin = {-90, 131}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.RealExpression zero_input12 annotation(
+  Modelica.Blocks.Sources.RealExpression torque_feedback[3](y = {0, -Fx*R0, 0}) annotation(
     Placement(transformation(origin = {-90, 90}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.RealExpression torque_feedback(y = -Fx*R0) annotation(
-    Placement(transformation(origin = {-90, 110}, extent = {{-10, -10}, {10, 10}})));
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_b hub_frame annotation(
+    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
 equation
   force_in = Modelica.Mechanics.MultiBody.Frames.resolve1(corner_frame.R, corner_frame.f);
   if -force_in[3] > 0 then
@@ -343,7 +334,7 @@ equation
   wheel_heading = Modelica.Mechanics.MultiBody.Frames.resolve2(frame_a.R, {1, 0, 0});
   v_x_wheel = Utilities.Math.Vector.dot(wheel_vel, wheel_heading);
   if norm({wheel_vel[1], wheel_vel[2], 0}) > 0.125 then
-    alpha = Utilities.Math.Vector.angle_between(wheel_heading, wheel_vel, {0, 0, 1});
+    alpha = VehicleDynamics.Utilities.Math.Vector.angle_between(wheel_heading, wheel_vel, {0, 0, 1});
     if v_x_wheel > 0.125 then
       kappa = (-revolute.w*R0 - v_x_wheel)/v_x_wheel;
       Fx = MF52.Fx_eval(Fz, alpha, kappa, gamma, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, RBX1, RBX2, RCX1, REX1, REX2, RHX1, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
@@ -361,7 +352,7 @@ equation
     alpha = 0;
     kappa = 0;
     if abs(force_in[1] + revolute.tau*R0) <= mu_s*Fz then
-      Fx_c = -force_in[1] - torque.frame_b.t[2]*R0;
+      Fx_c = -force_in[1] - hub_frame.t[2]*R0;
     else
       Fx_c = -mu_s*Fz;
     end if;
@@ -400,22 +391,12 @@ equation
     Line(points = {{-20, -80}, {0, -80}, {0, -100}}, color = {95, 95, 95}));
   connect(fixedRotation.frame_a, frame_a) annotation(
     Line(points = {{-10, -50}, {0, -50}, {0, -100}}, color = {95, 95, 95}));
-  connect(zero_input1.y, torque.torque[1]) annotation(
-    Line(points = {{-78, 20}, {-70, 20}, {-70, 0}, {-62, 0}}, color = {0, 0, 127}));
-  connect(zero_input2.y, torque.torque[3]) annotation(
-    Line(points = {{-78, -20}, {-70, -20}, {-70, 0}, {-62, 0}}, color = {0, 0, 127}));
-  connect(torque.frame_b, revolute.frame_a) annotation(
-    Line(points = {{-40, 0}, {-36, 0}, {-36, 40}, {-32, 40}}, color = {95, 95, 95}));
-  connect(u, torque.torque[2]) annotation(
-    Line(points = {{-120, 0}, {-62, 0}}, color = {0, 0, 127}));
-  connect(zero_input11.y, torque1.torque[1]) annotation(
-    Line(points = {{-78, 132}, {-70, 132}, {-70, 90}, {-62, 90}}, color = {0, 0, 127}));
-  connect(zero_input12.y, torque1.torque[3]) annotation(
-    Line(points = {{-78, 90}, {-62, 90}}, color = {0, 0, 127}));
-  connect(torque_feedback.y, torque1.torque[2]) annotation(
-    Line(points = {{-78, 110}, {-70, 110}, {-70, 90}, {-62, 90}}, color = {0, 0, 127}));
   connect(torque1.frame_b, revolute.frame_a) annotation(
     Line(points = {{-40, 90}, {-36, 90}, {-36, 40}, {-32, 40}}, color = {95, 95, 95}));
   connect(forceAndTorque.frame_b, fixedRotation.frame_b) annotation(
     Line(points = {{-40, -50}, {-30, -50}}, color = {95, 95, 95}));
+  connect(hub_frame, revolute.frame_a) annotation(
+    Line(points = {{-100, 0}, {-36, 0}, {-36, 40}, {-32, 40}}));
+  connect(torque_feedback.y, torque1.torque) annotation(
+    Line(points = {{-78, 90}, {-62, 90}}, color = {0, 0, 127}, thickness = 0.5));
 end MF5p2Base;
