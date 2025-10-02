@@ -64,5 +64,6 @@ equation
   connect(const.y, speed.v_ref) annotation(
     Line(points = {{-38, -52}, {-22, -52}}, color = {0, 0, 127}));
   annotation(
-    experiment(StartTime = 0, StopTime = 3));
+    experiment(StartTime = 0, StopTime = 3),
+  __OpenModelica_commandLineOptions = "--matchingAlgorithm=PFPlusExt --indexReductionMethod=dynamicStateSelection -d=initialization,NLSanalyticJacobian");
 end TestMF5p2Base;

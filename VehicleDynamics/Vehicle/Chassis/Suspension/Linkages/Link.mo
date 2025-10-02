@@ -24,7 +24,6 @@ model Link
   // Link
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = outboard - inboard, width = link_diameter, height = link_diameter)  annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
-
 equation
   connect(frame_a, to_link.frame_a) annotation(
     Line(points = {{-100, 0}, {-70, 0}}));
@@ -34,7 +33,7 @@ equation
     Line(points = {{10, 0}, {50, 0}}, color = {95, 95, 95}));
   connect(from_link.frame_b, frame_b) annotation(
     Line(points = {{70, 0}, {100, 0}}, color = {95, 95, 95}));
-annotation(
+  annotation(
   Icon(
     graphics = {
     Line(
