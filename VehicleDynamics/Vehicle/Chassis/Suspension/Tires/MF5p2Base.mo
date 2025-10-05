@@ -301,13 +301,13 @@ model MF5p2Base
     Placement(transformation(origin = {-30, 10}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Forces.WorldForceAndTorque forceAndTorque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.frame_b, animation = true) annotation(
     Placement(transformation(origin = {-50, -50}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
-  Modelica.Blocks.Sources.RealExpression tire_forces[3](y = {Fx, Fy, 0}*0) annotation(
+  Modelica.Blocks.Sources.RealExpression tire_forces[3](y = {Fx, Fy, 0}) annotation(
     Placement(transformation(origin = {-90, -44}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression tire_torques[3](y = {Mx, My, Mz}) annotation(
     Placement(transformation(origin = {-90, -56}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-  Modelica.Mechanics.MultiBody.Parts.Body wheel_inertia(r_CM = {0, 0, 0}, m = 1, I_22 = wheel_J, v_0(start = v_rel, each fixed = true)) annotation(
+  Modelica.Mechanics.MultiBody.Parts.Body wheel_inertia(r_CM = {0, 0, 0}, m = 1, I_22 = wheel_J, v_0(start = v_rel, each fixed = true), animation = false) annotation(
     Placement(transformation(origin = {-30, 50}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-  Modelica.Mechanics.MultiBody.Forces.WorldForce force(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)  annotation(
+  Modelica.Mechanics.MultiBody.Forces.WorldForce force(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world, animation = false)  annotation(
     Placement(transformation(origin = {-30, -80}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression realExpression[3](y = {Fx_c, Fy_c, 0})  annotation(
     Placement(transformation(origin = {-70, -80}, extent = {{-10, -10}, {10, 10}})));

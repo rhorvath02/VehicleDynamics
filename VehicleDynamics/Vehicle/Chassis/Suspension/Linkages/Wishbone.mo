@@ -26,7 +26,7 @@ model Wishbone
     Placement(transformation(origin = {70, 60}, extent = {{-10, -10}, {10, 10}})));
   Vehicle.Chassis.Suspension.Joints.SphericalCompliant aft_i_joint(r_rel(each fixed = true), diameter = joint_diameter) annotation(
     Placement(transformation(origin = {70, -60}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Joints.Spherical spherical(enforceStates = true) annotation(
+  Modelica.Mechanics.MultiBody.Joints.Spherical spherical(enforceStates = true, sphereDiameter = joint_diameter) annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{-10, -10}, {10, 10}})));
 equation
   connect(aft_i_joint.frame_a, aft_link.frame_a) annotation(
