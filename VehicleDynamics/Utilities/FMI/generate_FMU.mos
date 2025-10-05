@@ -1,11 +1,10 @@
-cd("C:\\Users\\rober\\Documents\\Github\\VehicleDynamics\\temp");
+cd("/home/rhorvath/Documents/Github/VehicleDynamics/temp");
 loadFile("../VehicleDynamics/package.mo");
-loadFile("../Kinematics.mo");
+loadFile("../Kinematics2.mo");
 loadModel(Modelica);
 
-
 buildModelFMU(
-  Kinematics,
+  Kinematics2,
   version="2.0",
   fmuType="me"
 );
