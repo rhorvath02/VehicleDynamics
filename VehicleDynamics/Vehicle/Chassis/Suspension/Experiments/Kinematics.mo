@@ -19,7 +19,7 @@ model Kinematics
   parameter SIunits.Position lower_aft_i[3] = {-0.095250, 0.215900, 0.090000} annotation(
     Dialog(group = "Geometry"));
   parameter SIunits.Position lower_o[3] = {0, 0.556499, 0.124998} annotation(
-    Dialog(group = "Geometry"));
+    Placement(visible = false, transformation(origin = {nan, nan}, extent = {{nan, nan}, {nan, nan}})));
   
   DoubleWishboneBase doubleWishboneBase(upper_fore_i = upper_fore_i, upper_aft_i = upper_aft_i, lower_fore_i = lower_fore_i, lower_aft_i = lower_aft_i, upper_o = upper_o, lower_o = lower_o, tie_i = tie_i, tie_o = tie_o, contact_patch = contact_patch) annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
@@ -90,10 +90,10 @@ model Kinematics
     Placement(transformation(origin = {-30, -120}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   Modelica.Blocks.Interfaces.RealOutput hwa annotation(
     Placement(transformation(origin = {-30, -150}, extent = {{-10, -10}, {10, 10}}, rotation = -90), iconTransformation(origin = {-34, -148}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = 8, animation = false)  annotation(
-    Placement(transformation(origin = {-30, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.Body body1(m = 8, r_CM = {0, 0, 0}, animation = false) annotation(
-    Placement(transformation(origin = {230, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  VehicleDynamics.Utilities.Mechanics.Multibody.GroundPhysics groundPhysics11 annotation(
+    Placement(transformation(origin = {250, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  VehicleDynamics.Utilities.Mechanics.Multibody.GroundPhysics groundPhysics111 annotation(
+    Placement(transformation(origin = {-50, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
 equation
   FL_Fy_aligned = MF5p2Base.Fy*cos(abs(MF5p2Base.alpha));
   FR_Fy_aligned = MF5p2Base1.Fy*cos(abs(MF5p2Base1.alpha));
@@ -117,7 +117,7 @@ equation
   connect(position.flange, prismatic.axis) annotation(
     Line(points = {{0, -60}, {32, -60}, {32, -74}}, color = {0, 127, 0}));
   connect(doubleWishboneBase.contact_patch_frame, MF5p2Base.frame_a) annotation(
-    Line(points = {{0, -10}, {0, -20}, {-30, -20}, {-30, 20}}, color = {95, 95, 95}));
+    Line(points = {{0, -10}, {-30, -10}, {-30, 20}}, color = {95, 95, 95}));
   connect(fixed5.frame_b, groundPhysics.frame_a) annotation(
     Line(points = {{-80, 30}, {-80, 20}}, color = {95, 95, 95}));
   connect(groundPhysics.frame_b, MF5p2Base.frame_a) annotation(
@@ -139,7 +139,7 @@ equation
   connect(groundPhysics1.frame_b, MF5p2Base1.frame_a) annotation(
     Line(points = {{280, 0}, {280, -10}, {230, -10}, {230, 20}}, color = {95, 95, 95}));
   connect(doubleWishboneBase1.contact_patch_frame, MF5p2Base1.frame_a) annotation(
-    Line(points = {{200, -10}, {200, -20}, {230, -20}, {230, 20}}, color = {95, 95, 95}));
+    Line(points = {{200, -10}, {230, -10}, {230, 20}}, color = {95, 95, 95}));
   connect(fixed51.frame_b, groundPhysics1.frame_a) annotation(
     Line(points = {{280, 30}, {280, 20}}, color = {95, 95, 95}));
   connect(prismatic1.axis, position.flange) annotation(
@@ -160,10 +160,14 @@ equation
     Line(points = {{-38, -60}, {-30, -60}, {-30, -108}}, color = {0, 0, 127}));
   connect(gain1.y, hwa) annotation(
     Line(points = {{-30, -130}, {-30, -150}}, color = {0, 0, 127}));
-  connect(body.frame_a, MF5p2Base.frame_a) annotation(
-    Line(points = {{-30, 50}, {-30, 20}}, color = {95, 95, 95}));
-  connect(body1.frame_a, MF5p2Base1.frame_a) annotation(
-    Line(points = {{230, 50}, {230, 20}}, color = {95, 95, 95}));
+  connect(groundPhysics11.frame_b, fixed51.frame_b) annotation(
+    Line(points = {{250, 20}, {250, 30}, {280, 30}}, color = {95, 95, 95}));
+  connect(groundPhysics111.frame_b, fixed5.frame_b) annotation(
+    Line(points = {{-50, 20}, {-50, 30}, {-80, 30}}, color = {95, 95, 95}));
+  connect(groundPhysics111.frame_a, doubleWishboneBase.contact_patch_frame) annotation(
+    Line(points = {{-50, 0}, {-50, -10}, {0, -10}}, color = {95, 95, 95}));
+  connect(groundPhysics11.frame_a, doubleWishboneBase1.contact_patch_frame) annotation(
+    Line(points = {{250, 0}, {250, -10}, {200, -10}}, color = {95, 95, 95}));
   annotation(
     experiment(StartTime = 0, StopTime = 2),
     __OpenModelica_commandLineOptions = "--matchingAlgorithm=PFPlusExt --indexReductionMethod=dynamicStateSelection -d=initialization,evaluateAllParameters,NLSanalyticJacobian",

@@ -3,21 +3,21 @@ model Kinematics2
   import Modelica.SIunits;
   parameter SIunits.Position contact_patch[3] = {0, 0.609600, 0} annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position upper_fore_i[3] = {112.268, 225.425, 214.3222}/1000 annotation(
+  parameter SIunits.Position upper_fore_i[3] = {101.6, 225.425, 214.3222}/1000 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position upper_aft_i[3] = {-112.268, 223.0393, 215.7854}/1000 annotation(
+  parameter SIunits.Position upper_aft_i[3] = {-76.2, 223.0393, 215.7854}/1000 annotation(
     Dialog(group = "Geometry"));
   parameter SIunits.Position upper_o[3] = {-19.9572, 530.7122, 294.64}/1000 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position tie_i[3] = {57.15, 210.074, 97.6}/1000 annotation(
+  parameter SIunits.Position tie_i[3] = {57.15, 182.88 + 0.0254 * 1000, 111.4516}/1000 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position tie_o[3] = {55.372, 579.12, 157.2416}/1000 annotation(
+  parameter SIunits.Position tie_o[3] = {55.372, 530.6365, 172.6968}/1000 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position lower_fore_i[3] = {112.776, 225.425, 80.01}/1000 annotation(
+  parameter SIunits.Position lower_fore_i[3] = {101.6, 225.425, 80.01}/1000 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position lower_aft_i[3] = {-112.776, 225.425, 80.01}/1000 annotation(
+  parameter SIunits.Position lower_aft_i[3] = {-76.2, 225.425, 80.01}/1000 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position lower_o[3] = {14.024, 554.1225, 126}/1000 annotation(
+  parameter SIunits.Position lower_o[3] = {-14.024, 550.6, 126}/1000 annotation(
     Dialog(group = "Geometry"));
   
   DoubleWishboneBase doubleWishboneBase(upper_fore_i = upper_fore_i, upper_aft_i = upper_aft_i, lower_fore_i = lower_fore_i, lower_aft_i = lower_aft_i, upper_o = upper_o, lower_o = lower_o, tie_i = tie_i, tie_o = tie_o, contact_patch = contact_patch) annotation(
@@ -40,13 +40,13 @@ model Kinematics2
     Placement(transformation(origin = {40, -80}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
   Modelica.Mechanics.Translational.Sources.Position position annotation(
     Placement(transformation(origin = {-10, -60}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.Ramp ramp(height = 0.5*0.0254, duration = 1, startTime = 1) annotation(
+  Modelica.Blocks.Sources.Ramp ramp(height = 0.7625*0.0254, duration = 1, startTime = 1) annotation(
     Placement(transformation(origin = {-50, -60}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.Fixed fixed5(r = contact_patch, animation = false) annotation(
     Placement(transformation(origin = {-80, 40}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   Utilities.Mechanics.Multibody.GroundPhysics groundPhysics annotation(
     Placement(transformation(origin = {-80, 10}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-  Modelica.Mechanics.MultiBody.Sensors.CutForce cutForce(animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Sensors.CutForce cutForce annotation(
     Placement(transformation(origin = {20, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Parts.Fixed fixed6(r = {upper_fore_i[1], -upper_fore_i[2], upper_fore_i[3]}, animation = false) annotation(
     Placement(transformation(origin = {130, 80}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
@@ -60,7 +60,7 @@ model Kinematics2
     Placement(transformation(origin = {130, -80}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
   Vehicle.Chassis.Suspension.DoubleWishboneBase doubleWishboneBase1(contact_patch = {contact_patch[1], -contact_patch[2], contact_patch[3]}, lower_aft_i = {lower_aft_i[1], -lower_aft_i[2], lower_aft_i[3]}, lower_fore_i = {lower_fore_i[1], -lower_fore_i[2], lower_fore_i[3]}, lower_o = {lower_o[1], -lower_o[2], lower_o[3]}, tie_i = {tie_i[1], -tie_i[2], tie_i[3]}, tie_o = {tie_o[1], -tie_o[2], tie_o[3]}, upper_aft_i = {upper_aft_i[1], -upper_aft_i[2], upper_aft_i[3]}, upper_fore_i = {upper_fore_i[1], -upper_fore_i[2], upper_fore_i[3]}, upper_o = {upper_o[1], -upper_o[2], upper_o[3]}) annotation(
     Placement(transformation(origin = {200, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
-  Modelica.Mechanics.MultiBody.Sensors.CutForce cutForce1(animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Sensors.CutForce cutForce1 annotation(
     Placement(transformation(origin = {180, -40}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
   Modelica.Mechanics.MultiBody.Parts.Fixed fixed51(r = {contact_patch[1], -contact_patch[2], contact_patch[3]}, animation = false) annotation(
     Placement(transformation(origin = {280, 40}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
@@ -72,15 +72,15 @@ model Kinematics2
     Placement(transformation(origin = {160, -80}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   Modelica.Blocks.Math.Add add(k1 = -1, k2 = +1) annotation(
     Placement(transformation(origin = {100, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-
+  
   Real FL_Fy_aligned;
   Real FR_Fy_aligned;
-  Real axle_weight = 1225;
+  parameter Real axle_weight = 1225;
   Real axle_mass = axle_weight/Modelica.Constants.g_n;
-  Real CG_height = 10*0.0254;
+  parameter Real CG_height = 11.14*0.0254;
   Real track_width = contact_patch[2] * 2;
   Real ay;
-
+  
   Modelica.Blocks.Math.Gain gain(k = 3.5/2*0.0254) annotation(
     Placement(transformation(origin = {100, -120}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   Modelica.Blocks.Interfaces.RealOutput pinion_torque annotation(
@@ -89,10 +89,10 @@ model Kinematics2
     Placement(transformation(origin = {-30, -120}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   Modelica.Blocks.Interfaces.RealOutput hwa annotation(
     Placement(transformation(origin = {-30, -150}, extent = {{-10, -10}, {10, 10}}, rotation = -90), iconTransformation(origin = {-34, -148}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.Body body(m = 8, r_CM = {0, 0, 0}, animation = false) annotation(
-    Placement(transformation(origin = {-30, 59}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.Body body1(m = 8, r_CM = {0, 0, 0}, animation = false) annotation(
-    Placement(transformation(origin = {230, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  VehicleDynamics.Utilities.Mechanics.Multibody.GroundPhysics groundPhysics11 annotation(
+    Placement(transformation(origin = {250, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
+  VehicleDynamics.Utilities.Mechanics.Multibody.GroundPhysics groundPhysics111 annotation(
+    Placement(transformation(origin = {-50, 10}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
 equation
   FL_Fy_aligned = MF5p2Base.Fy*cos(abs(MF5p2Base.alpha));
   FR_Fy_aligned = MF5p2Base1.Fy*cos(abs(MF5p2Base1.alpha));
@@ -116,7 +116,7 @@ equation
   connect(position.flange, prismatic.axis) annotation(
     Line(points = {{0, -60}, {32, -60}, {32, -74}}, color = {0, 127, 0}));
   connect(doubleWishboneBase.contact_patch_frame, MF5p2Base.frame_a) annotation(
-    Line(points = {{0, -10}, {0, -20}, {-30, -20}, {-30, 20}}, color = {95, 95, 95}));
+    Line(points = {{0, -10}, {-30, -10}, {-30, 20}}, color = {95, 95, 95}));
   connect(fixed5.frame_b, groundPhysics.frame_a) annotation(
     Line(points = {{-80, 30}, {-80, 20}}, color = {95, 95, 95}));
   connect(groundPhysics.frame_b, MF5p2Base.frame_a) annotation(
@@ -138,7 +138,7 @@ equation
   connect(groundPhysics1.frame_b, MF5p2Base1.frame_a) annotation(
     Line(points = {{280, 0}, {280, -10}, {230, -10}, {230, 20}}, color = {95, 95, 95}));
   connect(doubleWishboneBase1.contact_patch_frame, MF5p2Base1.frame_a) annotation(
-    Line(points = {{200, -10}, {200, -20}, {230, -20}, {230, 20}}, color = {95, 95, 95}));
+    Line(points = {{200, -10}, {230, -10}, {230, 20}}, color = {95, 95, 95}));
   connect(fixed51.frame_b, groundPhysics1.frame_a) annotation(
     Line(points = {{280, 30}, {280, 20}}, color = {95, 95, 95}));
   connect(prismatic1.axis, position.flange) annotation(
@@ -159,13 +159,18 @@ equation
     Line(points = {{-38, -60}, {-30, -60}, {-30, -108}}, color = {0, 0, 127}));
   connect(gain1.y, hwa) annotation(
     Line(points = {{-30, -130}, {-30, -150}}, color = {0, 0, 127}));
-  connect(body.frame_a, MF5p2Base.frame_a) annotation(
-    Line(points = {{-30, 50}, {-30, 20}}, color = {95, 95, 95}));
-  connect(body1.frame_a, MF5p2Base1.frame_a) annotation(
-    Line(points = {{230, 50}, {230, 20}}, color = {95, 95, 95}));
+  connect(groundPhysics11.frame_b, fixed51.frame_b) annotation(
+    Line(points = {{250, 20}, {250, 30}, {280, 30}}, color = {95, 95, 95}));
+  connect(groundPhysics111.frame_b, fixed5.frame_b) annotation(
+    Line(points = {{-50, 20}, {-50, 30}, {-80, 30}}, color = {95, 95, 95}));
+  connect(groundPhysics111.frame_a, doubleWishboneBase.contact_patch_frame) annotation(
+    Line(points = {{-50, 0}, {-50, -10}, {0, -10}}, color = {95, 95, 95}));
+  connect(groundPhysics11.frame_a, doubleWishboneBase1.contact_patch_frame) annotation(
+    Line(points = {{250, 0}, {250, -10}, {200, -10}}, color = {95, 95, 95}));
   annotation(
     experiment(StartTime = 0, StopTime = 2),
     __OpenModelica_commandLineOptions = "--matchingAlgorithm=PFPlusExt --indexReductionMethod=dynamicStateSelection -d=initialization,evaluateAllParameters,NLSanalyticJacobian",
     __OpenModelica_simulationFlags(lv = "LOG_STDOUT,LOG_ASSERT,LOG_STATS", s = "dassl", variableFilter = ".*"),
     Diagram(coordinateSystem(extent = {{-140, 100}, {300, -140}})));
+
 end Kinematics2;
