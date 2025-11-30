@@ -1,4 +1,4 @@
-within VehicleDynamics.Vehicle.Chassis.Suspension.Tires.MF52;
+within VehicleDynamics.Vehicle.Chassis.Tires.MF52;
 function Fx_eval
   import Modelica.SIunits;
   

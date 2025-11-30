@@ -168,7 +168,7 @@ equation
   connect(groundPhysics11.frame_a, doubleWishboneBase1.contact_patch_frame) annotation(
     Line(points = {{250, 0}, {250, -10}, {200, -10}}, color = {95, 95, 95}));
   annotation(
-    experiment(StartTime = 0, StopTime = 2),
+    experiment(StartTime = 1, StopTime = 2, Tolerance = 1e-08, Interval = 0.0002),
     __OpenModelica_commandLineOptions = "--matchingAlgorithm=PFPlusExt --indexReductionMethod=dynamicStateSelection -d=initialization,evaluateAllParameters,NLSanalyticJacobian",
     __OpenModelica_simulationFlags(lv = "LOG_STDOUT,LOG_ASSERT,LOG_STATS", s = "dassl", variableFilter = ".*"),
     Diagram(coordinateSystem(extent = {{-140, 100}, {300, -140}})));
