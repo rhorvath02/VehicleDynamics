@@ -7,6 +7,10 @@ model MF5p2Tire
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Fx_eval;
   import Modelica.SIunits;
   
+  // Initial conditions
+  parameter Modelica.SIunits.Velocity initial_velocity=0 "Initial translational velocity" annotation(
+    Dialog(group = "Initial Conditions"));
+
   parameter SIunits.Length rim_width=7*0.0254 annotation(
     Dialog(group = "Dimensions"));
   parameter SIunits.Length rim_R0=5*0.0254 annotation(
@@ -19,7 +23,7 @@ model MF5p2Tire
   parameter String tir_path = "/home/rhorvath/Documents/Github/VehicleDynamics/JSONs/Modified_Round_8_Hoosier_R25B_16x7p5_10_on_7in_12psi_PAC02_UM2.tir";
   inner ExternData.TIRFile tir_file(fileName=tir_path)  annotation(
       Placement(transformation(origin = {-90, 90}, extent = {{10, -10}, {-10, 10}})));
-      
+  
   // General parameters
   parameter Real R0=tir_file.getReal("UNLOADED_RADIUS", "DIMENSION") "Unloaded tire radius" annotation(
     Dialog(group = "Dimensions"));
@@ -297,6 +301,7 @@ model MF5p2Tire
   
   // Informational states
   Real Vsx;
+  Real Vsy;
   Real global_heading[3];
   Real ground_heading[3];
   Real ground_heading_dir[3];
@@ -323,12 +328,21 @@ model MF5p2Tire
     Placement(transformation(origin = {-70, -90}, extent = {{-10, -10}, {10, 10}})));
   // Transient parameters
   Real kappa_rel;
-  Real u(start=0);
+  Real alpha_rel;
   Real sigma_kappa = 0.05;
+  Real sigma_alpha = 0.3;
   Modelica.Mechanics.MultiBody.Parts.Body wheel_body( m = 1e-3, r_CM = {0, 0, 0}, animation = false) annotation(
     Placement(transformation(origin = {30, -70}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b chassis_frame annotation(
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
+
+protected
+  Real u(start=0);
+  Real v(start=0);
+  
+initial equation
+  tire2DOF.hub_axis.w = initial_velocity / R0;
+
 equation
   // Normal load
   Fz = cp_frame.f[3];
@@ -341,35 +355,37 @@ equation
   // Velocity
   global_vel = tire2DOF.wheel_vel.v;
   ground_vel = {global_vel[1], global_vel[2], 0};
-//  if norm(ground_vel) > v_min then
-//    ground_vel_dir = normalize(ground_vel);
-//  else
-//    ground_vel_dir = ground_heading_dir;
-//  end if;
 
-  ground_vel_dir = ground_heading_dir;
+  if norm(ground_vel) > v_min then
+    ground_vel_dir = normalize(ground_vel);
+  else
+    ground_vel_dir = ground_heading_dir;
+  end if;
     
   // Inclination angle
   global_vert_dir = Modelica.Mechanics.MultiBody.Frames.resolve2(cp_frame.R, {0, 0, 1});
   global_lat_dir = Modelica.Mechanics.MultiBody.Frames.resolve2(cp_frame.R, {0, 1, 0});
-  gamma = angle_between(global_vert_dir, {0,0,1}, ground_heading_dir);
+  gamma = angle_between(global_vert_dir, {0, 0, 1}, ground_heading_dir);
   
   // Longitudinal calcs
   Vsx = tire2DOF.wheel_vel.v[1] - tire2DOF.tire_Re.s_rel*tire2DOF.wheel_speed.w;
-  kappa_kin = -1*Vsx/max(abs(tire2DOF.wheel_vel.v[1]), v_min);
+  kappa_kin = -1*Vsx/max(noEvent(abs(tire2DOF.wheel_vel.v[1])), v_min);
   
   // Lateral calcs
-  alpha_kin = angle_between(ground_heading_dir, ground_vel_dir, {0, 0, 1});
+  Vsy = tire2DOF.wheel_vel.v[2];
+  alpha_kin = angle_between(ground_vel_dir, ground_heading_dir, {0, 0, 1});
 
-//  alpha_kin = 0;
-// Longitudinal transient calcs
-  der(u) + 1/sigma_kappa*abs(tire2DOF.wheel_vel.v[1])*u = -Vsx;
+  // Longitudinal transient calcs
+  der(u) + 1 / sigma_kappa * noEvent(abs(tire2DOF.wheel_vel.v[1])) * u = -Vsx;
   kappa_rel = u/sigma_kappa;
   
+  // Lateral transient calcs
+  der(v) + 1 / sigma_alpha * noEvent(abs(tire2DOF.wheel_vel.v[1])) * v = Vsy;
+  alpha_rel = atan(v / sigma_alpha);
+  
   // MF calcs
-  Fx = MF52.Fx_eval(Fz, alpha_kin, kappa_rel, gamma, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, RBX1, RBX2, RCX1, REX1, REX2, RHX1, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
-  Fy = 0;
-//  Fy = MF52.Fy_eval(Fz, alpha_kin, kappa_rel, gamma, PCY1, PDY1, PDY2, PDY3, PEY1, PEY2, PEY3, PEY4, PKY1, PKY2, PKY3, PHY1, PHY2, PHY3, PVY1, PVY2, PVY3, PVY4, RBY1, RBY2, RBY3, RCY1, REY1, REY2, RHY1, RHY2, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
+  Fx = MF52.Fx_eval(Fz, alpha_rel, kappa_rel, gamma, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, RBX1, RBX2, RCX1, REX1, REX2, RHX1, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
+  Fy = MF52.Fy_eval(Fz, alpha_rel, kappa_rel, gamma, PCY1, PDY1, PDY2, PDY3, PEY1, PEY2, PEY3, PEY4, PKY1, PKY2, PKY3, PHY1, PHY2, PHY3, PVY1, PVY2, PVY3, PVY4, RBY1, RBY2, RBY3, RCY1, REY1, REY2, RHY1, RHY2, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP, FNOMIN, R0);
   connect(tire2DOF.hub_frame, hub_frame) annotation(
     Line(points = {{10, 0}, {100, 0}}, color = {95, 95, 95}));
   connect(tire2DOF.cp_frame, cp_frame) annotation(
@@ -390,6 +406,13 @@ equation
   Icon(
   coordinateSystem(extent={{-100,-100},{100,100}}),
   graphics = {
+        Text(
+          extent={{-120,-160},{120,-120}},
+          textString="%name",
+          fontSize=14,
+          horizontalAlignment=TextAlignment.Center
+        ),
+
         Text(
           extent={{-200,-60},{-100,-20}},
           textString="Frame",

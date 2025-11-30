@@ -2,9 +2,9 @@ within VehicleDynamics.Utilities.Mechanics.Multibody;
 
 model GroundPhysics
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
-    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
+    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}, rotation = 0)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
-    Placement(transformation(origin = {0, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
+    Placement(transformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
     
   parameter Real c = 100000 "Stiffness";
   parameter Real d = 750 "Damping";
@@ -31,9 +31,15 @@ annotation(
     Icon(
       coordinateSystem(extent={{-100,-100},{100,100}}),
       graphics = {
+        Text(
+          extent={{-120,-160},{120,-120}},
+          textString="%name",
+          fontSize=14,
+          horizontalAlignment=TextAlignment.Center
+        ),
         
         Text(
-          extent={{40,-140},{140,-100}},
+          extent={{-230,-60},{-90,-20}},
           textString="Fixed",
           fontSize=12,
           textColor={0,0,0},
@@ -41,7 +47,7 @@ annotation(
         ),
         
         Text(
-          extent={{40,100},{210,140}},
+          extent={{20,100},{230,140}},
           textString="Interface",
           fontSize=12,
           textColor={0,0,0},
