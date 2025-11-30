@@ -1,4 +1,4 @@
-within VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestTires;
+within VehicleDynamics.TestVehicle.TestChassis.TestTires;
 
 model TestMF5p2Long
   // Gravity vector
@@ -6,7 +6,7 @@ model TestMF5p2Long
     Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}})));
   
   // Test tire
-  VehicleDynamics.Vehicle.Chassis.Tires.MF5p2Tire TestTire(R0 = 8*0.0254, rim_width = 7*0.0254, rim_R0 = 5*0.0254, tire_c = 1e8, tire_d = 1e8, wheel_J = 0.2, wheel_m = 3)  annotation(
+  VehicleDynamics.Vehicle.Chassis.Tires.MF5p2Tire TestTire(R0 = 8*0.0254, rim_width = 7*0.0254, rim_R0 = 5*0.0254, tire_c = 1e8, tire_d = 1e8, wheel_J = 0.2, wheel_m = 3, initial_velocity = 0)  annotation(
     Placement(transformation(origin = {0, 10}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   
   // Ground interface
@@ -24,11 +24,11 @@ model TestMF5p2Long
   // Torque input
   Modelica.Mechanics.MultiBody.Forces.WorldTorque TorqueInput annotation(
     Placement(transformation(origin = {30, 10}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
-  Modelica.Blocks.Sources.RealExpression Mx annotation(
+  Modelica.Blocks.Sources.RealExpression Mx(y = 0)  annotation(
     Placement(transformation(origin = {70, 40}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
   Modelica.Blocks.Sources.Ramp My(height = 10, duration = 2, startTime = 2)  annotation(
     Placement(transformation(origin = {70, 10}, extent = {{10, -10}, {-10, 10}})));
-  Modelica.Blocks.Sources.RealExpression Mz annotation(
+  Modelica.Blocks.Sources.RealExpression Mz(y = 0)  annotation(
     Placement(transformation(origin = {70, -20}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
     
 equation
