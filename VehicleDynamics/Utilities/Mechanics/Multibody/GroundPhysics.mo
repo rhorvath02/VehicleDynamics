@@ -1,12 +1,13 @@
-within VehicleDynamics.Utilities.Mechanics.MultiBody;
+within VehicleDynamics.Utilities.Mechanics.Multibody;
+
 model GroundPhysics
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
-    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
+    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
-    Placement(transformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}})));
+    Placement(transformation(origin = {0, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
     
-  parameter Real c = 1e8 "Stiffness";
-  parameter Real d = 1e4 "Damping";
+  parameter Real c = 100000 "Stiffness";
+  parameter Real d = 750 "Damping";
   
 protected
   Real r_rel_z "Relative z-displacement";
@@ -25,5 +26,62 @@ equation
   
   frame_a.t = {0, 0, 0};
   frame_b.t = {0, 0, 0};
-  
+
+annotation(
+    Icon(
+      coordinateSystem(extent={{-100,-100},{100,100}}),
+      graphics = {
+        
+        Text(
+          extent={{40,-140},{140,-100}},
+          textString="Fixed",
+          fontSize=12,
+          textColor={0,0,0},
+          horizontalAlignment=TextAlignment.Center
+        ),
+        
+        Text(
+          extent={{40,100},{210,140}},
+          textString="Interface",
+          fontSize=12,
+          textColor={0,0,0},
+          horizontalAlignment=TextAlignment.Center
+        ),
+        
+        // --- Dirt (bottom 62.5%) ---
+        Rectangle(
+          extent={{-100,-100},{100,25}},
+          fillPattern=FillPattern.Solid,
+          fillColor={150,100,50},
+          lineThickness=2
+        ),
+
+        // --- Grass top (top 37.5%) ---
+        Rectangle(
+          extent={{-100,25},{100,100}},
+          fillPattern=FillPattern.Solid,
+          fillColor={95,200,70},
+          lineThickness=2
+        ),
+
+        // --- Grass fringe pixels ---
+        Rectangle(extent={{-95,25},{-80,10}}, fillPattern=FillPattern.Solid, fillColor={115,220,85}),
+        Rectangle(extent={{-60,25},{-45,5}},  fillPattern=FillPattern.Solid, fillColor={115,220,85}),
+        Rectangle(extent={{-25,25},{-15,15}}, fillPattern=FillPattern.Solid, fillColor={115,220,85}),
+        Rectangle(extent={{10,25},{25,8}},    fillPattern=FillPattern.Solid, fillColor={115,220,85}),
+        Rectangle(extent={{45,25},{60,12}},   fillPattern=FillPattern.Solid, fillColor={115,220,85}),
+        Rectangle(extent={{75,25},{90,7}},    fillPattern=FillPattern.Solid, fillColor={115,220,85}),
+
+        // --- Dirt speckles ---
+        Rectangle(extent={{-80,-20},{-70,-30}}, fillPattern=FillPattern.Solid, fillColor={120,80,40}),
+        Rectangle(extent={{-50,-60},{-40,-70}}, fillPattern=FillPattern.Solid, fillColor={120,80,40}),
+        Rectangle(extent={{-20,-10},{-10,-20}}, fillPattern=FillPattern.Solid, fillColor={120,80,40}),
+        Rectangle(extent={{5,-80},{15,-90}},    fillPattern=FillPattern.Solid, fillColor={120,80,40}),
+        Rectangle(extent={{30,-45},{40,-55}},   fillPattern=FillPattern.Solid, fillColor={120,80,40}),
+        Rectangle(extent={{60,-70},{70,-80}},   fillPattern=FillPattern.Solid, fillColor={120,80,40}),
+        Rectangle(extent={{20,-25},{30,-35}},   fillPattern=FillPattern.Solid, fillColor={120,80,40})
+
+      }
+    )
+  );
 end GroundPhysics;
