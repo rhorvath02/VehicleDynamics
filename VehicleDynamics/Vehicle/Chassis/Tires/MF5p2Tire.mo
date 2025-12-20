@@ -35,14 +35,15 @@ model MF5p2Tire
   // Parameters - Mass properties
   parameter SIunits.Inertia wheel_inertia[3, 3] = [0, 0, 0; 0, 0.2, 0; 0, 0, 0] "Wheel + hub inertia tensor (y-axis as spindle)";
     parameter SIunits.Mass wheel_m = 1 ""
-    annotation(Dialog(group = "Mass Properties"));
+    annotation(Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
   
   // Numerical stability
   parameter Real v_min = 0.1 "Low-speed threshold for force gating (m/s)" annotation(Dialog(group = "Numerical Conditions"));
   parameter Real eps = 1e-6 "Small constant to prevent division by zero" annotation(Dialog(group = "Numerical Conditions"));
 
   // Read tire model
-  parameter String tir_path "File path to .tir";
+  parameter String tir_path = Modelica.Utilities.Files.loadResource(
+    "modelica://VehicleDynamics/Resources/JSONs/SUS/placeholder.tir") "File path to .tir";
   inner ExternData.TIRFile tir_file(fileName = tir_path)
     annotation(Placement(transformation(origin = {-90, 90},
                                          extent = {{10, -10}, {-10, 10}})));
