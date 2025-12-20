@@ -74,18 +74,36 @@ function Mz_eval
 
   // Scaling coeffs
   input Real LFZO;
+  input Real LCX;
+  input Real LMUX;
+  input Real LEX;
   input Real LKX;
+  input Real LHX;
+  input Real LVX;
+  input Real LXAL;
+  input Real LGAX;
   input Real LCY;
   input Real LMUY;
+  input Real LEY;
   input Real LKY;
   input Real LHY;
   input Real LVY;
   input Real LGAY;
+  input Real LKYG;
   input Real LTR;
   input Real LRES;
+  input Real LCZ;
   input Real LGAZ;
+  input Real LYKA;
   input Real LVYKA;
   input Real LS;
+  input Real LSGKP;
+  input Real LSGAL;
+  input Real LGYR;
+  input Real LMX;
+  input Real LVMX;
+  input Real LMY;
+  input Real LIP;
 
   // Vertical coeffs
   input Real FNOMIN;
