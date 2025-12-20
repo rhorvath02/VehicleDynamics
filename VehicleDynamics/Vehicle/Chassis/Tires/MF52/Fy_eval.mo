@@ -5,7 +5,7 @@ function Fy_eval
   // Tire inputs
   input SIunits.Force Fz "Normal force acting on tire";
   input SIunits.Angle alpha "Slip angle, in radians";
-  input Real kappa "Slip ratio, unitless";
+  input SIunits.DimensionlessRatio kappa "Slip ratio, unitless";
   input SIunits.Angle gamma "Inclination angle, in radians";
   
   // Pure lat coeffs

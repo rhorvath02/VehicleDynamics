@@ -34,8 +34,7 @@ model MF5p2Tire
   
   // Parameters - Mass properties
   parameter SIunits.Inertia wheel_inertia[3, 3] = [0, 0, 0; 0, 0.2, 0; 0, 0, 0] "Wheel + hub inertia tensor (y-axis as spindle)";
-    annotation(Dialog(group = "Mass Properties"));
-  parameter SIunits.Mass wheel_m = 1 ""
+    parameter SIunits.Mass wheel_m = 1 ""
     annotation(Dialog(group = "Mass Properties"));
   
   // Numerical stability
@@ -57,6 +56,8 @@ model MF5p2Tire
     tir_file.getReal("VERTICAL_DAMPING", "VERTICAL") "Wheel vertical damping";
   final parameter Real FNOMIN =
     tir_file.getReal("FNOMIN", "VERTICAL") "Nominal normal load, FZ0";
+  Modelica.Mechanics.MultiBody.Forces.WorldTorque torque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)  annotation(
+    Placement(transformation(origin = {-30, -40}, extent = {{-10, -10}, {10, 10}})));
 
   // Pure longitudinal slip coefficients
   parameter Real PCX1 = tir_file.getReal("PCX1", "LONGITUDINAL_COEFFICIENTS") annotation(
@@ -315,7 +316,7 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
   parameter Real LIP = tir_file.getReal("LIP", "SCALING_COEFFICIENTS") annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  
+
   // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a cp_frame
     annotation(Placement(transformation(origin = {0, -100},
@@ -351,8 +352,7 @@ model MF5p2Tire
     resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)
     annotation(Placement(transformation(origin = {-30, -70},
                                          extent = {{-10, -10}, {10, 10}})));
-  
-  // Body for state selection... Don't worry about it  
+  // Body for state selection... Don't worry about it
   Modelica.Mechanics.MultiBody.Parts.Body wheel_body(
     m = 1e-3,
     r_CM = {0, 0, 0},
@@ -363,11 +363,18 @@ model MF5p2Tire
   // Slip quantities
   Real alpha;
   Real kappa;
+  Real gamma;
 
   // Loads / forces
   Real Fx "Longitudinal force in global frame";
   Real Fy "Lateral force in global frame";
   Real Fz "Normal load in global frame";
+  Real Mx "Overturning moment in global frame";
+  Real My "Rolling resistance in global frame";
+  Real Mz "Aligning moment in global frame";
+  
+  Real pneu_trail "Pneumatic trail";
+  Real pneu_scrub "Pneumatic scrub";
   
   // Diagnostics
   Real P_contact;
@@ -379,9 +386,12 @@ model MF5p2Tire
 protected
   // World / ground unit vectors
   Real[3] e_z = {0, 0, 1};
+  Real[3] ez_w;
   Real[3] e_xw;
   Real[3] e_xg;
   Real[3] e_yg;
+  Real[3] M_world;
+  Real[3] e_spin;
 
   // Velocity vectors
   Real[3] v_cp;
@@ -401,7 +411,6 @@ protected
   // Low-speed gating
   // Real w_speed;
   
-  
   // Transient slip states
   Real u(start = 0) "Longitudinal slip state";
   Real v(start = 0) "Lateral slip state";
@@ -417,6 +426,10 @@ equation
   e_xw = Modelica.Mechanics.MultiBody.Frames.resolve1(cp_frame.R, {1, 0, 0});
   e_xg = normalize({e_xw[1], e_xw[2], 0});
   e_yg = normalize(cross(e_z, e_xg));
+  
+  // Inclination angle
+  ez_w = tire2DOF.hub_frame.R.T[:,3];
+  gamma = Modelica.Math.asin( max(-1.0, min(1.0, ez_w[2])) );
 
   // Contact velocity
   v_cp = tire2DOF.wheel_vel.v;
@@ -444,7 +457,7 @@ equation
   // MF52 calls
   Fx =
   MF52.Fx_eval(
-    Fz, alpha, kappa, 0,
+    Fz, alpha, kappa, gamma,
     PCX1, PDX1, PDX2, PDX3,
     PEX1, PEX2, PEX3, PEX4,
     PKX1, PKX2, PKX3,
@@ -459,7 +472,7 @@ equation
   
   Fy =
   MF52.Fy_eval(
-    Fz, alpha, 0, 0,
+    Fz, alpha, kappa, gamma,
     PCY1, PDY1, PDY2, PDY3,
     PEY1, PEY2, PEY3, PEY4,
     PKY1, PKY2, PKY3,
@@ -473,11 +486,56 @@ equation
     LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
     LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
     LMX, LVMX, LMY, LIP, FNOMIN, R0);
-
+    
+  Mx =
+  MF52.Mx_eval(
+    Fz, Fy, alpha, kappa, gamma,
+    QSX1, QSX2, QSX3,
+    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
+    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
+    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
+    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
+    LMX, LVMX, LMY, LIP, FNOMIN, R0);
+  
+  My = 
+  MF52.My_eval(
+    Fz, alpha, kappa, gamma,
+    QSY1, QSY2, QSY3, QSY4,
+    PKX1, PKX2, PKX3, PHX1,
+    PHX2, PVX1, PVX2,
+    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
+    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
+    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
+    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
+    LMX, LVMX, LMY, LIP, FNOMIN, R0);
+    
+  (Mz, pneu_trail, pneu_scrub) = MF52.Mz_eval(
+    Fz, Fx, Fy, alpha, kappa, gamma,
+    QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ9, QBZ10,
+    QCZ1, QDZ1, QDZ2, QDZ3, QDZ4, QDZ6,
+    QDZ7, QDZ8, QDZ9, QEZ1, QEZ2, QEZ3,
+    QEZ4, QEZ5, QHZ1, QHZ2, QHZ3, QHZ4,
+    SSZ1, SSZ2, SSZ3, SSZ4,
+    PCY1, PDY1, PDY2, PDY3, PKY1, PKY2, PKY3, 
+    PHY1, PHY2, PHY3, PVY1, PVY2, PVY3, PVY4,
+    RVY1, RVY2, RVY3, RVY4, RVY5, RVY6,
+    PKX1, PKX2, PKX3,
+    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
+    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
+    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
+    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
+    LMX, LVMX, LMY, LIP, FNOMIN, R0);
+  
   // Apply force
   F_world = Fx*e_xg + Fy*e_yg;
   force.force = F_world;
-
+  
+  // Apply moment
+  e_spin = Modelica.Mechanics.MultiBody.Frames.resolve1(tire2DOF.hub_frame.R, {0, 1, 0});
+  M_world = Mx * e_xg + My * e_spin + Mz * e_z;
+  torque.torque = M_world;
+  
+  // Diagnostics
   P_contact = dot(F_world, v_g);
   
   // Connections
@@ -499,8 +557,11 @@ equation
     Line(points = {{12, 30}, {-30, 30}, {-30, 0}, {-10, 0}}, color = {95, 95, 95}));
   connect(input_torque.frame_b, tire2DOF.hub_frame) annotation(
     Line(points = {{32, 30}, {50, 30}, {50, 0}, {10, 0}}, color = {95, 95, 95}));
+  connect(torque.frame_b, cp_frame) annotation(
+    Line(points = {{-20, -40}, {0, -40}, {0, -100}}, color = {95, 95, 95}));
 
 annotation(
+    Dialog(group = "Mass Properties"));annotation(
   Icon(
   coordinateSystem(extent={{-100,-100},{100,100}}),
   graphics = {
