@@ -1,8 +1,11 @@
 within VehicleDynamics.Vehicle.Chassis.Tires.TirePhysics;
 
 model Tire2DOF
+  // Modelica linalg
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
+  
+  // Modelica units
   import Modelica.SIunits;
   
   // Parameters
