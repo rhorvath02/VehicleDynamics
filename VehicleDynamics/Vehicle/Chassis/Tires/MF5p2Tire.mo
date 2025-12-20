@@ -40,7 +40,7 @@ model MF5p2Tire
   
   // Numerical stability
   parameter Real v_min = 0.1 "Low-speed threshold for force gating (m/s)" annotation(Dialog(group = "Numerical Conditions"));
-  parameter Real eps = 1e-6 "Small constant to prevenet division by zero" annotation(Dialog(group = "Numerical Conditions"));
+  parameter Real eps = 1e-6 "Small constant to prevent division by zero" annotation(Dialog(group = "Numerical Conditions"));
 
   // Read tire model
   parameter String tir_path "File path to .tir";
@@ -360,6 +360,23 @@ model MF5p2Tire
     annotation(Placement(transformation(origin = {30, -70},
                                          extent = {{-10, -10}, {10, 10}})));
 
+  // Slip quantities
+  Real alpha;
+  Real kappa;
+
+  // Loads / forces
+  Real Fx "Longitudinal force in global frame";
+  Real Fy "Lateral force in global frame";
+  Real Fz "Normal load in global frame";
+  
+  // Diagnostics
+  Real P_contact;
+  
+  // Relaxation lengths
+  Real sigma_kappa = 0.05;
+  Real sigma_alpha = 0.3;
+  
+protected
   // World / ground unit vectors
   Real[3] e_z = {0, 0, 1};
   Real[3] e_xw;
@@ -373,41 +390,28 @@ model MF5p2Tire
   // Velocity components
   Real Vx;
   Real Vy;
-
-  // Slip quantities
-  Real alpha;
-  Real kappa;
-
-  // Loads / forces
-  Real Fx;
-  Real Fy;
-  Real Fz;
   
-  Real Fy_raw;
-  
-  // Relaxation lengths
-  Real sigma_kappa = 0.05;
-  Real sigma_alpha = 0.3;
-  
-  // Diagnostics
+  // Protected loads
   Real[3] F_world;
-  Real P_contact;
-  Real mu_eff_i;
   
-  // Longitudinal slip
+  // Long and lat slip velocities
   Real Vsx;
-  Real w_speed;
+  Real Vsy;
   
-protected
+  // Low-speed gating
+  // Real w_speed;
+  
+  
   // Transient slip states
-  Real u(start = 0);
-
+  Real u(start = 0) "Longitudinal slip state";
+  Real v(start = 0) "Lateral slip state";
+  
 initial equation
   tire2DOF.hub_axis.w = initial_velocity / R0;
 
 equation
   // Normal load
-  Fz = cp_frame.f[3];
+  Fz = max(0, cp_frame.f[3]);
 
   // World basis
   e_xw = Modelica.Mechanics.MultiBody.Frames.resolve1(cp_frame.R, {1, 0, 0});
@@ -422,7 +426,12 @@ equation
   Vy = dot(v_g, e_yg);
   
   // Lateral slip
-  alpha = atan2(-Vy, abs(Vx));
+  Vsy = -Vy;
+  der(v) + (abs(Vx)/sigma_alpha) * v = Vsy;
+  tan(alpha) = v / sigma_alpha;
+  
+  // Kinematic slip definition below
+  // alpha = atan2(-Vy, abs(Vx));
   
   // Longitudinal slip
   Vsx = Vx - R0 * tire2DOF.hub_axis.w;
@@ -430,28 +439,9 @@ equation
   kappa = u / sigma_kappa;
   
   // Low-speed gating
-  w_speed = abs(Vx) / (abs(Vx) + v_min);
-
-  // MF52 calls
-  Fy_raw =
-    MF52.Fy_eval(
-      Fz, alpha, 0, 0,
-      PCY1, PDY1, PDY2, PDY3,
-      PEY1, PEY2, PEY3, PEY4,
-      PKY1, PKY2, PKY3,
-      PHY1, PHY2, PHY3,
-      PVY1, PVY2, PVY3, PVY4,
-      RBY1, RBY2, RBY3,
-      RCY1, REY1, REY2, RHY1, RHY2,
-      RVY1, RVY2, RVY3, RVY4, RVY5, RVY6,
-      LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
-      LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
-      LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
-      LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
-      LMX, LVMX, LMY, LIP, FNOMIN, R0);
-
-  Fy = Fy_raw;
+  // w_speed = abs(Vx) / (abs(Vx) + v_min);
   
+  // MF52 calls
   Fx =
   MF52.Fx_eval(
     Fz, alpha, kappa, 0,
@@ -466,20 +456,31 @@ equation
     LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
     LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
     LMX, LVMX, LMY, LIP, FNOMIN, R0);
+  
+  Fy =
+  MF52.Fy_eval(
+    Fz, alpha, 0, 0,
+    PCY1, PDY1, PDY2, PDY3,
+    PEY1, PEY2, PEY3, PEY4,
+    PKY1, PKY2, PKY3,
+    PHY1, PHY2, PHY3,
+    PVY1, PVY2, PVY3, PVY4,
+    RBY1, RBY2, RBY3,
+    RCY1, REY1, REY2, RHY1, RHY2,
+    RVY1, RVY2, RVY3, RVY4, RVY5, RVY6,
+    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
+    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
+    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
+    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
+    LMX, LVMX, LMY, LIP, FNOMIN, R0);
 
-
-  // ------------------------------------------------------------
   // Apply force
-  // ------------------------------------------------------------
   F_world = Fx*e_xg + Fy*e_yg;
   force.force = F_world;
 
   P_contact = dot(F_world, v_g);
   
-  mu_eff_i = sqrt(Fx^2 + Fy^2) / max(abs(Fz), eps);
-// ------------------------------------------------------------
-// Connections
-// ------------------------------------------------------------
+  // Connections
   connect(cp_frame, tire2DOF.cp_frame) annotation(
     Line(points = {{0, -100}, {0, -10}}));
   connect(force.frame_b, cp_frame) annotation(
