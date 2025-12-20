@@ -8,19 +8,24 @@ model Tire2DOF
   // Modelica units
   import Modelica.SIunits;
   
-  // Parameters
+  // Parameters - Dimensions
   parameter SIunits.Length R0 "Tire unloaded static radius" annotation(
     Dialog(group = "Dimensions"));
   parameter SIunits.Length rim_width "Rim width" annotation(
     Dialog(group = "Dimensions"));
   parameter SIunits.Length rim_R0 "Rim unloaded static radius" annotation(
     Dialog(group = "Dimensions"));
+  
+  // Parameters - Rates
   parameter SIunits.TranslationalSpringConstant tire_c "Wheel vertical stiffness" annotation(
     Dialog(group = "Rate Properties"));
   parameter SIunits.TranslationalDampingConstant tire_d "Wheel vertical damping" annotation(
     Dialog(group = "Rate Properties"));
+  
+  // Parameters - Mass properties
   parameter SIunits.Mass wheel_m "Wheel mass" annotation(Dialog(group = "Mass Properties"));
-  parameter SIunits.Inertia wheel_inertia[3, 3] "Wheel + hub inertia tensor (y-axis is spindle)" annotation(Dialog(group = "Mass Properties"));
+  parameter SIunits.Inertia wheel_inertia[3, 3] "Wheel + hub inertia tensor (y-axis as spindle)" annotation(Dialog(group = "Mass Properties"));
+  
    
   // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a cp_frame annotation(
