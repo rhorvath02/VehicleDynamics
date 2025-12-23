@@ -1,4 +1,4 @@
-within VehicleDynamics.Vehicle.Chassis.Suspension;
+within VehicleDynamics.Vehicle.Chassis.Suspension.Templates;
 model FrAxleBellcrank
   import Modelica.Math.Vectors.norm;
   import Modelica.SIunits;
