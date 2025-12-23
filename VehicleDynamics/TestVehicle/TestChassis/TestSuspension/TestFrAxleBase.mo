@@ -4,7 +4,7 @@ model TestFrAxleBase
   inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1})  annotation(
     Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}})));
   
-  Vehicle.Chassis.Suspension.FrAxleBellcrank Fr_axle annotation(
+  Vehicle.Chassis.Suspension.FrAxleBase Fr_axle annotation(
     Placement(transformation(origin = {0, 10}, extent = {{-10, -10}, {10, 10}})));
   
   Modelica.Blocks.Sources.Constant FL_torque_in(k = 0)  annotation(
