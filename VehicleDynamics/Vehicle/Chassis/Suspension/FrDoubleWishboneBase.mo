@@ -26,8 +26,20 @@ model FrDoubleWishboneBase
   parameter SIunits.Position tie_i[3] = hdpts.getRealArray1D("Front.left.tie.inboard", 3) annotation(Dialog(group="Geometry"));
   parameter SIunits.Position tie_o[3] = hdpts.getRealArray1D("Front.left.tie.outboard", 3) annotation(Dialog(group="Geometry"));
   parameter SIunits.Position wheel_center[3] = hdpts.getRealArray1D("Front.left.tire.wheel_center", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position static_gamma = hdpts.getReal("Front.left.tire.static_gamma") annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position static_alpha = hdpts.getReal("Front.left.tire.static_alpha") annotation(Dialog(group="Geometry"));
+  parameter SIunits.Angle static_gamma = hdpts.getReal("Front.left.tire.static_gamma") annotation(Dialog(group="Geometry"));
+  parameter SIunits.Angle static_alpha = hdpts.getReal("Front.left.tire.static_alpha") annotation(Dialog(group="Geometry"));
+  
+  parameter SIunits.TranslationalSpringConstant[3] FUCA_fore_i_c = hdpts.getRealArray1D("Front.left.upper.fore_i_c", 3)  "{x, y, z}-stiffness of upper, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FUCA_aft_i_c = hdpts.getRealArray1D("Front.left.upper.aft_i_c", 3)  "{x, y, z}-stiffness of upper, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FLCA_fore_i_c = hdpts.getRealArray1D("Front.left.lower.fore_i_c", 3)  "{x, y, z}-stiffness of lower, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FLCA_aft_i_c = hdpts.getRealArray1D("Front.left.lower.aft_i_c", 3)  "{x, y, z}-stiffness of lower, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] tie_i_c = hdpts.getRealArray1D("Front.left.tie.inboard_c", 3)  "{x, y, z}-stiffness of inboard tie mount" annotation(Dialog(group="Mounting"));
+
+  parameter SIunits.TranslationalDampingConstant[3] FUCA_fore_i_d = hdpts.getRealArray1D("Front.left.upper.fore_i_d", 3)  "{x, y, z}-damping of upper, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FUCA_aft_i_d = hdpts.getRealArray1D("Front.left.upper.aft_i_d", 3)  "{x, y, z}-damping of upper, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FLCA_fore_i_d = hdpts.getRealArray1D("Front.left.lower.fore_i_d", 3)  "{x, y, z}-damping of lower, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FLCA_aft_i_d = hdpts.getRealArray1D("Front.left.lower.aft_i_d", 3)  "{x, y, z}-damping of lower, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] tie_i_d = hdpts.getRealArray1D("Front.left.tie.inboard_d", 3)  "{x, y, z}-damping of inboard tie mount" annotation(Dialog(group="Mounting"));
   
   // Visual parameters
   parameter SIunits.Length link_diameter = 0.025 annotation(Dialog(tab="Animation", group="Sizing"));
@@ -52,9 +64,9 @@ model FrDoubleWishboneBase
     Placement(transformation(origin = {-100, 0}, extent = {{16, -16}, {-16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
 
   // Wishbones
-  Suspension.Linkages.Wishbone upper_wishbone(fore_i = upper_fore_i, aft_i = upper_aft_i, outboard = upper_o, link_diameter = link_diameter, joint_diameter = joint_diameter) annotation(
+  Suspension.Linkages.Wishbone upper_wishbone(fore_i = upper_fore_i, aft_i = upper_aft_i, outboard = upper_o, link_diameter = link_diameter, joint_diameter = joint_diameter, fore_i_c = FUCA_fore_i_c, aft_i_c = FUCA_aft_i_c, fore_i_d = FUCA_fore_i_d, aft_i_d = FUCA_aft_i_d) annotation(
     Placement(transformation(origin = {50, 60}, extent = {{-10, -10}, {10, 10}})));
-  Vehicle.Chassis.Suspension.Linkages.Wishbone lower_wishbone(aft_i = lower_aft_i, fore_i = lower_fore_i, outboard = lower_o, link_diameter = link_diameter, joint_diameter = joint_diameter) annotation(
+  Vehicle.Chassis.Suspension.Linkages.Wishbone lower_wishbone(aft_i = lower_aft_i, fore_i = lower_fore_i, outboard = lower_o, link_diameter = link_diameter, joint_diameter = joint_diameter, fore_i_c = FLCA_fore_i_c, aft_i_c = FLCA_aft_i_c, fore_i_d = FLCA_fore_i_d, aft_i_d = FLCA_aft_i_d) annotation(
     Placement(transformation(origin = {50, -60}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
   
   // Upright
@@ -62,7 +74,7 @@ model FrDoubleWishboneBase
     Placement(transformation(origin = {20, 0}, extent = {{-10, -10}, {10, 10}})));
   
   // Tie rod
-  Suspension.Linkages.Link link(inboard = tie_i, outboard = tie_o, link_diameter = link_diameter, joint_diameter = joint_diameter) annotation(
+  Suspension.Linkages.Link link(inboard = tie_i, outboard = tie_o, link_diameter = link_diameter, joint_diameter = joint_diameter, inboard_c = tie_i_c, inboard_d = tie_i_d) annotation(
     Placement(transformation(origin = {50, 0}, extent = {{10, -10}, {-10, 10}})));
   
   // Generalized mass
