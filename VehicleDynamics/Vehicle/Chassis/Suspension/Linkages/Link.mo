@@ -9,6 +9,9 @@ model Link
   parameter SIunits.Length joint_diameter "Joint diameter" annotation(
     Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
   
+  parameter SIunits.TranslationalSpringConstant[3] inboard_c = {1e9, 1e9, 1e9} "{x, y, z}-stiffness of inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] inboard_d = {1e9, 1e9, 1e9} "{x, y, z}-damping of inboard mount" annotation(Dialog(group="Mounting"));
+  
   // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
@@ -16,9 +19,9 @@ model Link
     Placement(transformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}})));
     
   // Joints
-  Joints.SphericalCompliant to_link(r_rel(each fixed = true), diameter = joint_diameter)  annotation(
+  Joints.xyzSphericalCompliant to_link(r_rel(each fixed = true), diameter = joint_diameter)  annotation(
     Placement(transformation(origin = {-60, 0}, extent = {{-10, -10}, {10, 10}})));
-  Joints.SphericalCompliant from_link(r_rel(each fixed = true), diameter = joint_diameter)  annotation(
+  Joints.xyzSphericalCompliant from_link(r_rel(each fixed = true), diameter = joint_diameter)  annotation(
     Placement(transformation(origin = {60, 0}, extent = {{-10, -10}, {10, 10}})));
 
   // Link
