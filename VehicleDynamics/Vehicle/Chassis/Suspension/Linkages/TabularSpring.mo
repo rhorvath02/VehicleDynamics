@@ -1,16 +1,20 @@
 within VehicleDynamics.Vehicle.Chassis.Suspension.Linkages;
 
-model TabularSpring
-  import VehicleDynamics.Utilities.Math.Vector.dot;
-  import Modelica.Mechanics.MultiBody.Frames;
+model TabularSpring "Tabular translational spring with optional mass"
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
   import Modelica.SIunits;
   
-  // User parameters
-  parameter Boolean animation = true "Enable animation" annotation(Dialog(group="Animation"));
-  parameter Real[:, 2] force_curve = [0, 0; 1, 0] annotation(Dialog(group="Initialization"));
-  parameter SIunits.Length free_length "Free spring length" annotation(Dialog(group="Initialization"));
+  // Parameters
+  parameter SIunits.TranslationalSpringConstant force_table[:,2] "Table of Force vs Compression (change in length)" annotation(
+    Dialog(group = "Spring Parameters"));
+  parameter SIunits.Length free_length "Free length of spring" annotation(Dialog(group = "Spring Parameters"));
+  parameter SIunits.Mass spring_mass = 0 "Spring mass" annotation(Dialog(group = "Spring Parameters"));
+  parameter SIunits.Position start_point[3] "Initial point of spring" annotation(Dialog(group = "Spring Parameters"));
+  parameter SIunits.Position end_point[3] "Terminal point of spring" annotation(Dialog(group = "Spring Parameters"));
+  
+  parameter SIunits.Length spring_diameter "Diameter of smallest possible cylinder enclosing spring" annotation(Dialog(group = "Animation"));
+  parameter Real eps = 1e-12 "regularization (m)" annotation(Dialog(group="Numerical"));
   
   // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
@@ -18,63 +22,72 @@ model TabularSpring
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b frame_b annotation(
     Placement(transformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}})));
   
-  // Spring interpolation
-  Modelica.Blocks.Tables.CombiTable1D spring_table(table = force_curve, columns = {2}, smoothness = Modelica.Blocks.Types.Smoothness.ContinuousDerivative, extrapolation = Modelica.Blocks.Types.Extrapolation.LastTwoPoints) annotation(
-    Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Forces.Internal.BasicForce basic_force(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameAB.world) annotation(
-    Placement(transformation(extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-  
-  Modelica.Mechanics.MultiBody.Interfaces.ZeroPosition zero_position annotation(
-    Placement(transformation(origin = {30, -20},extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-  Modelica.Blocks.Sources.RealExpression force_expression[3](y = -force*e_spring)  annotation(
-    Placement(transformation(origin = {-30, -20}, extent = {{-10, -10}, {10, 10}})));
-  
-  Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(useAxisFlange = true)  annotation(
+  // Force generation
+  Modelica.Mechanics.Translational.Sources.Force2 force annotation(
     Placement(transformation(origin = {0, 30}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.Translational.Sources.Position position(useSupport = true)  annotation(
-    Placement(transformation(origin = {-4, 70}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
-  Modelica.Blocks.Sources.Ramp ramp(height = 10, duration = 10)  annotation(
-    Placement(transformation(origin = {-70, 90}, extent = {{-10, -10}, {10, 10}})));
-
+  Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(animation = false, n = normalize(end_point - start_point), useAxisFlange = true) annotation(Placement(transformation(origin = {2, 0}, extent = {{-10, -10}, {10, 10}}))); 
+  
+  // Visualization
+  Modelica.Mechanics.MultiBody.Visualizers.Advanced.Shape shape(
+    shapeType = "spring",
+    R = Modelica.Mechanics.MultiBody.Frames.nullRotation(),
+    r = prismatic.frame_a.r_0,
+    lengthDirection = e_spring,
+    widthDirection  = w_spring,
+    length = spring_length,
+    width  = spring_diameter / 2,
+    height = spring_diameter/10,
+    extra  = 6) annotation(Placement(transformation(origin = {90, -90}, extent = {{-10, -10}, {10, 10}})));
+    
 protected
-  Real r_rel[3];
-  Real length;
-  Real e_spring[3];
-  Real force;
+  Real[3] r_rel;
+  Real[3] e_spring;
+  Real spring_length;
+  
+  // Orientation
+  Real[3] ref;
+  Real[3] w_spring;
+  
+  Real defl;
+  Real defl_abs;
+  Real sgn;
+  Real F_spring;
+
+public
+  Modelica.Blocks.Sources.RealExpression realExpression(y = defl_abs) annotation(
+    Placement(transformation(origin = {-90, 90}, extent = {{-10, -10}, {10, 10}})));
+  Modelica.Blocks.Tables.CombiTable1D combiTable1D(columns = {2}, extrapolation = Modelica.Blocks.Types.Extrapolation.LastTwoPoints, smoothness = Modelica.Blocks.Types.Smoothness.LinearSegments, table = force_table) annotation(
+    Placement(transformation(origin = {-50, 90}, extent = {{-10, -10}, {10, 10}})));
+
+initial equation
+  norm(prismatic.frame_b.r_0 - prismatic.frame_a.r_0) = free_length;
 
 equation
-  // Spring kinematics
-  r_rel = frame_b.r_0 - frame_a.r_0;
-  length = Modelica.Math.Vectors.norm(r_rel) - free_length;
-
-  // Spring axis
-  if length > 1e-10 then
-    e_spring = r_rel / length;
-  else
-    e_spring = {1, 0, 0};
-  end if;
+  // Relative vector along prismatic element
+  r_rel = prismatic.frame_b.r_0 - prismatic.frame_a.r_0;
+  spring_length = norm(r_rel);
+  e_spring = if spring_length > 1e-9 then r_rel/spring_length else {1, 0, 0};
+  ref = if abs(e_spring[3]) < 0.9 then {0, 0, 1} else {1, 0, 0};
+  w_spring = normalize(cross(ref, e_spring));
+  defl = free_length - spring_length;
   
-  // Spring force generation
-  spring_table.u[1] = length;
-  force = spring_table.y[1];
+  // Smooth abs and smooth sign
+  defl_abs = sqrt(defl*defl + eps*eps);
+  sgn = defl/defl_abs;
   
-  connect(frame_a, basic_force.frame_a) annotation(
-    Line(points = {{-100, 0}, {-10, 0}}));
-  connect(basic_force.frame_b, frame_b) annotation(
-    Line(points = {{10, 0}, {100, 0}}, color = {95, 95, 95}));
-  connect(zero_position.frame_resolve, basic_force.frame_resolve) annotation(
-    Line(points = {{20, -20}, {4, -20}, {4, -10}}, color = {95, 95, 95}));
-  connect(prismatic.frame_a, frame_a) annotation(
-    Line(points = {{-10, 30}, {-40, 30}, {-40, 0}, {-100, 0}}, color = {95, 95, 95}));
+  // Apply sign
+  F_spring = sgn*combiTable1D.y[1];
+  force.f = F_spring;
+  connect(frame_a, prismatic.frame_a) annotation(
+    Line(points = {{-100, 0}, {-8, 0}}));
   connect(prismatic.frame_b, frame_b) annotation(
-    Line(points = {{10, 30}, {40, 30}, {40, 0}, {100, 0}}, color = {95, 95, 95}));
-  connect(force_expression.y, basic_force.force) annotation(
-    Line(points = {{-18, -20}, {-6, -20}, {-6, -12}}, color = {0, 0, 127}, thickness = 0.5));
-  connect(position.flange, prismatic.support) annotation(
-    Line(points = {{-4, 60}, {-4, 36}}, color = {0, 127, 0}));
-  connect(ramp.y, position.s_ref) annotation(
-    Line(points = {{-58, 90}, {-4, 90}, {-4, 82}}, color = {0, 0, 127}));
-  connect(position.support, prismatic.axis) annotation(
-    Line(points = {{6, 70}, {8, 70}, {8, 36}}, color = {0, 127, 0}));
-  annotation(experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-06, Interval = 0.002));
+    Line(points = {{12, 0}, {100, 0}}, color = {95, 95, 95}));
+  connect(realExpression.y, combiTable1D.u[1]) annotation(
+    Line(points = {{-79, 90}, {-62, 90}}, color = {0, 0, 127}));
+  connect(force.flange_a, prismatic.support) annotation(
+    Line(points = {{-10, 30}, {-20, 30}, {-20, 6}, {-2, 6}}, color = {0, 127, 0}));
+  connect(force.flange_b, prismatic.axis) annotation(
+    Line(points = {{10, 30}, {20, 30}, {20, 6}, {10, 6}}, color = {0, 127, 0}));
+  annotation(
+    experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-06, Interval = 0.002));
 end TabularSpring;
