@@ -40,3 +40,7 @@ status
 stop
 success
 *.
+
+## Python
+*.venv
+*.__pycache__

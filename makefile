@@ -8,13 +8,21 @@
 # Translate dots to slashes for filesystem paths
 FS_PATH := $(subst .,/,$(path))
 
-ifndef path
-$(error You must provide 'path', e.g., path=MyLib.Components)
+# Detect Python
+PYTHON := $(shell command -v python 2>/dev/null)
+
+ifndef PYTHON
+$(error "Python not found. Please install python3 and ensure it is on PATH.")
 endif
 
-ifndef name
-$(error You must provide 'name', e.g., name=SpringDamper)
-endif
+# Arg validation
+# ifndef path
+# $(error You must provide 'path', e.g., path=MyLib.Components)
+# endif
+
+# ifndef name
+# $(error You must provide 'name', e.g., name=SpringDamper)
+# endif
 
 # Helper: parent directory of FS_PATH
 PARENT := $(dir $(FS_PATH))
@@ -62,3 +70,14 @@ package:
 	  grep -qx '$(name)' $(FS_PATH)/package.order || echo '$(name)' >> $(FS_PATH)/package.order; \
 	  echo "Updated package.order in $(FS_PATH)"; \
 	fi
+
+# Fit damper model
+fit_damper:
+	"$(PYTHON)" -m VehicleDynamics.RDM.fit_RDM_ttx25
+
+plot_damper:
+	"$(PYTHON)" -m VehicleDynamics.RDM.plot_RDM_ttx25
+
+damper:
+	"$(PYTHON)" -m VehicleDynamics.RDM.fit_RDM_ttx25
+	"$(PYTHON)" -m VehicleDynamics.RDM.plot_RDM_ttx25
