@@ -43,7 +43,7 @@ model MF5p2Tire
 
   // Read tire model
   parameter String tir_path = Modelica.Utilities.Files.loadResource(
-    "modelica://VehicleDynamics/Resources/JSONs/SUS/placeholder.tir") "File path to .tir";
+    "modelica://VehicleDynamics/Resources/JSONs/TIRES/placeholder.tir") "File path to .tir";
   inner ExternData.TIRFile tir_file(fileName = tir_path)
     annotation(Placement(transformation(origin = {-90, 90},
                                          extent = {{10, -10}, {-10, 10}})));

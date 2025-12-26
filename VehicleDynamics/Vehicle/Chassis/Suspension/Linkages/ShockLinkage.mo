@@ -55,21 +55,21 @@ model ShockLinkage
     Placement(transformation(origin = {-30, 0}, extent = {{-10, -10}, {10, 10}})));
   // Connecting model
   Modelica.Mechanics.Translational.Sources.Force2 force annotation(
-    Placement(transformation(origin = {0, 20}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {30, 20}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression spring_source(y = defl)  annotation(
-    Placement(transformation(origin = {-90, 90}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {-70, 90}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression damper_source(y = vel)  annotation(
-    Placement(transformation(origin = {-90, 60}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {-70, 60}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Tables.CombiTable1D spring_combiTable1D(table = spring_table, columns = {2}, smoothness = Modelica.Blocks.Types.Smoothness.LinearSegments, extrapolation = Modelica.Blocks.Types.Extrapolation.LastTwoPoints)  annotation(
-    Placement(transformation(origin = {-50, 90}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {-30, 90}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Tables.CombiTable1D damper_combiTable1D(table = damper_table, columns = {2}, smoothness = Modelica.Blocks.Types.Smoothness.LinearSegments, extrapolation = Modelica.Blocks.Types.Extrapolation.LastTwoPoints)  annotation(
-    Placement(transformation(origin = {-50, 60}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {-30, 60}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Math.Add add(k2 = -1)  annotation(
-    Placement(transformation(origin = {0, 40}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+    Placement(transformation(origin = {30, 40}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(useAxisFlange = true, n = normalize(shock_end - shock_start), s(start = norm(shock_end - shock_start), fixed = true))  annotation(
-    Placement(transformation(extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {30, 0}, extent = {{-10, -10}, {10, 10}})));
   Joints.SphericalCompliant sphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true))  annotation(
-    Placement(transformation(origin = {50, 0}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {70, 0}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Joints.Spherical to_link(sphereDiameter = 0.825*0.0254)  annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{-10, -10}, {10, 10}})));
 equation
@@ -78,29 +78,29 @@ equation
   defl = free_length - shock_r_rel;
   vel = shock_v_rel;
   connect(spring_source.y, spring_combiTable1D.u[1]) annotation(
-    Line(points = {{-78, 90}, {-62, 90}}, color = {0, 0, 127}));
+    Line(points = {{-59, 90}, {-42, 90}}, color = {0, 0, 127}));
   connect(damper_source.y, damper_combiTable1D.u[1]) annotation(
-    Line(points = {{-78, 60}, {-62, 60}}, color = {0, 0, 127}));
+    Line(points = {{-59, 60}, {-42, 60}}, color = {0, 0, 127}));
   connect(spring_combiTable1D.y[1], add.u1) annotation(
-    Line(points = {{-38, 90}, {6, 90}, {6, 52}}, color = {0, 0, 127}));
+    Line(points = {{-19, 90}, {36, 90}, {36, 52}}, color = {0, 0, 127}));
   connect(damper_combiTable1D.y[1], add.u2) annotation(
-    Line(points = {{-38, 60}, {-6, 60}, {-6, 52}}, color = {0, 0, 127}));
+    Line(points = {{-19, 60}, {24, 60}, {24, 52}}, color = {0, 0, 127}));
   connect(add.y, force.f) annotation(
-    Line(points = {{0, 30}, {0, 24}}, color = {0, 0, 127}));
+    Line(points = {{30, 29}, {30, 24}}, color = {0, 0, 127}));
   connect(fixedTranslation.frame_b, prismatic.frame_a) annotation(
-    Line(points = {{-20, 0}, {-10, 0}}, color = {95, 95, 95}));
+    Line(points = {{-20, 0}, {20, 0}}, color = {95, 95, 95}));
   connect(force.flange_a, prismatic.support) annotation(
-    Line(points = {{-10, 20}, {-20, 20}, {-20, 6}, {-4, 6}}, color = {0, 127, 0}));
-  connect(force.flange_b, prismatic.axis) annotation(
-    Line(points = {{10, 20}, {20, 20}, {20, 6}, {8, 6}}, color = {0, 127, 0}));
+    Line(points = {{20, 20}, {10, 20}, {10, 6}, {26, 6}}, color = {0, 127, 0}));
   connect(sphericalCompliant.frame_a, prismatic.frame_b) annotation(
-    Line(points = {{40, 0}, {10, 0}}, color = {95, 95, 95}));
+    Line(points = {{60, 0}, {40, 0}}, color = {95, 95, 95}));
   connect(sphericalCompliant.frame_b, frame_b) annotation(
-    Line(points = {{60, 0}, {100, 0}}, color = {95, 95, 95}));
+    Line(points = {{80, 0}, {100, 0}}, color = {95, 95, 95}));
   connect(frame_a, to_link.frame_a) annotation(
     Line(points = {{-100, 0}, {-80, 0}}));
   connect(to_link.frame_b, fixedTranslation.frame_a) annotation(
     Line(points = {{-60, 0}, {-40, 0}}, color = {95, 95, 95}));
+  connect(force.flange_b, prismatic.axis) annotation(
+    Line(points = {{40, 20}, {50, 20}, {50, 6}, {38, 6}}, color = {0, 127, 0}));
   annotation(
     experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-06, Interval = 0.002));
 end ShockLinkage;
