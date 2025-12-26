@@ -86,10 +86,6 @@ equation
     Line(points = {{-10, 70}, {0, 70}, {0, -100}}, color = {95, 95, 95}));
   connect(FR_shock_pickup.frame_a, axle_frame) annotation(
     Line(points = {{10, 70}, {0, 70}, {0, -100}}, color = {95, 95, 95}));
-  connect(shockLinkage.frame_a, FL_bellcrank.pickup_3_frame) annotation(
-    Line(points = {{-60, 70}, {-60, 50}}, color = {95, 95, 95}));
-  connect(shockLinkage.frame_b, FL_shock_pickup.frame_b) annotation(
-    Line(points = {{-40, 70}, {-30, 70}}, color = {95, 95, 95}));
   connect(FL_shock.frame_a, FL_bellcrank.pickup_3_frame) annotation(
     Line(points = {{-60, 70}, {-60, 50}}, color = {95, 95, 95}));
   connect(FL_shock.frame_b, FL_shock_pickup.frame_b) annotation(
