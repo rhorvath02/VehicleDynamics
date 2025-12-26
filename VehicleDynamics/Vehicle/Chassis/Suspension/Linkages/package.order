@@ -5,6 +5,6 @@ Link
 ShockBase
 Bellcrank3pu1p
 TabularSpring
-ShockLinkage
 TabularDamper
-TabularShock
+ShockLinkage
+TabularSpringDamperParallel

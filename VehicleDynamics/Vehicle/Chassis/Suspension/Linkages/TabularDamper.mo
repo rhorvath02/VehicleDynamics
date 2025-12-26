@@ -4,7 +4,6 @@ model TabularDamper "Tabular translational damper with velocity-force curve"
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
   import Modelica.SIunits;
-  
   // Parameters
   parameter SIunits.TranslationalDampingConstant force_table[:,2]
     "Table of Force vs Relative Velocity (m/s, N)"
@@ -28,7 +27,6 @@ model TabularDamper "Tabular translational damper with velocity-force curve"
     annotation(Dialog(group = "Animation"));
     
   parameter Real eps = 1e-12 "regularization (m/s)";
-  
   // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a frame_a annotation(
     Placement(transformation(origin = {-100, 0},
@@ -40,7 +38,6 @@ model TabularDamper "Tabular translational damper with velocity-force curve"
       extent = {{-16, -16}, {16, 16}}),
       iconTransformation(origin = {100, 0},
       extent = {{-16, -16}, {16, 16}})));
-  
   // Force generation
   Modelica.Mechanics.Translational.Sources.Force2 force annotation(
     Placement(transformation(origin = {0, 30},
@@ -52,14 +49,13 @@ model TabularDamper "Tabular translational damper with velocity-force curve"
     annotation(Placement(transformation(origin = {2, 0},
       extent = {{-10, -10}, {10, 10}}))); 
   
-    Modelica.Mechanics.MultiBody.Visualizers.FixedShape inner_cylinder(shapeType = "cylinder", lengthDirection = normalize(end_point - start_point), length = norm(end_point - start_point)*3/4, width = inner_diameter, height = inner_diameter)  annotation(
+    Modelica.Mechanics.MultiBody.Visualizers.FixedShape inner_cylinder(shapeType = "cylinder", lengthDirection = normalize(end_point - start_point), length = norm(end_point - start_point)*1/2, width = inner_diameter, height = inner_diameter)  annotation(
     Placement(transformation(origin = {-70, 30}, extent = {{-10, -10}, {10, 10}})));
 protected
   Real[3] r_rel;
   Real[3] v_rel;
   Real[3] e_damper;
   Real damper_length;
-  
   // Orientation
   Real[3] ref;
   Real[3] w_damper;
@@ -79,7 +75,7 @@ protected
     table = force_table)
     annotation(Placement(transformation(origin = {-50, 90},
       extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Visualizers.FixedShape outer_cylinder(height = outer_diameter, length = norm(end_point - start_point)*1/3, lengthDirection = -normalize(end_point - start_point), shapeType = "cylinder", width = outer_diameter) annotation(
+  Modelica.Mechanics.MultiBody.Visualizers.FixedShape outer_cylinder(height = outer_diameter, length = norm(end_point - start_point)*1/2, lengthDirection = -normalize(end_point - start_point), shapeType = "cylinder", width = outer_diameter) annotation(
     Placement(transformation(origin = {70, 30}, extent = {{10, -10}, {-10, 10}})));
 equation
 // Relative kinematics along damper axis
