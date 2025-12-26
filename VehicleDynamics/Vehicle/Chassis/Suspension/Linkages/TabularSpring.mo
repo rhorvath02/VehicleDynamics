@@ -53,13 +53,10 @@ protected
   Real sgn;
   Real F_spring;
 
-public
   Modelica.Blocks.Sources.RealExpression realExpression(y = defl_abs) annotation(
     Placement(transformation(origin = {-90, 90}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Tables.CombiTable1D combiTable1D(columns = {2}, extrapolation = Modelica.Blocks.Types.Extrapolation.LastTwoPoints, smoothness = Modelica.Blocks.Types.Smoothness.LinearSegments, table = force_table) annotation(
-    Placement(transformation(origin = {-50, 90}, extent = {{-10, -10}, {10, 10}})));
-
-initial equation
+    Placement(transformation(origin = {-50, 90}, extent = {{-10, -10}, {10, 10}})));initial equation
   norm(prismatic.frame_b.r_0 - prismatic.frame_a.r_0) = free_length;
 
 equation
