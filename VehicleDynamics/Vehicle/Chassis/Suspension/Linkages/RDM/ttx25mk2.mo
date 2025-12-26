@@ -1,4 +1,4 @@
 within VehicleDynamics.Vehicle.Chassis.Suspension.Linkages.RDM;
-function force_gen
-  // TODO: add inputs/outputs
-end force_gen;
+model ttx25mk2
+  // TODO: add contents
+end ttx25mk2;
