@@ -49,10 +49,10 @@ model FrAxleBellcrank
   
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation FR_shock_pickup(r = {FL_shock_mount[1], -FL_shock_mount[2], FL_shock_mount[3]} - effective_center)  annotation(
     Placement(transformation(origin = {20, 70}, extent = {{-10, -10}, {10, 10}})));
-  VehicleDynamics.Vehicle.Chassis.Suspension.Linkages.Link FL_pushrod1(inboard = FL_shock_pickup, joint_diameter = 0.825*0.0254, link_diameter = 0.625*0.0254, outboard = FL_bellcrank_pickup_3) annotation(
-    Placement(transformation(origin = {-50, 70}, extent = {{10, -10}, {-10, 10}}, rotation = 180)));
   VehicleDynamics.Vehicle.Chassis.Suspension.Linkages.Link FL_pushrod11(inboard = {FL_shock_pickup[1], -FL_shock_pickup[2], FL_shock_pickup[3]}, joint_diameter = 0.825*0.0254, link_diameter = 0.625*0.0254, outboard = {FL_bellcrank_pickup_3[1], -FL_bellcrank_pickup_3[2], FL_bellcrank_pickup_3[3]}) annotation(
     Placement(transformation(origin = {50, 70}, extent = {{-10, -10}, {10, 10}}, rotation = -180)));
+  Linkages.ShockLinkage shockLinkage(spring_diameter = 0.040, start_point = FL_bellcrank_pickup_3, end_point = FL_shock_mount, rod_length_fraction = 0.5, free_length = norm(FL_shock_mount - FL_bellcrank_pickup_3), spring_table = [0, 0; 1, 80000], spring_mass = 0, damper_table = [0, 0; 0.25, 100], damper_mass = 0, link_diameter = 0.625*0.0254, joint_diameter = 0.825*0.0254)  annotation(
+    Placement(transformation(origin = {-50, 70}, extent = {{-10, -10}, {10, 10}})));
 equation
   connect(FL_bellcrank_mount.frame_a, axle_frame) annotation(
     Line(points = {{-20, 40}, {0, 40}, {0, -100}}, color = {95, 95, 95}));
@@ -78,12 +78,12 @@ equation
     Line(points = {{-10, 70}, {0, 70}, {0, -100}}, color = {95, 95, 95}));
   connect(FR_shock_pickup.frame_a, axle_frame) annotation(
     Line(points = {{10, 70}, {0, 70}, {0, -100}}, color = {95, 95, 95}));
-  connect(FL_pushrod1.frame_a, FL_bellcrank.pickup_3_frame) annotation(
-    Line(points = {{-60, 70}, {-60, 50}}, color = {95, 95, 95}));
-  connect(FL_pushrod1.frame_b, FL_shock_pickup.frame_b) annotation(
-    Line(points = {{-40, 70}, {-30, 70}}, color = {95, 95, 95}));
   connect(FR_bellcrank.pickup_3_frame, FL_pushrod11.frame_a) annotation(
     Line(points = {{60, 50}, {60, 70}}, color = {95, 95, 95}));
   connect(FR_shock_pickup.frame_b, FL_pushrod11.frame_b) annotation(
     Line(points = {{30, 70}, {40, 70}}, color = {95, 95, 95}));
+  connect(shockLinkage.frame_a, FL_bellcrank.pickup_3_frame) annotation(
+    Line(points = {{-60, 70}, {-60, 50}}, color = {95, 95, 95}));
+  connect(shockLinkage.frame_b, FL_shock_pickup.frame_b) annotation(
+    Line(points = {{-40, 70}, {-30, 70}}, color = {95, 95, 95}));
 end FrAxleBellcrank;
