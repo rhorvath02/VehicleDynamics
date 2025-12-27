@@ -66,12 +66,14 @@ model ShockLinkage
     Placement(transformation(origin = {-30, 60}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Math.Add add(k2 = -1)  annotation(
     Placement(transformation(origin = {30, 40}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-  Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(useAxisFlange = true, n = normalize(shock_end - shock_start), s(start = norm(shock_end - shock_start), fixed = true))  annotation(
+  Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic(useAxisFlange = true, n = normalize(shock_end - shock_start), s(start = norm(shock_end - shock_start), fixed = true), animation = false)  annotation(
     Placement(transformation(origin = {30, 0}, extent = {{-10, -10}, {10, 10}})));
   Joints.SphericalCompliant sphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true))  annotation(
     Placement(transformation(origin = {70, 0}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Joints.Spherical to_link(sphereDiameter = 0.825*0.0254)  annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{-10, -10}, {10, 10}})));
+  Modelica.Mechanics.MultiBody.Visualizers.Advanced.Shape shape(R = Modelica.Mechanics.MultiBody.Frames.nullRotation(), extra = 6, length = shock_r_rel, lengthDirection = normalize(prismatic.frame_b.r_0 - prismatic.frame_a.r_0), r = prismatic.frame_a.r_0, shapeType = "spring", width = spring_diameter, height = shock_r_rel/20) annotation(
+    Placement(transformation(origin = {90, -90}, extent = {{-10, -10}, {10, 10}})));
 equation
   shock_r_rel = norm(prismatic.frame_b.r_0 - prismatic.frame_a.r_0);
   shock_v_rel = prismatic.v;
