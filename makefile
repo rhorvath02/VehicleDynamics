@@ -70,14 +70,3 @@ package:
 	  grep -qx '$(name)' $(FS_PATH)/package.order || echo '$(name)' >> $(FS_PATH)/package.order; \
 	  echo "Updated package.order in $(FS_PATH)"; \
 	fi
-
-# Fit damper model
-fit_damper:
-	"$(PYTHON)" -m VehicleDynamics.RDM.fit_RDM_ttx25
-
-plot_damper:
-	"$(PYTHON)" -m VehicleDynamics.RDM.plot_RDM_ttx25
-
-damper:
-	"$(PYTHON)" -m VehicleDynamics.RDM.fit_RDM_ttx25
-	"$(PYTHON)" -m VehicleDynamics.RDM.plot_RDM_ttx25
