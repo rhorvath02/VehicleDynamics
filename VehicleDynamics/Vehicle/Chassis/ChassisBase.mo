@@ -37,7 +37,7 @@ model ChassisBase
     Placement(transformation(origin = {0, 90}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Parts.Body body1(r_CM = {0, 0, 0}, m=100) annotation(
     Placement(transformation(origin = {0, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-  Body.FrameBase frameBase(Fr_effective_center = FrAxle.effective_center, Rr_effective_center = RrAxle.effective_center) annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = RrAxle.effective_center - FrAxle.effective_center) annotation(
     Placement(transformation( extent = {{-10, -10}, {10, 10}}, rotation = -90)));
 equation
   connect(FL_torque, FrAxle.FL_torque) annotation(
@@ -68,8 +68,8 @@ equation
     Line(points = {{0, 80}, {0, 28}}, color = {95, 95, 95}));
   connect(body1.frame_a, RrAxle.axle_frame) annotation(
     Line(points = {{0, -80}, {0, -26}}, color = {95, 95, 95}));
-  connect(FrAxle.axle_frame, frameBase.frame_a) annotation(
+  connect(FrAxle.axle_frame, fixedTranslation.frame_a) annotation(
     Line(points = {{0, 28}, {0, 10}}, color = {95, 95, 95}));
-  connect(RrAxle.axle_frame, frameBase.frame_b) annotation(
-    Line(points = {{0, -26}, {0, -10}}, color = {95, 95, 95}));
+  connect(fixedTranslation.frame_b, RrAxle.axle_frame) annotation(
+    Line(points = {{0, -10}, {0, -26}}, color = {95, 95, 95}));
 end ChassisBase;
