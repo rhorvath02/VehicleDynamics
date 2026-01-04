@@ -54,13 +54,13 @@ model RrAxleBellcrank
   // FL shock
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation RL_shock_pickup(r = RL_shock_mount - effective_center)  annotation(
     Placement(transformation(origin = {-20, 70}, extent = {{10, -10}, {-10, 10}})));
-  Linkages.ShockLinkage RL_shock(spring_diameter = 0.040, start_point = RL_bellcrank_pickup_2, end_point = RL_shock_mount, rod_length_fraction = 0.5, free_length = norm(RL_shock_mount - RL_bellcrank_pickup_2)/3, spring_table = [0, 0; 1, 80000], spring_mass = 0, damper_table = [0, 0; 0.25, 100], damper_mass = 0, link_diameter = 0.625*0.0254, joint_diameter = 0.825*0.0254)  annotation(
+  Linkages.ShockLinkage RL_shock(spring_diameter = 0.040, start_point = RL_bellcrank_pickup_2, end_point = RL_shock_mount, rod_length_fraction = 0.5, free_length = norm(RL_shock_mount - RL_bellcrank_pickup_2)/2, spring_table = [0, 0; 1, 80000], spring_mass = 0, damper_table = [0, 0; 0.25, 100], damper_mass = 0, link_diameter = 0.625*0.0254, joint_diameter = 0.825*0.0254)  annotation(
     Placement(transformation(origin = {-50, 70}, extent = {{-10, -10}, {10, 10}})));
 
   // FR shock
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation RR_shock_pickup(r = {RL_shock_mount[1], -RL_shock_mount[2], RL_shock_mount[3]} - effective_center)  annotation(
     Placement(transformation(origin = {20, 70}, extent = {{-10, -10}, {10, 10}})));
-  Linkages.ShockLinkage RR_shock(spring_diameter = 0.040, start_point = {RL_bellcrank_pickup_2[1], -RL_bellcrank_pickup_2[2], RL_bellcrank_pickup_2[3]}, end_point = {RL_shock_mount[1], -RL_shock_mount[2], RL_shock_mount[3]}, rod_length_fraction = 0.5, free_length = norm(RL_shock_mount - RL_bellcrank_pickup_2)/3, spring_table = [0, 0; 1, 80000], spring_mass = 0, damper_table = [0, 0; 0.25, 100], damper_mass = 0, link_diameter = 0.625*0.0254, joint_diameter = 0.825*0.0254)  annotation(
+  Linkages.ShockLinkage RR_shock(spring_diameter = 0.040, start_point = {RL_bellcrank_pickup_2[1], -RL_bellcrank_pickup_2[2], RL_bellcrank_pickup_2[3]}, end_point = {RL_shock_mount[1], -RL_shock_mount[2], RL_shock_mount[3]}, rod_length_fraction = 0.5, free_length = norm(RL_shock_mount - RL_bellcrank_pickup_2)/2, spring_table = [0, 0; 1, 80000], spring_mass = 0, damper_table = [0, 0; 0.25, 100], damper_mass = 0, link_diameter = 0.625*0.0254, joint_diameter = 0.825*0.0254)  annotation(
     Placement(transformation(origin = {50, 70}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
     
 equation
