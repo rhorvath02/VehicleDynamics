@@ -17,7 +17,7 @@ model FrAxleBellcrank
     Dialog(group = "Geometry"));
   parameter SIunits.Position FL_bellcrank_pickup_3[3] = FLBC.bellcrank_pickup_3 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_LCA_mount[3] = FLBC.LCA_mount annotation(
+  parameter SIunits.Position FL_LCA_mount[3] = FLBC.rod_mount annotation(
     Dialog(group = "Geometry"));
   parameter SIunits.Position FL_shock_mount[3] = FLBC.shock_mount annotation(
     Dialog(group = "Geometry"));
