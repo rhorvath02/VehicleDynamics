@@ -11,13 +11,28 @@ model FrameBase
   
   // User parameters
   parameter Boolean animation = true "Show sphere in animation";
-  parameter SIunits.TranslationalSpringConstant radial_stiffness = 1e9 "Radial stiffness";
-  parameter SIunits.TranslationalDampingConstant radial_damping = 1e9 "Radial damping";
+  
+  parameter SIunits.TranslationalSpringConstant c_x "Translational stiffness about x, from Front to Rear effective center";
+  parameter SIunits.TranslationalSpringConstant c_y "Translational stiffness about y, from Front to Rear effective center";
+  parameter SIunits.TranslationalSpringConstant c_z "Translational stiffness about z, from Front to Rear effective center";
+  parameter SIunits.RotationalSpringConstant c_phi_x "Rotational stiffness about x, from Front to Rear effective center";
+  parameter SIunits.RotationalSpringConstant c_phi_y "Rotational stiffness about y, from Front to Rear effective center";
+  parameter SIunits.RotationalSpringConstant c_phi_z "Rotational stiffness about z, from Front to Rear effective center";
+  
+  parameter SIunits.TranslationalDampingConstant d_x "Translational damping about x, from Front to Rear effective center";
+  parameter SIunits.TranslationalDampingConstant d_y "Translational damping about y, from Front to Rear effective center";
+  parameter SIunits.TranslationalDampingConstant d_z "Translational damping about z, from Front to Rear effective center";
+  parameter SIunits.RotationalDampingConstant d_phi_x "Rotational damping about x, from Front to Rear effective center";
+  parameter SIunits.RotationalDampingConstant d_phi_y "Rotational damping about y, from Front to Rear effective center";
+  parameter SIunits.RotationalDampingConstant d_phi_z "Rotational damping about z, from Front to Rear effective center";
+  
   parameter SIunits.Length diameter = 0.825*0.0254 "Diameter of bearing";
   parameter SIunits.Mass mass = 2.48e-3 "Mass of bearing";
   
   parameter SIunits.Position Fr_effective_center[3];
   parameter SIunits.Position Rr_effective_center[3];
+  
+  Real static_rel[3] = Rr_effective_center - Fr_effective_center;
   
   // Internal force and torque
   Modelica.Blocks.Sources.RealExpression forceExpression[3](y = -forceInternal) annotation(
@@ -43,25 +58,23 @@ model FrameBase
   SIunits.Position v_rel[3](start = {0, 0, 0}) "Derivative of spring elongation vector";
   SIunits.Angle phi_rel[3](start = {0, 0, 0});
   SIunits.AngularVelocity w_rel[3](start = {0, 0, 0});
-  
-  Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = mass, animation = false)  annotation(
-    Placement(transformation(origin = {-70, -50}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Interfaces.ZeroPosition zeroPosition annotation(
     Placement(transformation(origin = {50, -70}, extent = {{-10, -10}, {10, 10}})));
 
 initial equation
-  frame_b.r_0 - frame_a.r_0 = Rr_effective_center - Fr_effective_center;
-  Modelica.Mechanics.MultiBody.Frames.smallRotation(Modelica.Mechanics.MultiBody.Frames.relativeRotation(frame_a.R, frame_b.R)) = {0, 0, 0};
-
+  frame_b.r_0 - frame_a.r_0 = static_rel;
+  
 equation
-  r_rel = frame_b.r_0 - frame_a.r_0;
+  r_rel = (frame_b.r_0 - frame_a.r_0) - static_rel;
   phi_rel = Modelica.Mechanics.MultiBody.Frames.smallRotation(Modelica.Mechanics.MultiBody.Frames.relativeRotation(frame_a.R, frame_b.R));
   v_rel = der(r_rel);
   w_rel = der(phi_rel);
-  
-  forceInternal = radial_stiffness*r_rel + radial_damping * v_rel;
-  torqueInternal = phi_rel * 1e12;
-  
+  forceInternal[1] = c_x*r_rel[1] + d_x*v_rel[1];
+  forceInternal[2] = c_y*r_rel[2] + d_y*v_rel[2];
+  forceInternal[3] = c_z*r_rel[3] + d_z*v_rel[3];
+  torqueInternal[1] = c_phi_x*phi_rel[1] + d_phi_x*w_rel[1];
+  torqueInternal[2] = c_phi_y*phi_rel[2] + d_phi_y*w_rel[2];
+  torqueInternal[3] = c_phi_z*phi_rel[3] + d_phi_z*w_rel[3];
   connect(shape_a.frame_a, frame_a) annotation(
     Line(points = {{-80, 20}, {-80, 19.5}, {-100, 19.5}, {-100, 0}}, color = {95, 95, 95}));
   connect(shape_b.frame_a, frame_b) annotation(
@@ -78,8 +91,6 @@ equation
     Line(points = {{-16, -38}, {-16, -32}}, color = {0, 0, 127}, thickness = 0.5));
   connect(torqueExpression.y, basicTorque.torque) annotation(
     Line(points = {{24, -38}, {24, -12}}, color = {0, 0, 127}, thickness = 0.5));
-  connect(body.frame_a, frame_a) annotation(
-    Line(points = {{-80, -50}, {-100, -50}, {-100, 0}}, color = {95, 95, 95}));
   connect(zeroPosition.frame_resolve, basicTorque.frame_resolve) annotation(
     Line(points = {{40, -70}, {34, -70}, {34, -10}}, color = {95, 95, 95}));
   connect(zeroPosition.frame_resolve, basicForce.frame_resolve) annotation(
