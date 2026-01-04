@@ -10,9 +10,9 @@ model TestChassisBase
     Placement(transformation(origin = {-50, 30}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.Constant FR_torque_in(k = 0) annotation(
     Placement(transformation(origin = {50, 30}, extent = {{10, -10}, {-10, 10}})));
-  Modelica.Blocks.Sources.Ramp RL_torque_in(height=300, duration=2, startTime=1) annotation(
+  Modelica.Blocks.Sources.Ramp RL_torque_in(height= 275, duration=2, startTime=1) annotation(
     Placement(transformation(origin = {-50, -30}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.Ramp RR_torque_in(height=300, duration=2, startTime=1) annotation(
+  Modelica.Blocks.Sources.Ramp RR_torque_in(height= 275, duration=2, startTime=1) annotation(
     Placement(transformation(origin = {50, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
 
 equation
@@ -25,5 +25,5 @@ equation
   connect(RR_torque_in.y, chassisBase.RR_torque) annotation(
     Line(points = {{40, -30}, {24, -30}, {24, -13}}, color = {0, 0, 127}));
 annotation(
-    experiment(StartTime = 0, StopTime = 5, Tolerance = 1e-06, Interval = 0.001));
+    experiment(StartTime = 0, StopTime = 4.5, Tolerance = 1e-06, Interval = 0.001));
 end TestChassisBase;
