@@ -25,10 +25,6 @@ model TestMF5p2RigidVehicle
   Real Fz_tot;
   Real Ay_calc;
   
-  parameter String tir_path =
-  Modelica.Utilities.Files.loadResource(
-    "modelica://VehicleDynamics/Resources/JSONs/SUS/placeholder.tir");
-    
   // Tires
   VehicleDynamics.Vehicle.Chassis.Tires.MF5p2Tire FL_tire  annotation(
     Placement(transformation(origin = {-70, 80}, extent = {{10, -10}, {-10, 10}})));

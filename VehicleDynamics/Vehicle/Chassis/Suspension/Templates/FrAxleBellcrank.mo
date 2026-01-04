@@ -5,19 +5,21 @@ model FrAxleBellcrank
   
   extends VehicleDynamics.Vehicle.Chassis.Suspension.FrAxleBase;
   
-  parameter SIunits.Position FL_bellcrank_pivot[3] = hdpts.getRealArray1D("Front.left.bellcrank.pivot", 3) annotation(
+  final parameter VehicleDynamics.Resources.Records.SUS.FrAxleBellcrank FLBC;
+  
+  parameter SIunits.Position FL_bellcrank_pivot[3] = FLBC.bellcrank_pivot annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_bellcrank_pivot_ref[3] = hdpts.getRealArray1D("Front.left.bellcrank.pivot_ref", 3) annotation(
+  parameter SIunits.Position FL_bellcrank_pivot_ref[3] = FLBC.bellcrank_pivot_ref annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_bellcrank_pickup_1[3] = hdpts.getRealArray1D("Front.left.bellcrank.pickup_1", 3) annotation(
+  parameter SIunits.Position FL_bellcrank_pickup_1[3] = FLBC.bellcrank_pickup_1 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_bellcrank_pickup_2[3] = hdpts.getRealArray1D("Front.left.bellcrank.pickup_2", 3) annotation(
+  parameter SIunits.Position FL_bellcrank_pickup_2[3] = FLBC.bellcrank_pickup_2 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_bellcrank_pickup_3[3] = hdpts.getRealArray1D("Front.left.bellcrank.pickup_3", 3) annotation(
+  parameter SIunits.Position FL_bellcrank_pickup_3[3] = FLBC.bellcrank_pickup_3 annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_LCA_mount[3] = hdpts.getRealArray1D("Front.left.push/pull rod.LCA_mount", 3) annotation(
+  parameter SIunits.Position FL_LCA_mount[3] = FLBC.LCA_mount annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_shock_mount[3] = hdpts.getRealArray1D("Front.left.push/pull rod.shock_mount", 3) annotation(
+  parameter SIunits.Position FL_shock_mount[3] = FLBC.shock_mount annotation(
     Dialog(group = "Geometry"));
   
   // FL bellcrank
