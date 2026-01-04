@@ -20,6 +20,8 @@ model MF5p2Tire
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.My_eval;
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Mz_eval;
   
+  // Parameters - Tire defn
+  final parameter VehicleDynamics.Resources.Records.TIRES.MF52_Tire tire;
   
   // Parameters - Initial conditions
   parameter SIunits.Velocity initial_velocity = 0
@@ -34,288 +36,277 @@ model MF5p2Tire
   
   // Parameters - Mass properties
   parameter SIunits.Inertia wheel_inertia[3, 3] = [0, 0, 0; 0, 0.2, 0; 0, 0, 0] "Wheel + hub inertia tensor (y-axis as spindle)";
-    parameter SIunits.Mass wheel_m = 1 ""
-    annotation(Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
+  parameter SIunits.Mass wheel_m = 1 ""
+  annotation(Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
   
   // Numerical stability
   parameter Real v_min = 0.1 "Low-speed threshold for force gating (m/s)" annotation(Dialog(group = "Numerical Conditions"));
   parameter Real eps = 1e-6 "Small constant to prevent division by zero" annotation(Dialog(group = "Numerical Conditions"));
 
-  // Read tire model
-  parameter String tir_path = Modelica.Utilities.Files.loadResource(
-    "modelica://VehicleDynamics/Resources/JSONs/TIRES/placeholder.tir") "File path to .tir";
-  inner ExternData.TIRFile tir_file(fileName = tir_path)
-    annotation(Placement(transformation(origin = {-90, 90},
-                                         extent = {{10, -10}, {-10, 10}})));
-
   // General .tir parameters
-  final parameter Real R0 =
-    tir_file.getReal("UNLOADED_RADIUS", "DIMENSION") "Unloaded tire radius";
-  final parameter Real tire_c =
-    tir_file.getReal("VERTICAL_STIFFNESS", "VERTICAL") "Wheel vertical stiffness";
-  final parameter Real tire_d =
-    tir_file.getReal("VERTICAL_DAMPING", "VERTICAL") "Wheel vertical damping";
-  final parameter Real FNOMIN =
-    tir_file.getReal("FNOMIN", "VERTICAL") "Nominal normal load, FZ0";
+  final parameter Real R0 = tire.UNLOADED_RADIUS "Unloaded tire radius";
+  final parameter Real tire_c = tire.VERTICAL_STIFFNESS "Wheel vertical stiffness";
+  final parameter Real tire_d = tire.VERTICAL_DAMPING "Wheel vertical damping";
+  final parameter Real FNOMIN = tire.FNOMIN "Nominal normal load, FZ0";
   Modelica.Mechanics.MultiBody.Forces.WorldTorque torque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)  annotation(
     Placement(transformation(origin = {-30, -40}, extent = {{-10, -10}, {10, 10}})));
 
   // Pure longitudinal slip coefficients
-  parameter Real PCX1 = tir_file.getReal("PCX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PCX1 = tire.PCX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PDX1 = tir_file.getReal("PDX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PDX1 = tire.PDX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PDX2 = tir_file.getReal("PDX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PDX2 = tire.PDX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PDX3 = tir_file.getReal("PDX3", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PDX3 = tire.PDX3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PEX1 = tir_file.getReal("PEX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PEX1 = tire.PEX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PEX2 = tir_file.getReal("PEX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PEX2 = tire.PEX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PEX3 = tir_file.getReal("PEX3", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PEX3 = tire.PEX3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PEX4 = tir_file.getReal("PEX4", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PEX4 = tire.PEX4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PKX1 = tir_file.getReal("PKX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PKX1 = tire.PKX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PKX2 = tir_file.getReal("PKX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PKX2 = tire.PKX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PKX3 = tir_file.getReal("PKX3", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PKX3 = tire.PKX3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PHX1 = tir_file.getReal("PHX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PHX1 = tire.PHX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PHX2 = tir_file.getReal("PHX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PHX2 = tire.PHX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PVX1 = tir_file.getReal("PVX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PVX1 = tire.PVX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  parameter Real PVX2 = tir_file.getReal("PVX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real PVX2 = tire.PVX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
   
   // Combined longitudinal slip coefficients
-  parameter Real RBX1 = tir_file.getReal("RBX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real RBX1 = tire.RBX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
-  parameter Real RBX2 = tir_file.getReal("RBX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real RBX2 = tire.RBX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
-  parameter Real RCX1 = tir_file.getReal("RCX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real RCX1 = tire.RCX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
-  parameter Real REX1 = tir_file.getReal("REX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real REX1 = tire.REX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
-  parameter Real REX2 = tir_file.getReal("REX2", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real REX2 = tire.REX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
-  parameter Real RHX1 = tir_file.getReal("RHX1", "LONGITUDINAL_COEFFICIENTS") annotation(
+  parameter Real RHX1 = tire.RHX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
   
   // Pure lateral slip coefficients
-  parameter Real PCY1 = tir_file.getReal("PCY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PCY1 = tire.PCY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PDY1 = tir_file.getReal("PDY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PDY1 = tire.PDY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PDY2 = tir_file.getReal("PDY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PDY2 = tire.PDY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PDY3 = tir_file.getReal("PDY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PDY3 = tire.PDY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PEY1 = tir_file.getReal("PEY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PEY1 = tire.PEY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PEY2 = tir_file.getReal("PEY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PEY2 = tire.PEY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PEY3 = tir_file.getReal("PEY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PEY3 = tire.PEY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PEY4 = tir_file.getReal("PEY4", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PEY4 = tire.PEY4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PKY1 = tir_file.getReal("PKY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PKY1 = tire.PKY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PKY2 = tir_file.getReal("PKY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PKY2 = tire.PKY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PKY3 = tir_file.getReal("PKY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PKY3 = tire.PKY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PHY1 = tir_file.getReal("PHY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PHY1 = tire.PHY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PHY2 = tir_file.getReal("PHY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PHY2 = tire.PHY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PHY3 = tir_file.getReal("PHY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PHY3 = tire.PHY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PVY1 = tir_file.getReal("PVY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PVY1 = tire.PVY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PVY2 = tir_file.getReal("PVY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PVY2 = tire.PVY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PVY3 = tir_file.getReal("PVY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PVY3 = tire.PVY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  parameter Real PVY4 = tir_file.getReal("PVY4", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real PVY4 = tire.PVY4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
   
   // Combined lateral slip coefficients
-  parameter Real RBY1 = tir_file.getReal("RBY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RBY1 = tire.RBY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RBY2 = tir_file.getReal("RBY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RBY2 = tire.RBY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RBY3 = tir_file.getReal("RBY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RBY3 = tire.RBY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RCY1 = tir_file.getReal("RCY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RCY1 = tire.RCY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real REY1 = tir_file.getReal("REY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real REY1 = tire.REY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real REY2 = tir_file.getReal("REY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real REY2 = tire.REY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RHY1 = tir_file.getReal("RHY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RHY1 = tire.RHY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RHY2 = tir_file.getReal("RHY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RHY2 = tire.RHY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RVY1 = tir_file.getReal("RVY1", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RVY1 = tire.RVY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RVY2 = tir_file.getReal("RVY2", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RVY2 = tire.RVY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RVY3 = tir_file.getReal("RVY3", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RVY3 = tire.RVY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RVY4 = tir_file.getReal("RVY4", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RVY4 = tire.RVY4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RVY5 = tir_file.getReal("RVY5", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RVY5 = tire.RVY5 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  parameter Real RVY6 = tir_file.getReal("RVY6", "LATERAL_COEFFICIENTS") annotation(
+  parameter Real RVY6 = tire.RVY6 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
   
   // Overturning coefficients
-  parameter Real QSX1 = tir_file.getReal("QSX1", "OVERTURNING_COEFFICIENTS") annotation(
+  parameter Real QSX1 = tire.QSX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "All Mx"));
-  parameter Real QSX2 = tir_file.getReal("QSX2", "OVERTURNING_COEFFICIENTS") annotation(
+  parameter Real QSX2 = tire.QSX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "All Mx"));
-  parameter Real QSX3 = tir_file.getReal("QSX3", "OVERTURNING_COEFFICIENTS") annotation(
+  parameter Real QSX3 = tire.QSX3 annotation(
     Dialog(tab = "Tire Coeffs", group = "All Mx"));
   
   // Rolling resistance coefficients
-  parameter Real QSY1 = tir_file.getReal("QSY1", "ROLLING_COEFFICIENTS") annotation(
+  parameter Real QSY1 = tire.QSY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "All My"));
-  parameter Real QSY2 = tir_file.getReal("QSY2", "ROLLING_COEFFICIENTS") annotation(
+  parameter Real QSY2 = tire.QSY2 annotation(
     Dialog(tab = "Tire Coeffs", group = "All My"));
-  parameter Real QSY3 = tir_file.getReal("QSY3", "ROLLING_COEFFICIENTS") annotation(
+  parameter Real QSY3 = tire.QSY3 annotation(
     Dialog(tab = "Tire Coeffs", group = "All My"));
-  parameter Real QSY4 = tir_file.getReal("QSY4", "ROLLING_COEFFICIENTS") annotation(
+  parameter Real QSY4 = tire.QSY4 annotation(
     Dialog(tab = "Tire Coeffs", group = "All My"));
   
   // Pure aligning coefficients
-  parameter Real QBZ1 = tir_file.getReal("QBZ1", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ1 = tire.QBZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QBZ2 = tir_file.getReal("QBZ2", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ2 = tire.QBZ2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QBZ3 = tir_file.getReal("QBZ3", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ3 = tire.QBZ3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QBZ4 = tir_file.getReal("QBZ4", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ4 = tire.QBZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QBZ5 = tir_file.getReal("QBZ5", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ5 = tire.QBZ5 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QBZ9 = tir_file.getReal("QBZ9", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ9 = tire.QBZ9 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QBZ10 = tir_file.getReal("QBZ10", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QBZ10 = tire.QBZ10 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QCZ1 = tir_file.getReal("QCZ1", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QCZ1 = tire.QCZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ1 = tir_file.getReal("QDZ1", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ1 = tire.QDZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ2 = tir_file.getReal("QDZ2", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ2 = tire.QDZ2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ3 = tir_file.getReal("QDZ3", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ3 = tire.QDZ3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ4 = tir_file.getReal("QDZ4", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ4 = tire.QDZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ6 = tir_file.getReal("QDZ6", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ6 = tire.QDZ6 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ7 = tir_file.getReal("QDZ7", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ7 = tire.QDZ7 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ8 = tir_file.getReal("QDZ8", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ8 = tire.QDZ8 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QDZ9 = tir_file.getReal("QDZ9", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QDZ9 = tire.QDZ9 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QEZ1 = tir_file.getReal("QEZ1", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QEZ1 = tire.QEZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QEZ2 = tir_file.getReal("QEZ2", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QEZ2 = tire.QEZ2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QEZ3 = tir_file.getReal("QEZ3", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QEZ3 = tire.QEZ3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QEZ4 = tir_file.getReal("QEZ4", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QEZ4 = tire.QEZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QEZ5 = tir_file.getReal("QEZ5", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QEZ5 = tire.QEZ5 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QHZ1 = tir_file.getReal("QHZ1", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QHZ1 = tire.QHZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QHZ2 = tir_file.getReal("QHZ2", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QHZ2 = tire.QHZ2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QHZ3 = tir_file.getReal("QHZ3", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QHZ3 = tire.QHZ3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  parameter Real QHZ4 = tir_file.getReal("QHZ4", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real QHZ4 = tire.QHZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
   
   // Combined aligning coefficients
-  parameter Real SSZ1 = tir_file.getReal("SSZ1", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real SSZ1 = tire.SSZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
-  parameter Real SSZ2 = tir_file.getReal("SSZ2", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real SSZ2 = tire.SSZ2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
-  parameter Real SSZ3 = tir_file.getReal("SSZ3", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real SSZ3 = tire.SSZ3 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
-  parameter Real SSZ4 = tir_file.getReal("SSZ4", "ALIGNING_COEFFICIENTS") annotation(
+  parameter Real SSZ4 = tire.SSZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
   
   // Scaling coefficients
-  parameter Real LFZO = tir_file.getReal("LFZO", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LFZO = tire.LFZO annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LCX = tir_file.getReal("LCX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LCX = tire.LCX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LMUX = tir_file.getReal("LMUX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LMUX = tire.LMUX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LEX = tir_file.getReal("LEX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LEX = tire.LEX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LKX = tir_file.getReal("LKX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LKX = tire.LKX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LHX = tir_file.getReal("LHX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LHX = tire.LHX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LVX = tir_file.getReal("LVX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LVX = tire.LVX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LXAL = tir_file.getReal("LXAL", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LXAL = tire.LXAL annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LGAX = tir_file.getReal("LGAX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LGAX = tire.LGAX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LCY = tir_file.getReal("LCY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LCY = tire.LCY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LMUY = tir_file.getReal("LMUY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LMUY = tire.LMUY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LEY = tir_file.getReal("LEY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LEY = tire.LEY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LKY = tir_file.getReal("LKY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LKY = tire.LKY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LHY = tir_file.getReal("LHY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LHY = tire.LHY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LVY = tir_file.getReal("LVY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LVY = tire.LVY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LGAY = tir_file.getReal("LGAY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LGAY = tire.LGAY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LKYG = tir_file.getReal("LKYG", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LKYG = tire.LKYG annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LTR = tir_file.getReal("LTR", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LTR = tire.LTR annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LRES = tir_file.getReal("LRES", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LRES = tire.LRES annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LCZ = tir_file.getReal("LCZ", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LCZ = tire.LCZ annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LGAZ = tir_file.getReal("LGAZ", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LGAZ = tire.LGAZ annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LYKA = tir_file.getReal("LYKA", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LYKA = tire.LYKA annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LVYKA = tir_file.getReal("LVYKA", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LVYKA = tire.LVYKA annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LS = tir_file.getReal("LS", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LS = tire.LS annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LSGKP = tir_file.getReal("LSGKP", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LSGKP = tire.LSGKP annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LSGAL = tir_file.getReal("LSGAL", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LSGAL = tire.LSGAL annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LGYR = tir_file.getReal("LGYR", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LGYR = tire.LGYR annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LMX = tir_file.getReal("LMX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LMX = tire.LMX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LVMX = tir_file.getReal("LVMX", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LVMX = tire.LVMX annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LMY = tir_file.getReal("LMY", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LMY = tire.LMY annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
-  parameter Real LIP = tir_file.getReal("LIP", "SCALING_COEFFICIENTS") annotation(
+  parameter Real LIP = tire.LIP annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
 
   // Frames

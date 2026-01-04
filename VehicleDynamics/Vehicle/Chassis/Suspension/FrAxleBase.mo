@@ -2,39 +2,31 @@ within VehicleDynamics.Vehicle.Chassis.Suspension;
 
 model FrAxleBase
   import Modelica.SIunits;
-  // File path inputs
-  parameter String hdpts_path = Modelica.Utilities.Files.loadResource("modelica://VehicleDynamics/Resources/JSONs/SUS/hdpts.json") "File path to hdpts json" annotation(
-    Dialog(group = "File Paths"));
-  parameter String mass_props_path = Modelica.Utilities.Files.loadResource("modelica://VehicleDynamics/Resources/JSONs/SUS/mass_props.json") "File path to mass_props json" annotation(
-    Dialog(group = "File Paths"));
-  // JSONs
-  inner ExternData.JSONFile hdpts(fileName = hdpts_path) annotation(
-    Placement(transformation(origin = {-130, 90}, extent = {{10, -10}, {-10, 10}})));
-  inner ExternData.JSONFile mass_props(fileName = mass_props_path) annotation(
-    Placement(transformation(origin = {-130, 70}, extent = {{10, -10}, {-10, 10}})));
+  
   // Parameters
-  parameter SIunits.Position FL_upper_fore_i[3] = hdpts.getRealArray1D("Front.left.upper.fore_i", 3) annotation(
+  parameter SIunits.Position FL_upper_fore_i[3] = FL_double_wishbone.upper_fore_i annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_upper_aft_i[3] = hdpts.getRealArray1D("Front.left.upper.aft_i", 3) annotation(
+  parameter SIunits.Position FL_upper_aft_i[3] = FL_double_wishbone.upper_aft_i annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_lower_fore_i[3] = hdpts.getRealArray1D("Front.left.lower.fore_i", 3) annotation(
+  parameter SIunits.Position FL_lower_fore_i[3] = FL_double_wishbone.lower_fore_i annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_lower_aft_i[3] = hdpts.getRealArray1D("Front.left.lower.aft_i", 3) annotation(
+  parameter SIunits.Position FL_lower_aft_i[3] = FL_double_wishbone.lower_aft_i annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_upper_o[3] = hdpts.getRealArray1D("Front.left.upper.outboard", 3) annotation(
+  parameter SIunits.Position FL_upper_o[3] = FL_double_wishbone.upper_o annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_lower_o[3] = hdpts.getRealArray1D("Front.left.lower.outboard", 3) annotation(
+  parameter SIunits.Position FL_lower_o[3] = FL_double_wishbone.lower_o annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_tie_i[3] = hdpts.getRealArray1D("Front.left.tie.inboard", 3) annotation(
+  parameter SIunits.Position FL_tie_i[3] = FL_double_wishbone.tie_i annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_tie_o[3] = hdpts.getRealArray1D("Front.left.tie.outboard", 3) annotation(
+  parameter SIunits.Position FL_tie_o[3] = FL_double_wishbone.tie_o annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Position FL_wheel_center[3] = hdpts.getRealArray1D("Front.left.tire.wheel_center", 3) annotation(
+  parameter SIunits.Position FL_wheel_center[3] = FL_double_wishbone.wheel_center annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Angle FL_static_gamma = hdpts.getReal("Front.left.tire.static_gamma") annotation(
+  parameter SIunits.Angle FL_static_gamma = FL_double_wishbone.static_gamma annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.Angle FL_static_alpha = hdpts.getReal("Front.left.tire.static_alpha") annotation(
+  parameter SIunits.Angle FL_static_alpha = FL_double_wishbone.static_alpha annotation(
     Dialog(group = "Geometry"));
+  
   parameter SIunits.Position FR_upper_fore_i[3] = {FL_upper_fore_i[1], -FL_upper_fore_i[2], FL_upper_fore_i[3]} annotation(
     Dialog(group = "Geometry"));
   parameter SIunits.Position FR_upper_aft_i[3] = {FL_upper_aft_i[1], -FL_upper_aft_i[2], FL_upper_aft_i[3]} annotation(
@@ -57,43 +49,45 @@ model FrAxleBase
     Dialog(group = "Geometry"));
   parameter SIunits.Angle FR_static_alpha = -1*FL_static_alpha annotation(
     Dialog(group = "Geometry"));
-  parameter SIunits.TranslationalSpringConstant[3] FUCA_fore_i_c = hdpts.getRealArray1D("Front.left.upper.fore_i_c", 3) "{x, y, z}-stiffness of upper, fore, inboard mount" annotation(
+  
+  parameter SIunits.TranslationalSpringConstant[3] FUCA_fore_i_c = FL_double_wishbone.FUCA_fore_i_c "{x, y, z}-stiffness of upper, fore, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] FUCA_aft_i_c = hdpts.getRealArray1D("Front.left.upper.aft_i_c", 3) "{x, y, z}-stiffness of upper, aft, inboard mount" annotation(
+  parameter SIunits.TranslationalSpringConstant[3] FUCA_aft_i_c = FL_double_wishbone.FUCA_aft_i_c "{x, y, z}-stiffness of upper, aft, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] FLCA_fore_i_c = hdpts.getRealArray1D("Front.left.lower.fore_i_c", 3) "{x, y, z}-stiffness of lower, fore, inboard mount" annotation(
+  parameter SIunits.TranslationalSpringConstant[3] FLCA_fore_i_c = FL_double_wishbone.FLCA_fore_i_c "{x, y, z}-stiffness of lower, fore, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] FLCA_aft_i_c = hdpts.getRealArray1D("Front.left.lower.aft_i_c", 3) "{x, y, z}-stiffness of lower, aft, inboard mount" annotation(
+  parameter SIunits.TranslationalSpringConstant[3] FLCA_aft_i_c = FL_double_wishbone.FLCA_aft_i_c "{x, y, z}-stiffness of lower, aft, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] tie_i_c = hdpts.getRealArray1D("Front.left.tie.inboard_c", 3) "{x, y, z}-stiffness of inboard tie mount" annotation(
+  parameter SIunits.TranslationalSpringConstant[3] tie_i_c = FL_double_wishbone.tie_i_c "{x, y, z}-stiffness of inboard tie mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FUCA_fore_i_d = hdpts.getRealArray1D("Front.left.upper.fore_i_d", 3) "{x, y, z}-damping of upper, fore, inboard mount" annotation(
+  
+  parameter SIunits.TranslationalDampingConstant[3] FUCA_fore_i_d = FL_double_wishbone.FUCA_fore_i_d "{x, y, z}-damping of upper, fore, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FUCA_aft_i_d = hdpts.getRealArray1D("Front.left.upper.aft_i_d", 3) "{x, y, z}-damping of upper, aft, inboard mount" annotation(
+  parameter SIunits.TranslationalDampingConstant[3] FUCA_aft_i_d = FL_double_wishbone.FUCA_aft_i_d "{x, y, z}-damping of upper, aft, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FLCA_fore_i_d = hdpts.getRealArray1D("Front.left.lower.fore_i_d", 3) "{x, y, z}-damping of lower, fore, inboard mount" annotation(
+  parameter SIunits.TranslationalDampingConstant[3] FLCA_fore_i_d = FL_double_wishbone.FLCA_fore_i_d "{x, y, z}-damping of lower, fore, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FLCA_aft_i_d = hdpts.getRealArray1D("Front.left.lower.aft_i_d", 3) "{x, y, z}-damping of lower, aft, inboard mount" annotation(
+  parameter SIunits.TranslationalDampingConstant[3] FLCA_aft_i_d = FL_double_wishbone.FLCA_aft_i_d "{x, y, z}-damping of lower, aft, inboard mount" annotation(
     Dialog(group = "Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] tie_i_d = hdpts.getRealArray1D("Front.left.tie.inboard_d", 3) "{x, y, z}-damping of inboard tie mount" annotation(
+  parameter SIunits.TranslationalDampingConstant[3] tie_i_d = FL_double_wishbone.tie_i_d "{x, y, z}-damping of inboard tie mount" annotation(
     Dialog(group = "Mounting"));
-
+  
   // Interface frame
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a axle_frame annotation(
-    Placement(transformation(origin = {0, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation=90)));
+    Placement(transformation(origin = {0, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b FL_cp annotation(
-    Placement(transformation(origin = {-120, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {-90, -100}, extent = {{-16, -16}, {16, 16}}, rotation=90)));
+    Placement(transformation(origin = {-120, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {-90, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b FR_cp annotation(
-    Placement(transformation(origin = {120, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {90, -100}, extent = {{-16, -16}, {16, 16}}, rotation=90)));
+    Placement(transformation(origin = {120, -100}, extent = {{16, -16}, {-16, 16}}, rotation = -90), iconTransformation(origin = {90, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
   
   // Wheel torque inputs
   Modelica.Blocks.Interfaces.RealInput FL_torque annotation(
     Placement(transformation(origin = {-160, 20}, extent = {{-20, -20}, {20, 20}}), iconTransformation(origin = {-120, 66}, extent = {{-20, -20}, {20, 20}})));
   Modelica.Blocks.Interfaces.RealInput FR_torque annotation(
     Placement(transformation(origin = {160, 20}, extent = {{20, -20}, {-20, 20}}), iconTransformation(origin = {120, 66}, extent = {{-20, -20}, {20, 20}}, rotation = 180)));
-
+  
   // Double wishbone assemblies
-  FrDoubleWishboneBase FL_double_wishbone(upper_fore_i = FL_upper_fore_i, upper_aft_i = FL_upper_aft_i, lower_fore_i = FL_lower_fore_i, lower_aft_i = FL_lower_aft_i, tie_i = FL_tie_i, upper_o = FL_upper_o, lower_o = FL_lower_o, tie_o = FL_tie_o, wheel_center = FL_wheel_center, static_gamma = FL_static_gamma, static_alpha = FL_static_alpha, FUCA_fore_i_c = FUCA_fore_i_c, FUCA_aft_i_c = FUCA_aft_i_c, FLCA_fore_i_c = FLCA_fore_i_c, FLCA_aft_i_c = FLCA_aft_i_c, tie_i_c = tie_i_c, FUCA_fore_i_d = FUCA_fore_i_d, FUCA_aft_i_d = FUCA_aft_i_d, FLCA_fore_i_d = FLCA_fore_i_d, FLCA_aft_i_d = FLCA_aft_i_d, tie_i_d = tie_i_d) annotation(
+  FrDoubleWishboneBase FL_double_wishbone annotation(
     Placement(transformation(origin = {-70, -50}, extent = {{-30, -30}, {30, 30}})));
   FrDoubleWishboneBase FR_double_wishbone(upper_fore_i = FR_upper_fore_i, upper_aft_i = FR_upper_aft_i, lower_fore_i = FR_lower_fore_i, lower_aft_i = FR_lower_aft_i, upper_o = FR_upper_o, lower_o = FR_lower_o, tie_i = FR_tie_i, tie_o = FR_tie_o, wheel_center = FR_wheel_center, static_gamma = FR_static_gamma, static_alpha = FR_static_alpha, FUCA_fore_i_c = {FUCA_fore_i_c[1], -FUCA_fore_i_c[2], FUCA_fore_i_c[3]}, FUCA_aft_i_c = {FUCA_aft_i_c[1], -FUCA_aft_i_c[2], FUCA_aft_i_c[3]}, FLCA_fore_i_c = {FLCA_fore_i_c[1], -FLCA_fore_i_c[2], FLCA_fore_i_c[3]}, FLCA_aft_i_c = {FLCA_aft_i_c[1], -FLCA_aft_i_c[2], FLCA_aft_i_c[3]}, tie_i_c = {tie_i_c[1], -tie_i_c[2], tie_i_c[3]}, FUCA_fore_i_d = {FUCA_fore_i_d[1], -FUCA_fore_i_d[2], FUCA_fore_i_d[3]}, FUCA_aft_i_d = {FUCA_aft_i_d[1], -FUCA_aft_i_d[2], FUCA_aft_i_d[3]}, FLCA_fore_i_d = {FLCA_fore_i_d[1], -FLCA_fore_i_d[2], FLCA_fore_i_d[3]}, FLCA_aft_i_d = {FLCA_aft_i_d[1], -FLCA_aft_i_d[2], FLCA_aft_i_d[3]}, tie_i_d = {tie_i_d[1], -tie_i_d[2], tie_i_d[3]}) annotation(
     Placement(transformation(origin = {70, -50}, extent = {{30, -30}, {-30, 30}})));
@@ -103,7 +97,7 @@ model FrAxleBase
     Placement(transformation(origin = {-130, -50}, extent = {{10, -10}, {-10, 10}})));
   VehicleDynamics.Vehicle.Chassis.Tires.MF5p2Tire FR_tire annotation(
     Placement(transformation(origin = {130, -50}, extent = {{-10, -10}, {10, 10}})));
-
+  
   // Define effective center
   final parameter Real[3] effective_center = {FL_wheel_center[1], 0, FL_wheel_center[3]};
   
@@ -128,7 +122,7 @@ model FrAxleBase
     Placement(transformation(origin = {20, -50}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation FR_tie_i_trans(r = FR_tie_i - effective_center, animation = false) annotation(
     Placement(transformation(origin = {20, -70}, extent = {{-10, -10}, {10, 10}})));
-  
+
 equation
   connect(FL_tie_i_trans.frame_b, FL_double_wishbone.tie_i_frame) annotation(
     Line(points = {{-30, -70}, {-40, -70}}, color = {95, 95, 95}));
@@ -182,7 +176,6 @@ equation
     Line(points = {{-120, -100}, {-120, -80}, {-130, -80}, {-130, -60}, {-130, -60}}));
   connect(FR_cp, FR_tire.cp_frame) annotation(
     Line(points = {{120, -100}, {120, -80}, {130, -80}, {130, -60}, {130, -60}}));
-
-annotation(
+  annotation(
     Diagram(coordinateSystem(extent = {{-140, 100}, {140, -100}})));
 end FrAxleBase;

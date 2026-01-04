@@ -4,42 +4,33 @@ model FrDoubleWishboneBase
   // Modelica units
   import Modelica.SIunits;
   
-  // File path inputs
-  parameter String hdpts_path =
-  Modelica.Utilities.Files.loadResource("modelica://VehicleDynamics/Resources/JSONs/SUS/hdpts.json") "File path to hdpts json" annotation(Dialog(group="File Paths"));
-  parameter String mass_props_path =
-  Modelica.Utilities.Files.loadResource("modelica://VehicleDynamics/Resources/JSONs/SUS/mass_props.json") "File path to mass_props json" annotation(Dialog(group="File Paths"));
+  // Parameters - FL sus defn
+  final parameter VehicleDynamics.Resources.Records.SUS.FrAxleBase FLDW;
   
-  // JSONs
-  inner ExternData.JSONFile hdpts(fileName = hdpts_path) annotation(
-    Placement(transformation(origin = {-90, 90}, extent = {{10, -10}, {-10, 10}})));
-  inner ExternData.JSONFile mass_props(fileName = mass_props_path) annotation(
-    Placement(transformation(origin = {-90, 70}, extent = {{10, -10}, {-10, 10}})));
-
   // Parameters
-  parameter SIunits.Position upper_fore_i[3] = hdpts.getRealArray1D("Front.left.upper.fore_i", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position upper_aft_i[3] = hdpts.getRealArray1D("Front.left.upper.aft_i", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position lower_fore_i[3] = hdpts.getRealArray1D("Front.left.lower.fore_i", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position lower_aft_i[3] = hdpts.getRealArray1D("Front.left.lower.aft_i", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position upper_o[3] = hdpts.getRealArray1D("Front.left.upper.outboard", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position lower_o[3] = hdpts.getRealArray1D("Front.left.lower.outboard", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position tie_i[3] = hdpts.getRealArray1D("Front.left.tie.inboard", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position tie_o[3] = hdpts.getRealArray1D("Front.left.tie.outboard", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position wheel_center[3] = hdpts.getRealArray1D("Front.left.tire.wheel_center", 3) annotation(Dialog(group="Geometry"));
-  parameter SIunits.Angle static_gamma = hdpts.getReal("Front.left.tire.static_gamma") annotation(Dialog(group="Geometry"));
-  parameter SIunits.Angle static_alpha = hdpts.getReal("Front.left.tire.static_alpha") annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position upper_fore_i[3] = FLDW.upper_fore_i annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position upper_aft_i[3] = FLDW.upper_aft_i annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position lower_fore_i[3] = FLDW.lower_fore_i annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position lower_aft_i[3] = FLDW.lower_aft_i annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position upper_o[3] = FLDW.upper_outboard annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position lower_o[3] = FLDW.lower_outboard annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position tie_i[3] = FLDW.tie_inboard annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position tie_o[3] = FLDW.tie_outboard annotation(Dialog(group="Geometry"));
+  parameter SIunits.Position wheel_center[3] = FLDW.wheel_center annotation(Dialog(group="Geometry"));
+  parameter SIunits.Angle static_gamma = FLDW.static_gamma annotation(Dialog(group="Geometry"));
+  parameter SIunits.Angle static_alpha = FLDW.static_alpha annotation(Dialog(group="Geometry"));
   
-  parameter SIunits.TranslationalSpringConstant[3] FUCA_fore_i_c = hdpts.getRealArray1D("Front.left.upper.fore_i_c", 3)  "{x, y, z}-stiffness of upper, fore, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] FUCA_aft_i_c = hdpts.getRealArray1D("Front.left.upper.aft_i_c", 3)  "{x, y, z}-stiffness of upper, aft, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] FLCA_fore_i_c = hdpts.getRealArray1D("Front.left.lower.fore_i_c", 3)  "{x, y, z}-stiffness of lower, fore, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] FLCA_aft_i_c = hdpts.getRealArray1D("Front.left.lower.aft_i_c", 3)  "{x, y, z}-stiffness of lower, aft, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalSpringConstant[3] tie_i_c = hdpts.getRealArray1D("Front.left.tie.inboard_c", 3)  "{x, y, z}-stiffness of inboard tie mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FUCA_fore_i_c = FLDW.upper_fore_i_c "{x, y, z}-stiffness of upper, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FUCA_aft_i_c = FLDW.upper_aft_i_c "{x, y, z}-stiffness of upper, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FLCA_fore_i_c = FLDW.lower_fore_i_c "{x, y, z}-stiffness of lower, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] FLCA_aft_i_c = FLDW.lower_aft_i_c  "{x, y, z}-stiffness of lower, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalSpringConstant[3] tie_i_c = FLDW.tie_inboard_c  "{x, y, z}-stiffness of inboard tie mount" annotation(Dialog(group="Mounting"));
 
-  parameter SIunits.TranslationalDampingConstant[3] FUCA_fore_i_d = hdpts.getRealArray1D("Front.left.upper.fore_i_d", 3)  "{x, y, z}-damping of upper, fore, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FUCA_aft_i_d = hdpts.getRealArray1D("Front.left.upper.aft_i_d", 3)  "{x, y, z}-damping of upper, aft, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FLCA_fore_i_d = hdpts.getRealArray1D("Front.left.lower.fore_i_d", 3)  "{x, y, z}-damping of lower, fore, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] FLCA_aft_i_d = hdpts.getRealArray1D("Front.left.lower.aft_i_d", 3)  "{x, y, z}-damping of lower, aft, inboard mount" annotation(Dialog(group="Mounting"));
-  parameter SIunits.TranslationalDampingConstant[3] tie_i_d = hdpts.getRealArray1D("Front.left.tie.inboard_d", 3)  "{x, y, z}-damping of inboard tie mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FUCA_fore_i_d = FLDW.upper_fore_i_d "{x, y, z}-damping of upper, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FUCA_aft_i_d = FLDW.upper_aft_i_d "{x, y, z}-damping of upper, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FLCA_fore_i_d = FLDW.lower_fore_i_d "{x, y, z}-damping of lower, fore, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] FLCA_aft_i_d = FLDW.lower_aft_i_d "{x, y, z}-damping of lower, aft, inboard mount" annotation(Dialog(group="Mounting"));
+  parameter SIunits.TranslationalDampingConstant[3] tie_i_d = FLDW.tie_inboard_d "{x, y, z}-damping of inboard tie mount" annotation(Dialog(group="Mounting"));
   
   // Visual parameters
   parameter SIunits.Length link_diameter = 0.025 annotation(Dialog(tab="Animation", group="Sizing"));

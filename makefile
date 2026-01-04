@@ -70,3 +70,7 @@ package:
 	  grep -qx '$(name)' $(FS_PATH)/package.order || echo '$(name)' >> $(FS_PATH)/package.order; \
 	  echo "Updated package.order in $(FS_PATH)"; \
 	fi
+
+records:
+# 	$(PYTHON) ./Tools/TIRES/convert_mf52_tir_to_record.py ./VehicleDynamics/Resources/JSONs/TIRES/MF52_Tire.tir
+	$(PYTHON) ./Tools/SUS/convert_suspension_json_to_record.py ./VehicleDynamics/Resources/JSONs/SUS/tune.json

@@ -1,10 +1,10 @@
-within VehicleDynamics.TestVehicle.TestChassis.TestSuspension;
-model TestFrAxleBase
+within VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestTemplates;
+model TestFrAxleBellcrank
   
   inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1})  annotation(
     Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}})));
   
-  VehicleDynamics.Vehicle.Chassis.Suspension.FrAxleBase Fr_axle annotation(
+  Vehicle.Chassis.Suspension.Templates.FrAxleBellcrank Fr_axle annotation(
     Placement(transformation(origin = {0, 10}, extent = {{-10, -10}, {10, 10}})));
   
   Modelica.Blocks.Sources.Constant FL_torque_in(k = 0)  annotation(
@@ -39,4 +39,4 @@ equation
     Line(points = {{70, -30}, {50, -30}}, color = {95, 95, 95}));
   connect(constrain_axle.frame_b, Fr_axle.axle_frame) annotation(
     Line(points = {{0, -20}, {0, 0}}, color = {95, 95, 95}));
-end TestFrAxleBase;
+end TestFrAxleBellcrank;
