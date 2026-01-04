@@ -8,6 +8,7 @@ typed Modelica suspension records.
 - No runtime JSON parsing
 - FMU-safe
 - Deterministic output
+- Supports Front + Rear axles
 - Record hierarchy mirrors model topology
 """
 
@@ -35,11 +36,11 @@ def fmt_vec(v):
 
 
 # =============================================================================
-# RECORD SCHEMAS (SINGLE SOURCE OF TRUTH)
+# RECORD SCHEMAS (AXLE-INDEPENDENT)
 # =============================================================================
 
 RECORD_SCHEMAS = {
-    "FrAxleBase": [
+    "Base": [
         # Upper
         "upper_fore_i",
         "upper_fore_i_c",
@@ -70,7 +71,7 @@ RECORD_SCHEMAS = {
         "static_alpha",
     ],
 
-    "FrAxleBellcrank": [
+    "Bellcrank": [
         # Bellcrank
         "bellcrank_pivot",
         "bellcrank_pivot_ref",
@@ -79,59 +80,66 @@ RECORD_SCHEMAS = {
         "bellcrank_pickup_3",
 
         # Push / pull rod
-        "LCA_mount",
+        "rod_mount",     # normalized name
         "shock_mount",
     ],
 }
 
 
 # =============================================================================
-# JSON EXTRACTION
+# JSON EXTRACTION (AXLE-AGNOSTIC)
 # =============================================================================
 
-def extract_front_left(data: dict) -> dict:
-    fl = data["Front"]["left"]
+def extract_axle_left(data: dict, axle: str) -> dict:
+    al = data[axle]["left"]
+
+    # Normalize push/pull rod mount naming
+    rod = al["push/pull rod"]
+    rod_mount = rod.get("LCA_mount", rod.get("UCA_mount"))
+
+    if rod_mount is None:
+        raise KeyError(f"{axle}.left.push/pull rod missing LCA_mount/UCA_mount")
 
     return {
         # Upper
-        "upper_fore_i": fl["upper"]["fore_i"],
-        "upper_fore_i_c": fl["upper"]["fore_i_c"],
-        "upper_fore_i_d": fl["upper"]["fore_i_d"],
-        "upper_aft_i": fl["upper"]["aft_i"],
-        "upper_aft_i_c": fl["upper"]["aft_i_c"],
-        "upper_aft_i_d": fl["upper"]["aft_i_d"],
-        "upper_outboard": fl["upper"]["outboard"],
+        "upper_fore_i": al["upper"]["fore_i"],
+        "upper_fore_i_c": al["upper"]["fore_i_c"],
+        "upper_fore_i_d": al["upper"]["fore_i_d"],
+        "upper_aft_i": al["upper"]["aft_i"],
+        "upper_aft_i_c": al["upper"]["aft_i_c"],
+        "upper_aft_i_d": al["upper"]["aft_i_d"],
+        "upper_outboard": al["upper"]["outboard"],
 
         # Lower
-        "lower_fore_i": fl["lower"]["fore_i"],
-        "lower_fore_i_c": fl["lower"]["fore_i_c"],
-        "lower_fore_i_d": fl["lower"]["fore_i_d"],
-        "lower_aft_i": fl["lower"]["aft_i"],
-        "lower_aft_i_c": fl["lower"]["aft_i_c"],
-        "lower_aft_i_d": fl["lower"]["aft_i_d"],
-        "lower_outboard": fl["lower"]["outboard"],
+        "lower_fore_i": al["lower"]["fore_i"],
+        "lower_fore_i_c": al["lower"]["fore_i_c"],
+        "lower_fore_i_d": al["lower"]["fore_i_d"],
+        "lower_aft_i": al["lower"]["aft_i"],
+        "lower_aft_i_c": al["lower"]["aft_i_c"],
+        "lower_aft_i_d": al["lower"]["aft_i_d"],
+        "lower_outboard": al["lower"]["outboard"],
 
         # Tie
-        "tie_inboard": fl["tie"]["inboard"],
-        "tie_inboard_c": fl["tie"]["inboard_c"],
-        "tie_inboard_d": fl["tie"]["inboard_d"],
-        "tie_outboard": fl["tie"]["outboard"],
+        "tie_inboard": al["tie"]["inboard"],
+        "tie_inboard_c": al["tie"]["inboard_c"],
+        "tie_inboard_d": al["tie"]["inboard_d"],
+        "tie_outboard": al["tie"]["outboard"],
 
         # Bellcrank
-        "bellcrank_pivot": fl["bellcrank"]["pivot"],
-        "bellcrank_pivot_ref": fl["bellcrank"]["pivot_ref"],
-        "bellcrank_pickup_1": fl["bellcrank"]["pickup_1"],
-        "bellcrank_pickup_2": fl["bellcrank"]["pickup_2"],
-        "bellcrank_pickup_3": fl["bellcrank"]["pickup_3"],
+        "bellcrank_pivot": al["bellcrank"]["pivot"],
+        "bellcrank_pivot_ref": al["bellcrank"]["pivot_ref"],
+        "bellcrank_pickup_1": al["bellcrank"]["pickup_1"],
+        "bellcrank_pickup_2": al["bellcrank"]["pickup_2"],
+        "bellcrank_pickup_3": al["bellcrank"]["pickup_3"],
 
-        # Push / pull rod
-        "LCA_mount": fl["push/pull rod"]["LCA_mount"],
-        "shock_mount": fl["push/pull rod"]["shock_mount"],
+        # Push / pull rod (normalized)
+        "rod_mount": rod_mount,
+        "shock_mount": rod["shock_mount"],
 
         # Tire
-        "wheel_center": fl["tire"]["wheel_center"],
-        "static_gamma": fl["tire"]["static_gamma"],
-        "static_alpha": fl["tire"]["static_alpha"],
+        "wheel_center": al["tire"]["wheel_center"],
+        "static_gamma": al["tire"]["static_gamma"],
+        "static_alpha": al["tire"]["static_alpha"],
     }
 
 
@@ -187,13 +195,41 @@ def emit_record(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines))
 
-    # Maintain package.order
     pkg_order = out_path.parent / "package.order"
     if pkg_order.exists():
         entries = pkg_order.read_text().splitlines()
         if name not in entries:
             entries.append(name)
             pkg_order.write_text("\n".join(entries) + "\n")
+
+
+# =============================================================================
+# DRIVER
+# =============================================================================
+
+def emit_axle(data: dict, axle: str, prefix: str, out_dir: Path, src: Path):
+    all_params = extract_axle_left(data, axle)
+
+    base_params = {k: all_params[k] for k in RECORD_SCHEMAS["Base"]}
+    bellcrank_params = {k: all_params[k] for k in RECORD_SCHEMAS["Bellcrank"]}
+
+    base_name = f"{prefix}AxleBase"
+    bellcrank_name = f"{prefix}AxleBellcrank"
+
+    emit_record(
+        name=base_name,
+        params=base_params,
+        out_path=out_dir / f"{base_name}.mo",
+        src=src,
+    )
+
+    emit_record(
+        name=bellcrank_name,
+        params=bellcrank_params,
+        out_path=out_dir / f"{bellcrank_name}.mo",
+        src=src,
+        extends=base_name,
+    )
 
 
 # =============================================================================
@@ -210,32 +246,16 @@ def main():
     src = Path(sys.argv[1]).resolve()
     data = json.loads(src.read_text())
 
-    all_params = extract_front_left(data)
-
     out_dir = Path("VehicleDynamics/Resources/Records/SUS")
 
-    # --- Base record ---
-    base_params = {k: all_params[k] for k in RECORD_SCHEMAS["FrAxleBase"]}
-    emit_record(
-        name="FrAxleBase",
-        params=base_params,
-        out_path=out_dir / "FrAxleBase.mo",
-        src=src,
-    )
-
-    # --- Bellcrank record ---
-    bellcrank_params = {k: all_params[k] for k in RECORD_SCHEMAS["FrAxleBellcrank"]}
-    emit_record(
-        name="FrAxleBellcrank",
-        params=bellcrank_params,
-        out_path=out_dir / "FrAxleBellcrank.mo",
-        src=src,
-        extends="FrAxleBase",
-    )
+    emit_axle(data, axle="Front", prefix="Fr", out_dir=out_dir, src=src)
+    emit_axle(data, axle="Rear",  prefix="Rr", out_dir=out_dir, src=src)
 
     print("Generated:")
     print(f"  - {out_dir / 'FrAxleBase.mo'}")
     print(f"  - {out_dir / 'FrAxleBellcrank.mo'}")
+    print(f"  - {out_dir / 'RrAxleBase.mo'}")
+    print(f"  - {out_dir / 'RrAxleBellcrank.mo'}")
 
 
 if __name__ == "__main__":
