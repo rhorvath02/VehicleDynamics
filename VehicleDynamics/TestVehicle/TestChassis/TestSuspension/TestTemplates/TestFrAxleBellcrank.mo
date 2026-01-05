@@ -23,7 +23,8 @@ model TestFrAxleBellcrank
     Placement(transformation(origin = {80, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
   Modelica.Mechanics.MultiBody.Parts.Fixed constrain_axle(r = {0, 0, 0.2032}) annotation(
     Placement(transformation(origin = {0, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-
+  Modelica.Blocks.Sources.Ramp ramp1(duration = 1, height = 1.25*0.0254, startTime = 0) annotation(
+    Placement(transformation(origin = {-30, 50}, extent = {{-10, -10}, {10, 10}})));
 equation
   connect(FL_torque_in.y, Fr_axle.FL_torque) annotation(
     Line(points = {{-28, 10}, {-20, 10}, {-20, 17}, {-12, 17}}, color = {0, 0, 127}));
@@ -39,4 +40,6 @@ equation
     Line(points = {{70, -30}, {50, -30}}, color = {95, 95, 95}));
   connect(constrain_axle.frame_b, Fr_axle.axle_frame) annotation(
     Line(points = {{0, -20}, {0, 0}}, color = {95, 95, 95}));
+  connect(ramp1.y, Fr_axle.steer_input) annotation(
+    Line(points = {{-18, 50}, {0, 50}, {0, 22}}, color = {0, 0, 127}));
 end TestFrAxleBellcrank;

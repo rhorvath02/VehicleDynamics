@@ -33,7 +33,8 @@ model TestFrDoubleWishboneBase
     Placement(transformation(origin = {-90, 0}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Blocks.Sources.Ramp ramp(duration = 1, height = 0, startTime = 0) annotation(
     Placement(transformation(origin = {-140, 32}, extent = {{-10, -10}, {10, 10}})));
-
+  Modelica.Blocks.Sources.Ramp ramp1(duration = 1, height = 1.25*0.0254, startTime = 0) annotation(
+    Placement(transformation(origin = {-70, 80}, extent = {{-10, -10}, {10, 10}})));
 equation
   connect(upper_fore_i.frame_b, frDoubleWishboneBase.upper_fore_i_frame) annotation(
     Line(points = {{80, 90}, {0, 90}, {0, 46}}, color = {95, 95, 95}));
@@ -53,6 +54,8 @@ equation
     Line(points = {{-80, 0}, {-44, 0}}, color = {95, 95, 95}));
   connect(world.frame_b, groundPhysics.frame_a) annotation(
     Line(points = {{-130, -90}, {-120, -90}, {-120, -40}, {-100, -40}}, color = {95, 95, 95}));
+  connect(ramp1.y, frDoubleWishboneBase.steer_input) annotation(
+    Line(points = {{-59, 80}, {-29, 80}, {-29, 54}, {-30, 54}}, color = {0, 0, 127}));
   annotation(
     Diagram(coordinateSystem(extent = {{-220, 100}, {100, -100}})));
 end TestFrDoubleWishboneBase;
