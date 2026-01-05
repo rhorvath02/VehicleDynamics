@@ -84,7 +84,7 @@ model RrDoubleWishboneBase
     Placement(transformation(origin = {-40, 60}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
   Modelica.Mechanics.Rotational.Sources.Position x_angle annotation(
     Placement(transformation(origin = {-40, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Joints.Revolute revolute_x(n = {1, 0, 0}, phi(fixed = true, start = static_gamma*Modelica.Constants.pi/180), useAxisFlange = true) annotation(
+  Modelica.Mechanics.MultiBody.Joints.Revolute revolute_x(n = {1, 0, 0}, phi(start = static_gamma*Modelica.Constants.pi/180), useAxisFlange = true) annotation(
     Placement(transformation(origin = {-40, 0}, extent = {{10, -10}, {-10, 10}})));
   
   // Set toe (using alpha sign convention)
@@ -92,7 +92,7 @@ model RrDoubleWishboneBase
     Placement(transformation(origin = {-70, 60}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   Modelica.Mechanics.Rotational.Sources.Position z_angle annotation(
     Placement(transformation(origin = {-70, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Joints.Revolute revolute_z(n = {0, 0, 1}, phi(fixed = true, start = static_alpha*Modelica.Constants.pi/180), useAxisFlange = true) annotation(
+  Modelica.Mechanics.MultiBody.Joints.Revolute revolute_z(n = {0, 0, 1}, phi(start = static_alpha*Modelica.Constants.pi/180), useAxisFlange = true) annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{10, -10}, {-10, 10}})));
     
 equation

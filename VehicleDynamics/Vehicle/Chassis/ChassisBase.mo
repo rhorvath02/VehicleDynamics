@@ -33,12 +33,12 @@ model ChassisBase
     Placement(transformation(origin = {90, -40}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
   Modelica.Blocks.Interfaces.RealInput FR_torque annotation(
     Placement(transformation(origin = {120, 60}, extent = {{20, -20}, {-20, 20}}, rotation = -0), iconTransformation(origin = {120, 66}, extent = {{-20, -20}, {20, 20}}, rotation = 180)));
-  Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m=100, r_0(start = {0, 0, 0.187959}, each fixed = true)) annotation(
-    Placement(transformation(origin = {0, 90}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.Body body1(r_CM = {0, 0, 0}, m=100) annotation(
-    Placement(transformation(origin = {0, -90}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+  Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = (RrAxle.effective_center - FrAxle.effective_center) / 2, m=200, I_11=30, I_22=40, I_33=50, r_0(start = {0, 0, 0.187959})) annotation(
+    Placement(transformation(origin = {50, 50}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = RrAxle.effective_center - FrAxle.effective_center) annotation(
     Placement(transformation( extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+  Modelica.Blocks.Sources.Ramp ramp1(duration = 3, height = 0.5*0.0254, startTime = 5) annotation(
+    Placement(transformation(origin = {-30, 90}, extent = {{-10, -10}, {10, 10}})));
 equation
   connect(FL_torque, FrAxle.FL_torque) annotation(
     Line(points = {{-120, 60}, {-24, 60}}, color = {0, 0, 127}));
@@ -65,11 +65,11 @@ equation
   connect(RR_fixed.frame_b, RR_ground.frame_a) annotation(
     Line(points = {{80, -40}, {60, -40}}, color = {95, 95, 95}));
   connect(body.frame_a, FrAxle.axle_frame) annotation(
-    Line(points = {{0, 80}, {0, 28}}, color = {95, 95, 95}));
-  connect(body1.frame_a, RrAxle.axle_frame) annotation(
-    Line(points = {{0, -80}, {0, -26}}, color = {95, 95, 95}));
+    Line(points = {{40, 50}, {40, 50.5}, {0, 50.5}, {0, 28}}, color = {95, 95, 95}));
   connect(FrAxle.axle_frame, fixedTranslation.frame_a) annotation(
     Line(points = {{0, 28}, {0, 10}}, color = {95, 95, 95}));
   connect(fixedTranslation.frame_b, RrAxle.axle_frame) annotation(
     Line(points = {{0, -10}, {0, -26}}, color = {95, 95, 95}));
+  connect(ramp1.y, FrAxle.steer_input) annotation(
+    Line(points = {{-18, 90}, {0, 90}, {0, 72}}, color = {0, 0, 127}));
 end ChassisBase;

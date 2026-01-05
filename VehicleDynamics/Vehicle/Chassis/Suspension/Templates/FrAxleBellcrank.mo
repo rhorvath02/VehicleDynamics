@@ -62,7 +62,11 @@ model FrAxleBellcrank
     Placement(transformation(origin = {20, 70}, extent = {{-10, -10}, {10, 10}})));
   Linkages.ShockLinkage FR_shock(spring_diameter = 0.040, start_point = {FL_bellcrank_pickup_3[1], -FL_bellcrank_pickup_3[2], FL_bellcrank_pickup_3[3]}, end_point = {FL_shock_mount[1], -FL_shock_mount[2], FL_shock_mount[3]}, rod_length_fraction = 0.5, free_length = norm(FL_shock_mount - FL_bellcrank_pickup_3)/2, spring_table = [0, 0; 1, 80000], spring_mass = 0, damper_table = [0, 0; 0.25, 100], damper_mass = 0, link_diameter = 0.625*0.0254, joint_diameter = 0.825*0.0254)  annotation(
     Placement(transformation(origin = {50, 70}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
-    
+  
+  // Steering interface
+  Modelica.Blocks.Interfaces.RealInput steer_input annotation(
+    Placement(transformation(origin = {0, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90), iconTransformation(origin = {0, 120}, extent = {{-20, -20}, {20, 20}}, rotation=-90)));
+
 equation
   connect(FL_bellcrank_mount.frame_a, axle_frame) annotation(
     Line(points = {{-20, 40}, {0, 40}, {0, -100}}, color = {95, 95, 95}));
@@ -96,4 +100,8 @@ equation
     Line(points = {{60, 70}, {60, 50}}, color = {95, 95, 95}));
   connect(FR_shock.frame_b, FR_shock_pickup.frame_b) annotation(
     Line(points = {{40, 70}, {30, 70}}, color = {95, 95, 95}));
+  connect(steer_input, FL_double_wishbone.steer_input) annotation(
+    Line(points = {{0, 120}, {0, 88}, {-90, 88}, {-90, -14}}, color = {0, 0, 127}));
+  connect(steer_input, FR_double_wishbone.steer_input) annotation(
+    Line(points = {{0, 120}, {0, 88}, {90, 88}, {90, -14}}, color = {0, 0, 127}));
 end FrAxleBellcrank;
