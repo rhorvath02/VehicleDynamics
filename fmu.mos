@@ -1,0 +1,41 @@
+// =====================================================
+// FMU build script (repo-root, CLI-friendly)
+// =====================================================
+
+// Keep diagnostics useful but not noisy
+setCommandLineOptions(
+  "+simCodeTarget=C "
+  + "--maxSizeLinearTearing=1000 "
+  + "--maxSizeNonlinearTearing=1000 "
+  + "-d=initialization "
+);
+
+// Reset compiler state
+clear();
+
+// Load standard library
+loadModel(Modelica);
+
+// Load project root package
+loadFile("VehicleDynamics/package.mo");
+
+// Switch working directory to build output
+cd("Build/fmu");
+
+// Sanity check model
+checkModel(VehicleDynamics.TestVehicle.TestChassis.TestChassisBase);
+
+// --- BUILD FMU (FORCED EVALUATION) ---
+res := buildModelFMU(
+  VehicleDynamics.TestVehicle.TestChassis.TestChassisBase,
+  version = "2.0",
+  fmuType = "cs",
+  platforms = {"dynamic"},
+  fileNamePrefix = "TestChassisBase"
+);
+
+print("buildModelFMU returned: " + String(res));
+print(getErrorString());
+
+// Exit cleanly
+quit();
