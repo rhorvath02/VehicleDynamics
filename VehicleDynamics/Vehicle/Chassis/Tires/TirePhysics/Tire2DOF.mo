@@ -36,11 +36,11 @@ model Tire2DOF
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}, rotation=0)));
   
   // Joint interfaces
-  Modelica.Mechanics.MultiBody.Joints.Revolute hub_axis(n = {0, 1, 0}, useAxisFlange = true, animation = false) annotation(
+  Modelica.Mechanics.MultiBody.Joints.Revolute hub_axis(n = {0, 1, 0}, useAxisFlange = true, animation = false, phi(start = 0, fixed = true), w(start = 0, fixed = true)) annotation(
     Placement(transformation(origin = {20, 0}, extent = {{-10, -10}, {10, 10}})));
   
   // Tire vertical deflection
-  Modelica.Mechanics.MultiBody.Joints.Prismatic tire_z(n = {0, 0, 1}, s(start = R0, fixed = true), useAxisFlange = true, animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Joints.Prismatic tire_z(n = {0, 0, 1}, s(start = R0, fixed = true), useAxisFlange = true, animation = false, v(start = 0, fixed = true))  annotation(
     Placement(transformation(origin = {-30, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Forces.SpringDamperParallel tire_spring(c = tire_c, d = tire_d, s_unstretched = R0, fixedRotationAtFrame_a = false, fixedRotationAtFrame_b = false, animation = false) annotation(
     Placement(transformation(origin = {0, -70}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
@@ -52,11 +52,7 @@ model Tire2DOF
     Placement(transformation(origin = {30, 60}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
   Modelica.Blocks.Sources.RealExpression tire_torque(y = -cp_frame.f[1]*tire_Re.s_rel)  annotation(
     Placement(transformation(origin = {-10, 60}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
-  
   // Wheel mass
-  Modelica.Mechanics.MultiBody.Parts.Body wheel_body(r_CM = {0, 0, 0}, m = wheel_m)  annotation(
-    Placement(transformation(origin = {-30, 30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  
   // Sensors
   Modelica.Mechanics.Rotational.Sensors.SpeedSensor wheel_speed annotation(
     Placement(transformation(origin = {80, 30}, extent = {{-10, -10}, {10, 10}})));
@@ -99,8 +95,6 @@ equation
     Line(points = {{20, 10}, {20, 30}, {30, 30}}));
   connect(chassis_frame, hub_axis.frame_a) annotation(
     Line(points = {{-100, 0}, {10, 0}}));
-  connect(wheel_body.frame_a, hub_axis.frame_a) annotation(
-    Line(points = {{-30, 20}, {-30, 0}, {10, 0}}, color = {95, 95, 95}));
   annotation(
     experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-06, Interval = 0.002));
 end Tire2DOF;
