@@ -74,3 +74,7 @@ package:
 records:
 # 	$(PYTHON) ./Tools/TIRES/convert_mf52_tir_to_record.py ./VehicleDynamics/Resources/JSONs/TIRES/MF52_Tire.tir
 	$(PYTHON) ./Tools/SUS/convert_suspension_json_to_record.py ./VehicleDynamics/Resources/JSONs/SUS/tune.json
+
+init:
+	sudo apt install gcc-arm-linux-gnueabihf  # arm linux
+	sudo apt install gcc-mingw-w64-x86-64     # windows

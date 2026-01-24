@@ -8,6 +8,8 @@ setCommandLineOptions(
   + "--maxSizeLinearTearing=1000 "
   + "--maxSizeNonlinearTearing=1000 "
   + "-d=initialization "
+  + "-d=aliasConflicts "
+  + "--fmuRuntimeDepends=none "
 );
 
 // Reset compiler state
@@ -23,15 +25,17 @@ loadFile("VehicleDynamics/package.mo");
 cd("Build/fmu");
 
 // Sanity check model
-checkModel(VehicleDynamics.TestVehicle.TestChassis.TestChassisBase);
+checkModel(VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrDoubleWishboneBase);
 
 // --- BUILD FMU (FORCED EVALUATION) ---
 res := buildModelFMU(
-  VehicleDynamics.TestVehicle.TestChassis.TestChassisBase,
+  VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrDoubleWishboneBase,
   version = "2.0",
-  fmuType = "cs",
-  platforms = {"dynamic"},
-  fileNamePrefix = "TestChassisBase"
+  fmuType = "me_cs",
+  // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
+  platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
+               "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
+  fileNamePrefix = "TestFrDoubleWishboneBase"
 );
 
 print("buildModelFMU returned: " + String(res));
