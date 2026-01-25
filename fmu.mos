@@ -9,8 +9,11 @@ setCommandLineOptions(
   + "--maxSizeNonlinearTearing=1000 "
   + "-d=initialization "
   + "-d=aliasConflicts "
-  + "--fmuRuntimeDepends=none "
+  + "--fmuRuntimeDepends=modelica "
+  + "-d=failtrace "
 );
+
+print(getErrorString());
 
 // Reset compiler state
 clear();
@@ -24,18 +27,36 @@ loadFile("VehicleDynamics/package.mo");
 // Switch working directory to build output
 cd("Build/fmu");
 
-// Sanity check model
-checkModel(VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrDoubleWishboneBase);
+// // Sanity check model
+// checkModel(VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrDoubleWishboneBase);
+
+// setCommandLineOptions(
+//   "--fmiFlags=s:cvode "
+//   // + "--noSymbolicJacobian "
+//   // + "--fmiFlags=lv:LOG_ASSERT "
+// );
 
 // --- BUILD FMU (FORCED EVALUATION) ---
+// res := buildModelFMU(
+//   VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrDoubleWishboneBase,
+//   version = "2.0",
+//   fmuType = "me_cs",
+//   // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
+//   // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
+//   //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
+//   platforms = {"dynamic"},
+//   fileNamePrefix = "TestFrDoubleWishboneBase"
+// );
+
 res := buildModelFMU(
-  VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrDoubleWishboneBase,
+  VehicleDynamics.TestVehicle.TestChassis.TestTires.TestMF5p2RigidVehicle,
   version = "2.0",
   fmuType = "me_cs",
   // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
-  platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
-               "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
-  fileNamePrefix = "TestFrDoubleWishboneBase"
+  // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
+  //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
+  platforms = {"dynamic"},
+  fileNamePrefix = "TestMF5p2RigidVehicle"
 );
 
 print("buildModelFMU returned: " + String(res));
