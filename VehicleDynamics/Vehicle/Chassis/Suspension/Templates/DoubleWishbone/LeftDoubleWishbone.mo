@@ -1,16 +1,7 @@
 within VehicleDynamics.Vehicle.Chassis.Suspension.Templates.DoubleWishbone;
 
 model LeftDoubleWishbone
-  extends VehicleDynamics.Vehicle.Chassis.Suspension.Templates.DoubleWishbone.DoubleWishboneBase(
-    redeclare parameter VehicleDynamics.Resources.Records.MASSPROPS.FrUnsprung
-      unsprung_mass,
-    redeclare parameter VehicleDynamics.Resources.Records.MASSPROPS.FrUCA
-      uca_mass,
-    redeclare parameter VehicleDynamics.Resources.Records.MASSPROPS.FrLCA
-      lca_mass,
-    redeclare parameter VehicleDynamics.Resources.Records.MASSPROPS.FrTie
-      tie_mass
-  );
+  extends VehicleDynamics.Vehicle.Chassis.Suspension.Templates.DoubleWishbone.DoubleWishboneBase;
 
 equation
   connect(prismatic_rack.frame_b, sphericalSpherical.frame_a) annotation(

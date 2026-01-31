@@ -11,8 +11,8 @@ record RrShock
 
   import Modelica.SIunits;
 
-  parameter SIunits.Mass m = 1.23456789;
-  parameter SIunits.Position r_cm[3] = {-0.01, 0.4, 0.5};
-  parameter SIunits.Inertia I[3,3] = {{0.05, 0, 0}, {0, 0.05, 0}, {0, 0, 0.05}};
+  parameter SIunits.Mass m = 0.39967795;
+  parameter SIunits.Position r_cm[3] = {-1.47256593, 0.30651588, 0.27889458};
+  parameter SIunits.Inertia I[3,3] = {{0.00225533, 0.00013562, -0.00045208}, {0.00013562, 0.00199361, -0.00070199}, {-0.00045208, -0.00070199, 0.0006078}};
 
 end RrShock;

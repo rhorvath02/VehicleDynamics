@@ -1,6 +1,6 @@
 within VehicleDynamics.Resources.Records.TEMPLATES;
 
-partial record BodyTemplate
+record BodyTemplate
   "Rigid body mass properties (body-fixed frame)"
 
   import Modelica.SIunits;

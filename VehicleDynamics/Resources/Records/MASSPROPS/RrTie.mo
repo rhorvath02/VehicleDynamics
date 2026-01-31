@@ -11,8 +11,8 @@ record RrTie
 
   import Modelica.SIunits;
 
-  parameter SIunits.Mass m = 0.13459415;
-  parameter SIunits.Position r_cm[3] = {0.05709287, 0.34616483, 0.1281302};
-  parameter SIunits.Inertia I[3,3] = {{0.0201276, 0.00265922, 0.0009845}, {0.00265922, 0.00267834, 0.0061809}, {0.0009845, 0.0061809, 0.01833132}};
+  parameter SIunits.Mass m = 0.13293714;
+  parameter SIunits.Position r_cm[3] = {-1.40704567, 0.39979876, 0.18668273};
+  parameter SIunits.Inertia I[3,3] = {{0.00146339, -0.00039766, -0.00006025}, {-0.00039766, 0.00014812, 0.0002161}, {-0.00006025, 0.0002161, 0.00154153}};
 
 end RrTie;

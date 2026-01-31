@@ -2,6 +2,8 @@ within VehicleDynamics.Vehicle.Chassis.Suspension.Templates.DoubleWishbone;
 
 partial model AxleDoubleWishboneBase
   import Modelica.SIunits;
+  
+  import VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate;
 
   // Parameters
   parameter SIunits.Position left_upper_fore_i[3] annotation(
@@ -52,6 +54,73 @@ partial model AxleDoubleWishboneBase
   parameter SIunits.Angle right_static_alpha = -1 * left_static_alpha annotation(
     Dialog(group = "Geometry"));
   
+  // ======================
+  // Mass Properties (Left)
+  // ======================
+  parameter BodyTemplate left_unsprung_mass "Left unsprung mass" annotation(
+    Dialog(tab = "Mass Properties", group = "Wheel Properties"));
+  parameter BodyTemplate left_uca_mass "Left upper control arm mass" annotation(
+    Dialog(tab = "Mass Properties", group = "UCA Properties"));
+  parameter BodyTemplate left_lca_mass "Left lower control arm mass" annotation(
+  Dialog(tab = "Mass Properties", group = "LCA Properties"));
+  parameter BodyTemplate left_tie_mass "Left tie rod mass" annotation(
+    Dialog(tab = "Mass Properties", group = "Tie Properties"));
+    
+  // ============================================
+  // Mass Properties (Right – mirrored from left)
+  // ============================================
+  parameter BodyTemplate right_unsprung_mass = BodyTemplate(m = left_unsprung_mass.m,
+                                                            r_cm = {
+                                                              left_unsprung_mass.r_cm[1],
+                                                             -left_unsprung_mass.r_cm[2],
+                                                              left_unsprung_mass.r_cm[3]
+                                                            },
+                                                            I = {
+                                                              {  left_unsprung_mass.I[1,1], -left_unsprung_mass.I[1,2],  left_unsprung_mass.I[1,3] },
+                                                              { -left_unsprung_mass.I[2,1],  left_unsprung_mass.I[2,2], -left_unsprung_mass.I[2,3] },
+                                                              {  left_unsprung_mass.I[3,1], -left_unsprung_mass.I[3,2],  left_unsprung_mass.I[3,3] }
+                                                            }) "Right unsprung mass" annotation(
+      Dialog(tab = "Mass Properties", group = "Wheel Properties"));
+  
+  parameter BodyTemplate right_uca_mass = BodyTemplate(m = left_uca_mass.m,
+                                                       r_cm = {
+                                                         left_uca_mass.r_cm[1],
+                                                        -left_uca_mass.r_cm[2],
+                                                         left_uca_mass.r_cm[3]
+                                                       },
+                                                       I = {
+                                                           {  left_uca_mass.I[1,1], -left_uca_mass.I[1,2],  left_uca_mass.I[1,3] },
+                                                           { -left_uca_mass.I[2,1],  left_uca_mass.I[2,2], -left_uca_mass.I[2,3] },
+                                                           {  left_uca_mass.I[3,1], -left_uca_mass.I[3,2],  left_uca_mass.I[3,3] }
+                                                       }) "Right upper control arm mass" annotation(
+      Dialog(tab = "Mass Properties", group = "UCA Properties"));
+  
+  parameter BodyTemplate right_lca_mass = BodyTemplate(m = left_lca_mass.m,
+                                                       r_cm = {
+                                                         left_lca_mass.r_cm[1],
+                                                        -left_lca_mass.r_cm[2],
+                                                         left_lca_mass.r_cm[3]
+                                                       },
+                                                       I = {
+                                                           {  left_lca_mass.I[1,1], -left_lca_mass.I[1,2],  left_lca_mass.I[1,3] },
+                                                           { -left_lca_mass.I[2,1],  left_lca_mass.I[2,2], -left_lca_mass.I[2,3] },
+                                                           {  left_lca_mass.I[3,1], -left_lca_mass.I[3,2],  left_lca_mass.I[3,3] }
+                                                       }) "Right lower control arm mass" annotation(
+      Dialog(tab = "Mass Properties", group = "LCA Properties"));
+  
+  parameter BodyTemplate right_tie_mass = BodyTemplate(m = left_tie_mass.m,
+                                                       r_cm = {
+                                                         left_tie_mass.r_cm[1],
+                                                        -left_tie_mass.r_cm[2],
+                                                         left_tie_mass.r_cm[3]
+                                                       },
+                                                       I = {
+                                                           {  left_tie_mass.I[1,1], -left_tie_mass.I[1,2],  left_tie_mass.I[1,3] },
+                                                           { -left_tie_mass.I[2,1],  left_tie_mass.I[2,2], -left_tie_mass.I[2,3] },
+                                                           {  left_tie_mass.I[3,1], -left_tie_mass.I[3,2],  left_tie_mass.I[3,3] }
+                                                       }) "Right tie rod mass" annotation(
+      Dialog(tab = "Mass Properties", group = "Tie Properties"));
+  
   // Visual parameters
   parameter SIunits.Length link_diameter annotation(
     Dialog(tab = "Animation", group = "Sizing"));
@@ -82,7 +151,11 @@ partial model AxleDoubleWishboneBase
                                                                                                               static_gamma = left_static_gamma,
                                                                                                               static_alpha = left_static_alpha,
                                                                                                               link_diameter = link_diameter,
-                                                                                                              joint_diameter = joint_diameter) annotation(
+                                                                                                              joint_diameter = joint_diameter,
+                                                                                                              unsprung_mass = left_unsprung_mass,
+                                                                                                              uca_mass = left_uca_mass,
+                                                                                                              lca_mass = left_lca_mass,
+                                                                                                              tie_mass = left_tie_mass) annotation(
     Placement(transformation(origin = {-70, -50}, extent = {{-30, -30}, {30, 30}})));
   
   VehicleDynamics.Vehicle.Chassis.Suspension.Templates.DoubleWishbone.RightDoubleWishbone right_double_wishbone(upper_fore_i = right_upper_fore_i,
@@ -97,7 +170,11 @@ partial model AxleDoubleWishboneBase
                                                                                                                 static_gamma = right_static_gamma,
                                                                                                                 static_alpha = right_static_alpha,
                                                                                                                 link_diameter = link_diameter,
-                                                                                                                joint_diameter = joint_diameter) annotation(
+                                                                                                                joint_diameter = joint_diameter,
+                                                                                                                unsprung_mass = right_unsprung_mass,
+                                                                                                                uca_mass = right_uca_mass,
+                                                                                                                lca_mass = right_lca_mass,
+                                                                                                                tie_mass = right_tie_mass) annotation(
     Placement(transformation(origin = {70, -50}, extent = {{30, -30}, {-30, 30}})));
   
   // Tires

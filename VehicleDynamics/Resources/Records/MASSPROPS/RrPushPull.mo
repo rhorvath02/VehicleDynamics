@@ -11,8 +11,8 @@ record RrPushPull
 
   import Modelica.SIunits;
 
-  parameter SIunits.Mass m = 0.12345678;
-  parameter SIunits.Position r_cm[3] = {0.00384464, 0.38672888, 0.34796099};
-  parameter SIunits.Inertia I[3,3] = {{0.01, 0, 0}, {0, 0.01, 0}, {0, 0, 0.01}};
+  parameter SIunits.Mass m = 0.12876397;
+  parameter SIunits.Position r_cm[3] = {-1.45952523, 0.40988917, 0.15435368};
+  parameter SIunits.Inertia I[3,3] = {{0.00086923, -0.00028677, -0.00034408}, {-0.00028677, 0.00074649, 0.00042518}, {-0.00034408, 0.00042518, 0.005933}};
 
 end RrPushPull;

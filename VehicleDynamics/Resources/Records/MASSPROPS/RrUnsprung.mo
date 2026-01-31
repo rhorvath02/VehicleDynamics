@@ -11,8 +11,8 @@ record RrUnsprung
 
   import Modelica.SIunits;
 
-  parameter SIunits.Mass m = 7.8160579;
-  parameter SIunits.Position r_cm[3] = {-0.0061298, 0.60174377, 0.19797979};
-  parameter SIunits.Inertia I[3,3] = {{3.24231873, -0.02844717, -0.00889662}, {-0.02844717, 0.46729195, 0.93039709}, {-0.00889662, 0.93039709, 2.93847123}};
+  parameter SIunits.Mass m = 7.35802418;
+  parameter SIunits.Position r_cm[3] = {-1.54948701, 0.60559861, 0.20104023};
+  parameter SIunits.Inertia I[3,3] = {{0.10429603, 0.00008706, 0.00004516}, {0.00008706, 0.15655532, -0.00147057}, {0.00004516, -0.00147057, 0.10327132}};
 
 end RrUnsprung;

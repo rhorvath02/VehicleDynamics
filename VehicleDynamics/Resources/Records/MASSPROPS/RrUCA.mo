@@ -11,8 +11,8 @@ record RrUCA
 
   import Modelica.SIunits;
 
-  parameter SIunits.Mass m = 0.55776965;
-  parameter SIunits.Position r_cm[3] = {-0.00187916, 0.45854113, 0.25343195};
-  parameter SIunits.Inertia I[3,3] = {{0.16010718, -0.00106496, -0.00037293}, {-0.00106496, 0.03698976, 0.06598056}, {-0.00037293, 0.06598056, 0.12490358}};
+  parameter SIunits.Mass m = 0.34927896;
+  parameter SIunits.Position r_cm[3] = {-1.47556121, 0.42263392, 0.27196898};
+  parameter SIunits.Inertia I[3,3] = {{0.00248293, -0.00169357, -0.00031129}, {-0.00169357, 0.00276385, 0.00045612}, {-0.00031129, 0.00045612, 0.00504556}};
 
 end RrUCA;

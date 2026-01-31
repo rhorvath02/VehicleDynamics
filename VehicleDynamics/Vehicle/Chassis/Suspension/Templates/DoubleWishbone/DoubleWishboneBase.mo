@@ -7,7 +7,10 @@ partial model DoubleWishboneBase
   // Modelica linalg
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
-
+  
+  // Body template for mass properties
+  import VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate;
+  
   // Parameters
   parameter SIunits.Position upper_fore_i[3] "Upper control arm fore inboard joint, expressed in chassis frame" annotation(
     Dialog(group = "Geometry"));
@@ -32,18 +35,14 @@ partial model DoubleWishboneBase
   parameter SIunits.Angle static_alpha "Static toe angle, in deg, mirrored and consistent with SAE J670 Z-up coordinates (left side)" annotation(
     Dialog(group = "Geometry"));
   
-  replaceable parameter VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate unsprung_mass constrainedby VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate annotation(
-    Dialog(group = "Mass"),
-    choicesAllMatching = true);
-  replaceable parameter VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate uca_mass constrainedby VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate annotation(
-    Dialog(group = "Mass"),
-    choicesAllMatching = true);
-  replaceable parameter VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate lca_mass constrainedby VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate annotation(
-    Dialog(group = "Mass"),
-    choicesAllMatching = true);
-  replaceable parameter VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate tie_mass constrainedby VehicleDynamics.Resources.Records.TEMPLATES.BodyTemplate annotation(
-    Dialog(group = "Mass"),
-    choicesAllMatching = true);
+  parameter BodyTemplate unsprung_mass "Unsprung mass" annotation(
+    Dialog(tab = "Mass Properties", group = "Wheel Properties"));
+  parameter BodyTemplate uca_mass "Upper control arm mass" annotation(
+    Dialog(tab = "Mass Properties", group = "UCA Properties"));
+  parameter BodyTemplate lca_mass "Lower control arm mass" annotation(
+    Dialog(tab = "Mass Properties", group = "LCA Properties"));
+  parameter BodyTemplate tie_mass "Tie rod mass" annotation(
+    Dialog(tab = "Mass Properties", group = "Tie Properties"));
   
   // Visual parameters
   parameter SIunits.Length link_diameter annotation(
