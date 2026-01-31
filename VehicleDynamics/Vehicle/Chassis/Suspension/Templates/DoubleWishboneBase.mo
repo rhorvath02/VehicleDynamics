@@ -9,6 +9,9 @@ partial model DoubleWishboneBase
   import Modelica.Math.Vectors.norm;
 
   // Parameters
+  parameter String side "Side of vehicle, Left/Right" annotation(
+    Dialog(group = "Geometry"));
+  
   parameter SIunits.Position upper_fore_i[3] "Upper control arm fore inboard joint, expressed in chassis frame" annotation(
     Dialog(group = "Geometry"));
   parameter SIunits.Position upper_aft_i[3] "Upper control arm aft inboard joint, expressed in chassis frame" annotation(
@@ -246,6 +249,14 @@ protected
     Placement(transformation(origin = {90, -90}, extent = {{-10, -10}, {10, 10}})));
 
 equation
+  if side == "Left" then
+    connect(prismatic_rack.frame_b, sphericalSpherical.frame_a);
+    connect(sphericalSpherical.frame_b, upright.tie_frame);
+  else
+    connect(prismatic_rack.frame_b, sphericalSpherical.frame_b);
+    connect(sphericalSpherical.frame_a, upright.tie_frame);
+  end if;
+  
   connect(tie_i_frame, prismatic_rack.frame_a) annotation(
     Line(points = {{100, 0}, {80, 0}}));
   connect(upright.mass_frame, fixedTranslation.frame_a) annotation(
