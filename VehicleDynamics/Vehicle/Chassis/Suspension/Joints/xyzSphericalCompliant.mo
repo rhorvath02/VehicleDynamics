@@ -5,10 +5,8 @@ model xyzSphericalCompliant
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
   import Modelica.SIunits;
-  
   // Kinematic elements
   extends Modelica.Mechanics.MultiBody.Interfaces.PartialTwoFrames;
-  
   // User parameters
   parameter Boolean animation = true "Show sphere in animation";
   parameter SIunits.TranslationalSpringConstant trans_x_stiffness = 1e9 "Translational x-stiffness";
@@ -21,7 +19,6 @@ model xyzSphericalCompliant
   
   parameter SIunits.Length diameter = 0.825*0.0254 "Diameter of bearing";
   parameter SIunits.Mass mass = 2.48e-3 "Mass of bearing";
-  
   // Internal force and torque
   Modelica.Blocks.Sources.RealExpression force_expression[3](y = -force_internal) annotation(
     Placement(transformation(origin = {-16, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
@@ -32,31 +29,26 @@ model xyzSphericalCompliant
   Modelica.Mechanics.MultiBody.Forces.Internal.BasicTorque basic_torque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameAB.world)  annotation(
     Placement(transformation(origin = {30, 0}, extent = {{10, -10}, {-10, 10}}, rotation = -180)));
 
-  // Visualization
-  Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_a(shapeType = "sphere", length = diameter, width = diameter, height = diameter, animation = animation, r_shape = {-diameter/2, 0, 0}, color = {255, 0, 0}) annotation(
+// Visualization
+  Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_a(shapeType = "sphere", length = diameter, width = diameter, height = diameter, animation = animation, r_shape = {-diameter/2, 0, 0}, color = Modelica.Mechanics.MultiBody.Types.Defaults.JointColor) annotation(
     Placement(transformation(origin = {-70, 20}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_b(animation = animation, height = diameter, length = diameter, r_shape = {-diameter/2, 0, 0}, shapeType = "sphere", width = diameter, color = {255, 0, 0}) annotation(
+  Modelica.Mechanics.MultiBody.Visualizers.FixedShape shape_b(animation = animation, height = diameter, length = diameter, r_shape = {-diameter/2, 0, 0}, shapeType = "sphere", width = diameter, color = Modelica.Mechanics.MultiBody.Types.Defaults.JointColor) annotation(
     Placement(transformation(origin = {70, 20}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
 
-  // Force and torque variables
+// Force and torque variables
   Real force_internal[3];
   Real torque_internal[3];
   
   SIunits.Position r_rel[3](start = {0, 0, 0}) "Spring elongation vector (state)";
   SIunits.Position v_rel[3](start = {0, 0, 0}) "Derivative of spring elongation vector";
-  Modelica.Mechanics.MultiBody.Parts.Body body(r_CM = {0, 0, 0}, m = mass, animation = false)  annotation(
-    Placement(transformation(origin = {-70, -50}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Interfaces.ZeroPosition zero_position annotation(
     Placement(transformation(origin = {50, -70}, extent = {{-10, -10}, {10, 10}})));
-
 equation
   r_rel = frame_b.r_0 - frame_a.r_0;
-  v_rel = der(r_rel);
-  force_internal = {trans_x_stiffness * r_rel[1] + trans_x_damping * v_rel[1], trans_y_stiffness * r_rel[2] + trans_y_damping * v_rel[2], trans_z_stiffness * r_rel[3] + trans_z_damping * v_rel[3]};
-  
-  // No torque applied in spherical joint
+  der(r_rel) = v_rel;
+  force_internal = {trans_x_stiffness*r_rel[1] + trans_x_damping*v_rel[1], trans_y_stiffness*r_rel[2] + trans_y_damping*v_rel[2], trans_z_stiffness*r_rel[3] + trans_z_damping*v_rel[3]};
+// No torque applied in spherical joint
   torque_internal = {0, 0, 0};
-  
   connect(shape_a.frame_a, frame_a) annotation(
     Line(points = {{-80, 20}, {-80, 19.5}, {-100, 19.5}, {-100, 0}}, color = {95, 95, 95}));
   connect(shape_b.frame_a, frame_b) annotation(
@@ -73,8 +65,6 @@ equation
     Line(points = {{-16, -38}, {-16, -32}}, color = {0, 0, 127}, thickness = 0.5));
   connect(torque_expression.y, basic_torque.torque) annotation(
     Line(points = {{24, -38}, {24, -12}}, color = {0, 0, 127}, thickness = 0.5));
-  connect(body.frame_a, frame_a) annotation(
-    Line(points = {{-80, -50}, {-100, -50}, {-100, 0}}, color = {95, 95, 95}));
   connect(zero_position.frame_resolve, basic_torque.frame_resolve) annotation(
     Line(points = {{40, -70}, {34, -70}, {34, -10}}, color = {95, 95, 95}));
   connect(zero_position.frame_resolve, basic_force.frame_resolve) annotation(

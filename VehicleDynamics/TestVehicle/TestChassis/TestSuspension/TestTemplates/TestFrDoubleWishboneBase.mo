@@ -1,4 +1,4 @@
-within VehicleDynamics.TestVehicle.TestChassis.TestSuspension;
+within VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestTemplates;
 
 model TestFrDoubleWishboneBase
   // Modelica linalg
@@ -12,7 +12,7 @@ model TestFrDoubleWishboneBase
   inner Modelica.Mechanics.MultiBody.World world(n = {0, 0, -1}) annotation(
     Placement(transformation(origin = {-140, -90}, extent = {{-10, -10}, {10, 10}})));
   
-  VehicleDynamics.Vehicle.Chassis.Suspension.FrDoubleWishboneBase frDoubleWishboneBase annotation(
+  VehicleDynamics.Vehicle.Chassis.Suspension.Templates.FrDoubleWishbone frDoubleWishboneBase annotation(
     Placement(transformation(origin = {1.42109e-14, 0}, extent = {{-45, -45}, {45, 45}})));
   
 protected
@@ -39,7 +39,7 @@ protected
   // Torque application to fully define system
   Modelica.Blocks.Sources.Ramp torque_ramp(duration = 1, height = 0, startTime = 0) annotation(
     Placement(transformation(origin = {-140, 32}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Blocks.Sources.Ramp steer_ramp(duration = 1, height = 1.25*0.0254, startTime = 0) annotation(
+  Modelica.Blocks.Sources.Ramp steer_ramp(duration = 1, height = 0.75*0.0254, startTime = 0) annotation(
     Placement(transformation(origin = {-70, 80}, extent = {{-10, -10}, {10, 10}})));
 
 equation

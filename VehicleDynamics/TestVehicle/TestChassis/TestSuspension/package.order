@@ -1,7 +1,7 @@
 TestTemplates
 TestLinkages
 TestJoints
-TestFrDoubleWishboneBase
-TestRrDoubleWishboneBase
-TestFrAxleBase
-TestRrAxleBase
+TestFrRigidAxleBellcrank
+TestRrRigidAxleBellcrank
+TestFrAxleBellcrank
+TestRrAxleBellcrank

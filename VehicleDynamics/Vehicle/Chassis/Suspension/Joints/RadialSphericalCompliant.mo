@@ -1,6 +1,6 @@
 within VehicleDynamics.Vehicle.Chassis.Suspension.Joints;
 
-model SphericalCompliant
+model RadialSphericalCompliant
   import Modelica.Mechanics.MultiBody.Frames;
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
@@ -115,4 +115,4 @@ equation
           extent={{-150,110},{150,70}},
           textString="%name",
           textColor={0,0,255})}));
-end SphericalCompliant;
+end RadialSphericalCompliant;

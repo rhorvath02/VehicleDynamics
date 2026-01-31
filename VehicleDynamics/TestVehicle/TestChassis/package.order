@@ -1,4 +1,5 @@
 TestBody
-TestTires
 TestSuspension
+TestTires
+TestRigidChassisBase
 TestChassisBase

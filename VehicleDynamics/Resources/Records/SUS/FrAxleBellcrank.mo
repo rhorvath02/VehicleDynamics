@@ -1,10 +1,10 @@
+within VehicleDynamics.Resources.Records.SUS;
+
 // ============================================================================
 // AUTO-GENERATED FILE — DO NOT EDIT
-// Source: /home/rhorvath2002/Documents/Github/VehicleDynamics/VehicleDynamics/Resources/JSONs/SUS/tune.json
+// Source: /home/rober/shared/VehicleDynamics/VehicleDynamics/Resources/JSONs/SUS/tune.json
 // Tool: convert_suspension_json_to_record.py
 // ============================================================================
-
-within VehicleDynamics.Resources.Records.SUS;
 
 record FrAxleBellcrank
   "Auto-generated suspension parameter record"

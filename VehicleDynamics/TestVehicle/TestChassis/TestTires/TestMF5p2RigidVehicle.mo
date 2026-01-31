@@ -30,7 +30,7 @@ protected
   Modelica.Blocks.Sources.Ramp RR_torque(height = 50, duration = 1, startTime = 1) annotation(
     Placement(transformation(origin = {90, 10}, extent = {{10, -10}, {-10, 10}})));
 
-  // Ground interfaces
+// Ground interfaces
   Modelica.Mechanics.MultiBody.Parts.Fixed FL_fixed(r = {1, 1, 0}, animation = false)  annotation(
     Placement(transformation(origin = {-90, 40}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.Fixed FR_fixed(r = {1, -1, 0}, animation = false)  annotation(
@@ -145,5 +145,5 @@ equation
   connect(FR_torque.y, FR_tire.hub_torque) annotation(
     Line(points = {{80, 100}, {72, 100}, {72, 92}}, color = {0, 0, 127}));
   annotation(
-    experiment(StartTime = 0, StopTime = 10, Tolerance = 1e-08, Interval = 0.002));
+    experiment(StartTime = 0, StopTime = 15, Tolerance = 1e-06, Interval = 0.002));
 end TestMF5p2RigidVehicle;

@@ -1,15 +1,18 @@
 within VehicleDynamics.Vehicle.Chassis.Suspension.Linkages;
-model Bellcrank3pu1p  
+
+model Bellcrank3pu1p
   import Modelica.Math.Vectors.normalize;
   import Modelica.SIunits;
-  
-  parameter SIunits.Position pivot[3] "Pivot coordinates" annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position pivot_ref[3] "Second point on pivot axis" annotation(Dialog(group="Geometry"));
-  
-  parameter SIunits.Position pickup_1[3] "First pickup coordinates" annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position pickup_2[3] "Second pickup coordinates" annotation(Dialog(group="Geometry"));
-  parameter SIunits.Position pickup_3[3] "Third pickup coordinates" annotation(Dialog(group="Geometry"));
-  
+  parameter SIunits.Position pivot[3] "Pivot coordinates" annotation(
+    Dialog(group = "Geometry"));
+  parameter SIunits.Position pivot_ref[3] "Second point on pivot axis" annotation(
+    Dialog(group = "Geometry"));
+  parameter SIunits.Position pickup_1[3] "First pickup coordinates" annotation(
+    Dialog(group = "Geometry"));
+  parameter SIunits.Position pickup_2[3] "Second pickup coordinates" annotation(
+    Dialog(group = "Geometry"));
+  parameter SIunits.Position pickup_3[3] "Third pickup coordinates" annotation(
+    Dialog(group = "Geometry"));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a mount_frame annotation(
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}, rotation = 0)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b pickup_1_frame annotation(
@@ -18,20 +21,16 @@ model Bellcrank3pu1p
     Placement(transformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}})));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b pickup_3_frame annotation(
     Placement(transformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90), iconTransformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
-  
-  Modelica.Mechanics.MultiBody.Joints.Revolute revolute(n = normalize(pivot_ref - pivot), animation = false)  annotation(
+  Modelica.Mechanics.MultiBody.Joints.Revolute revolute(n = normalize(pivot_ref - pivot), animation = false, phi(displayUnit = "rad")) annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{-10, -10}, {10, 10}})));
-  
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation first_pickup(r = pickup_1 - pivot)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation first_pickup(r = pickup_1 - pivot) annotation(
     Placement(transformation(origin = {-40, 0}, extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation second_pickup(r = pickup_2 - pickup_1)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation second_pickup(r = pickup_2 - pickup_1) annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation third_pickup(r = pickup_3 - pickup_2)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation third_pickup(r = pickup_3 - pickup_2) annotation(
     Placement(transformation(origin = {40, 0}, extent = {{-10, -10}, {10, 10}})));
-  
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation visual_loop(r = pivot - pickup_3)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation visual_loop(r = pivot - pickup_3) annotation(
     Placement(transformation(origin = {30, 20}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
-
 equation
   connect(mount_frame, revolute.frame_a) annotation(
     Line(points = {{-100, 0}, {-80, 0}}));

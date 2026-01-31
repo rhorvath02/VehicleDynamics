@@ -2,7 +2,7 @@ Experiments
 Templates
 Linkages
 Joints
-FrDoubleWishboneBase
-RrDoubleWishboneBase
-FrAxleBase
-RrAxleBase
+FrRigidAxleBellcrank
+RrRigidAxleBellcrank
+FrAxleBellcrank
+RrAxleBellcrank

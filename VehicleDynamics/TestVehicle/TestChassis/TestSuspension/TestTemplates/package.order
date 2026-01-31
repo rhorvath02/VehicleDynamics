@@ -1,2 +1,8 @@
-TestFrAxleBellcrank
-TestRrAxleBellcrank
+TestFrRigidDoubleWishbone
+TestRrRigidDoubleWishbone
+TestFrDoubleWishboneBase
+TestRrDoubleWishboneBase
+TestFrRigidAxle
+TestRrRigidAxle
+TestFrAxleBase
+TestRrAxleBase

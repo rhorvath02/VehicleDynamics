@@ -23,9 +23,8 @@ model Link
     Placement(transformation(origin = {-60, 0}, extent = {{-10, -10}, {10, 10}})));
   Joints.xyzSphericalCompliant from_link(r_rel(each fixed = true), diameter = joint_diameter)  annotation(
     Placement(transformation(origin = {60, 0}, extent = {{-10, -10}, {10, 10}})));
-
   // Link
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = outboard - inboard, width = link_diameter, height = link_diameter)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = outboard - inboard, width = link_diameter, height = link_diameter) annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
 equation
   connect(frame_a, to_link.frame_a) annotation(

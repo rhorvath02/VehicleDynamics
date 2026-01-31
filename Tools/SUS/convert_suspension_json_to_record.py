@@ -43,26 +43,16 @@ RECORD_SCHEMAS = {
     "Base": [
         # Upper
         "upper_fore_i",
-        "upper_fore_i_c",
-        "upper_fore_i_d",
         "upper_aft_i",
-        "upper_aft_i_c",
-        "upper_aft_i_d",
         "upper_outboard",
 
         # Lower
         "lower_fore_i",
-        "lower_fore_i_c",
-        "lower_fore_i_d",
         "lower_aft_i",
-        "lower_aft_i_c",
-        "lower_aft_i_d",
         "lower_outboard",
 
         # Tie
         "tie_inboard",
-        "tie_inboard_c",
-        "tie_inboard_d",
         "tie_outboard",
 
         # Tire
@@ -103,26 +93,16 @@ def extract_axle_left(data: dict, axle: str) -> dict:
     return {
         # Upper
         "upper_fore_i": al["upper"]["fore_i"],
-        "upper_fore_i_c": al["upper"]["fore_i_c"],
-        "upper_fore_i_d": al["upper"]["fore_i_d"],
         "upper_aft_i": al["upper"]["aft_i"],
-        "upper_aft_i_c": al["upper"]["aft_i_c"],
-        "upper_aft_i_d": al["upper"]["aft_i_d"],
         "upper_outboard": al["upper"]["outboard"],
 
         # Lower
         "lower_fore_i": al["lower"]["fore_i"],
-        "lower_fore_i_c": al["lower"]["fore_i_c"],
-        "lower_fore_i_d": al["lower"]["fore_i_d"],
         "lower_aft_i": al["lower"]["aft_i"],
-        "lower_aft_i_c": al["lower"]["aft_i_c"],
-        "lower_aft_i_d": al["lower"]["aft_i_d"],
         "lower_outboard": al["lower"]["outboard"],
 
         # Tie
         "tie_inboard": al["tie"]["inboard"],
-        "tie_inboard_c": al["tie"]["inboard_c"],
-        "tie_inboard_d": al["tie"]["inboard_d"],
         "tie_outboard": al["tie"]["outboard"],
 
         # Bellcrank
@@ -155,13 +135,13 @@ def emit_record(
     extends: str | None = None,
 ):
     lines = [
+        "within VehicleDynamics.Resources.Records.SUS;",
+        "",
         "// ============================================================================",
         "// AUTO-GENERATED FILE — DO NOT EDIT",
         f"// Source: {src}",
         "// Tool: convert_suspension_json_to_record.py",
         "// ============================================================================",
-        "",
-        "within VehicleDynamics.Resources.Records.SUS;",
         "",
         f"record {name}",
         '  "Auto-generated suspension parameter record"',

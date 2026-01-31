@@ -5,42 +5,36 @@ model MF5p2Tire
   import VehicleDynamics.Utilities.Math.Vector.angle_between;
   import VehicleDynamics.Utilities.Math.Vector.cross;
   import VehicleDynamics.Utilities.Math.Vector.dot;
-  
   // Modelica linalg
   import Modelica.Math.Vectors.normalize;
   import Modelica.Math.Vectors.norm;
-  
   // Modelica units
   import Modelica.SIunits;
-  
   // MF52 functions
+  import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Records.Mz_record;
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Fx_eval;
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Fy_eval;
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Mx_eval;
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.My_eval;
   import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Mz_eval;
-  
   // Parameters - Tire defn
   final parameter VehicleDynamics.Resources.Records.TIRES.MF52_Tire tire "MF52 tire parameter record" annotation(
     );
-  
   // Parameters - Dimensions
   parameter SIunits.Length rim_width = 7*0.0254 "Rim width" annotation(
     Dialog(group = "Dimensions"));
   parameter SIunits.Length rim_R0 = 5*0.0254 "Rim unloaded static radius" annotation(
     Dialog(group = "Dimensions"));
-  
   // Parameters - Mass properties
   parameter SIunits.Inertia wheel_inertia[3, 3] = [0, 0, 0; 0, 0.2, 0; 0, 0, 0] "Wheel + hub inertia tensor (y-axis as spindle)";
   parameter SIunits.Mass wheel_m = 1 "" annotation(
     Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
 
-  // General .tir parameters
+// General .tir parameters
   final parameter Real R0 = tire.UNLOADED_RADIUS "Unloaded tire radius";
   final parameter Real tire_c = tire.VERTICAL_STIFFNESS "Wheel vertical stiffness";
   final parameter Real tire_d = tire.VERTICAL_DAMPING "Wheel vertical damping";
   final parameter Real FNOMIN = tire.FNOMIN "Nominal normal load, FZ0";
-  
   // Pure longitudinal slip coefficients
   parameter Real PCX1 = tire.PCX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
@@ -72,7 +66,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
   parameter Real PVX2 = tire.PVX2 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fx"));
-  
   // Combined longitudinal slip coefficients
   parameter Real RBX1 = tire.RBX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
@@ -86,7 +79,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
   parameter Real RHX1 = tire.RHX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fx"));
-  
   // Pure lateral slip coefficients
   parameter Real PCY1 = tire.PCY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
@@ -124,7 +116,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
   parameter Real PVY4 = tire.PVY4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Fy"));
-  
   // Combined lateral slip coefficients
   parameter Real RBY1 = tire.RBY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
@@ -154,7 +145,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
   parameter Real RVY6 = tire.RVY6 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Fy"));
-  
   // Overturning coefficients
   parameter Real QSX1 = tire.QSX1 annotation(
     Dialog(tab = "Tire Coeffs", group = "All Mx"));
@@ -162,7 +152,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "All Mx"));
   parameter Real QSX3 = tire.QSX3 annotation(
     Dialog(tab = "Tire Coeffs", group = "All Mx"));
-  
   // Rolling resistance coefficients
   parameter Real QSY1 = tire.QSY1 annotation(
     Dialog(tab = "Tire Coeffs", group = "All My"));
@@ -172,7 +161,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "All My"));
   parameter Real QSY4 = tire.QSY4 annotation(
     Dialog(tab = "Tire Coeffs", group = "All My"));
-  
   // Pure aligning coefficients
   parameter Real QBZ1 = tire.QBZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
@@ -224,7 +212,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
   parameter Real QHZ4 = tire.QHZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Pure Mz"));
-  
   // Combined aligning coefficients
   parameter Real SSZ1 = tire.SSZ1 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
@@ -234,7 +221,6 @@ model MF5p2Tire
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
   parameter Real SSZ4 = tire.SSZ4 annotation(
     Dialog(tab = "Tire Coeffs", group = "Combined Mz"));
-  
   // Scaling coefficients
   parameter Real LFZO = tire.LFZO annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
@@ -299,13 +285,13 @@ model MF5p2Tire
   parameter Real LIP = tire.LIP annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
 
-  // Frames
+// Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a cp_frame annotation(
     Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b chassis_frame annotation(
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
 
-  // 2DOF Tire physics
+// 2DOF Tire physics
   TirePhysics.Tire2DOF tire2DOF(final R0 = R0,
                                 final rim_width = rim_width,
                                 final rim_R0 = rim_R0,
@@ -314,9 +300,8 @@ model MF5p2Tire
                                 final wheel_m = wheel_m,
                                 final wheel_inertia = wheel_inertia) annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
-  
   // Torque input
-  Modelica.Mechanics.MultiBody.Forces.Torque input_torque annotation(
+  Modelica.Mechanics.MultiBody.Forces.Torque input_torque(animation = false)  annotation(
     Placement(transformation(origin = {22, 30}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   Modelica.Blocks.Interfaces.RealInput hub_torque annotation(
     Placement(transformation(origin = {16, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90), iconTransformation(origin = {25, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90)));
@@ -327,42 +312,38 @@ model MF5p2Tire
   Real kappa;
   Real gamma;
 
-  // Loads / forces
+// Loads / forces
   Real Fx "Longitudinal force in global frame";
   Real Fy "Lateral force in global frame";
   Real Fz "Normal load in global frame";
   Real Mx "Overturning moment in global frame";
   Real My "Rolling resistance in global frame";
-  Real Mz "Aligning moment in global frame";
   
+  Mz_record Mz_out "Mz output record";
+  Real Mz "Aligning moment in global frame";
   Real pneu_trail "Pneumatic trail";
   Real pneu_scrub "Pneumatic scrub";
   
   // Relaxation lengths
   Real sigma_kappa = 0.05;
   Real sigma_alpha = 0.3;
-  Modelica.Mechanics.MultiBody.Parts.PointMass wheel_body(m = 1e-3)  annotation(
-    Placement(transformation(origin = {30, -70}, extent = {{-10, -10}, {10, 10}})));
 protected
   // Numerical stability
   parameter Real v_min = 0.1 "Low-speed threshold for force gating (m/s)" annotation(Dialog(group = "Numerical Conditions"));
   parameter Real eps = 1e-6 "Small constant to prevent division by zero" annotation(Dialog(group = "Numerical Conditions"));
   // Diagnostics
   Real P_contact;
-    
-  // Off-axis torque input
+    // Off-axis torque input
   Modelica.Blocks.Sources.RealExpression zeroX(y = 0)  annotation(
     Placement(transformation(origin = {-10, 60}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression zeroZ(y = 0)  annotation(
     Placement(transformation(origin = {-10, 80}, extent = {{-10, -10}, {10, 10}})));
-  
   // MF52 load application
   Modelica.Mechanics.MultiBody.Forces.WorldForce force(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world, animation = true) annotation(
     Placement(transformation(origin = {-30, -70}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Forces.WorldTorque torque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)  annotation(
     Placement(transformation(origin = {-30, -40}, extent = {{-10, -10}, {10, 10}})));
-    
-  // World / ground unit vectors
+    // World / ground unit vectors
   Real[3] e_z = {0, 0, 1};
   Real[3] ez_w;
   Real[3] e_xw;
@@ -371,149 +352,137 @@ protected
   Real[3] M_world;
   Real[3] e_spin;
 
-  // Velocity vectors
+// Velocity vectors
   Real[3] v_cp;
   Real[3] v_g;
-  
   // Velocity components
   Real Vx;
   Real Vy;
-  
   // Protected loads
   Real[3] F_world;
-  
   // Long and lat slip velocities
   Real Vsx;
   Real Vsy;
-  
   // Low-speed gating
   // Real w_speed;
-  
   // Transient slip states
   Real u(start = 0, fixed = true) "Longitudinal slip state";
   Real v(start = 0, fixed = true) "Lateral slip state";
+public
+  Modelica.Mechanics.MultiBody.Parts.PointMass pointMass(m = 1e-3, animation = false) annotation(
+    Placement(transformation(origin = {30, -70}, extent = {{-10, -10}, {10, 10}})));
+
+algorithm
+  Fx := MF52.Fx_eval(Fz, alpha, kappa, gamma,
+                     PCX1, PDX1, PDX2, PDX3, PEX1,
+                     PEX2, PEX3, PEX4, PKX1, PKX2,
+                     PKX3, PHX1, PHX2, PVX1, PVX2,
+                     RBX1, RBX2, RCX1, REX1, REX2,
+                     RHX1, LFZO, LCX, LMUX, LEX,
+                     LKX, LHX, LVX, LXAL, LGAX,
+                     LCY, LMUY, LEY, LKY, LHY, LVY,
+                     LGAY, LKYG, LTR, LRES, LCZ,
+                     LGAZ, LYKA, LVYKA, LS, LSGKP,
+                     LSGAL, LGYR, LMX, LVMX, LMY,
+                     LIP, FNOMIN, R0);
+  Fy := MF52.Fy_eval(Fz, alpha, kappa, gamma,
+                     PCY1, PDY1, PDY2, PDY3, PEY1,
+                     PEY2, PEY3, PEY4, PKY1, PKY2,
+                     PKY3, PHY1, PHY2, PHY3, PVY1,
+                     PVY2, PVY3, PVY4, RBY1, RBY2,
+                     RBY3, RCY1, REY1, REY2, RHY1,
+                     RHY2, RVY1, RVY2, RVY3, RVY4,
+                     RVY5, RVY6, LFZO, LCX, LMUX,
+                     LEX, LKX, LHX, LVX, LXAL,
+                     LGAX, LCY, LMUY, LEY, LKY,
+                     LHY, LVY, LGAY, LKYG, LTR,
+                     LRES, LCZ, LGAZ, LYKA, LVYKA,
+                     LS, LSGKP, LSGAL, LGYR, LMX,
+                     LVMX, LMY, LIP, FNOMIN, R0);
+  Mx := MF52.Mx_eval(Fz, Fy, alpha, kappa, gamma,
+                     QSX1, QSX2, QSX3, LFZO, LCX,
+                     LMUX, LEX, LKX, LHX, LVX, LXAL,
+                     LGAX, LCY, LMUY, LEY, LKY, LHY,
+                     LVY, LGAY, LKYG, LTR, LRES, LCZ,
+                     LGAZ, LYKA, LVYKA, LS, LSGKP,
+                     LSGAL, LGYR, LMX, LVMX, LMY,
+                     LIP, FNOMIN, R0);
+  My := MF52.My_eval(Fz, alpha, kappa, gamma,
+                     QSY1, QSY2, QSY3, QSY4, PKX1,
+                     PKX2, PKX3, PHX1, PHX2, PVX1,
+                     PVX2, LFZO, LCX, LMUX, LEX, LKX,
+                     LHX, LVX, LXAL, LGAX, LCY, LMUY,
+                     LEY, LKY, LHY, LVY, LGAY, LKYG,
+                     LTR, LRES, LCZ, LGAZ, LYKA, LVYKA,
+                     LS, LSGKP, LSGAL, LGYR, LMX, LVMX,
+                     LMY, LIP, FNOMIN, R0);
+  Mz_out := MF52.Mz_eval(Fz, Fx, Fy, alpha, kappa, gamma,
+                         QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ9,
+                         QBZ10, QCZ1, QDZ1, QDZ2, QDZ3, QDZ4,
+                         QDZ6, QDZ7, QDZ8, QDZ9, QEZ1, QEZ2,
+                         QEZ3, QEZ4, QEZ5, QHZ1, QHZ2, QHZ3,
+                         QHZ4, SSZ1, SSZ2, SSZ3, SSZ4, PCY1,
+                         PDY1, PDY2, PDY3, PKY1, PKY2, PKY3,
+                         PHY1, PHY2, PHY3, PVY1, PVY2, PVY3,
+                         PVY4, RVY1, RVY2, RVY3, RVY4, RVY5,
+                         RVY6, PKX1, PKX2, PKX3, LFZO, LCX, LMUX,
+                         LEX, LKX, LHX, LVX, LXAL, LGAX, LCY,
+                         LMUY, LEY, LKY, LHY, LVY, LGAY, LKYG,
+                         LTR, LRES, LCZ, LGAZ, LYKA, LVYKA, LS,
+                         LSGKP, LSGAL, LGYR, LMX, LVMX, LMY, LIP,
+                         FNOMIN, R0);
+    Mz := Mz_out.Mz;
+    pneu_trail := Mz_out.pneu_trail;
+    pneu_scrub := Mz_out.pneu_scrub;
 
 equation
-  // Normal load
+// Normal load
   Fz = max(0, cp_frame.f[3]);
-
-  // World basis
+// World basis
   e_xw = Modelica.Mechanics.MultiBody.Frames.resolve1(cp_frame.R, {1, 0, 0});
   e_xg = normalize({e_xw[1], e_xw[2], 0});
   e_yg = normalize(cross(e_z, e_xg));
-  
-  // Inclination angle
-  ez_w = tire2DOF.hub_frame.R.T[:,3];
-  gamma = Modelica.Math.asin( max(-1.0, min(1.0, ez_w[2])) );
-
-  // Contact velocity
+// Inclination angle
+  ez_w = tire2DOF.hub_frame.R.T[:, 3];
+  gamma = Modelica.Math.asin(max(-1.0, min(1.0, ez_w[2])));
+// Contact velocity
   v_cp = tire2DOF.wheel_vel.v;
-  v_g  = {v_cp[1], v_cp[2], 0};
-
+  v_g = {v_cp[1], v_cp[2], 0};
   Vx = dot(v_g, e_xg);
   Vy = dot(v_g, e_yg);
-  
-  // Lateral slip
+// Lateral slip
   Vsy = -Vy;
-  der(v) + (abs(Vx)/sigma_alpha) * v = Vsy;
-  tan(alpha) = v / sigma_alpha;
+  der(v) + (abs(Vx)/sigma_alpha)*v = Vsy;
+
+  if time < 1e-2 then
+    alpha = 0;
+  else
+    alpha = atan(v/sigma_alpha);
+  end if;
+// Kinematic slip definition below
+// alpha = atan2(-Vy, abs(Vx));
+// Longitudinal slip
+  Vsx = Vx - R0*tire2DOF.hub_axis.w;
+  der(u) + (abs(Vx)/sigma_kappa)*u = -Vsx;
+
+  if time < 1e-2 then
+    kappa = 0;
+  else
+    kappa = u/sigma_kappa;
+  end if;
+// Low-speed gating
+// w_speed = abs(Vx) / (abs(Vx) + v_min);
   
-  // Kinematic slip definition below
-  // alpha = atan2(-Vy, abs(Vx));
-  
-  // Longitudinal slip
-  Vsx = Vx - R0 * tire2DOF.hub_axis.w;
-  der(u) + (abs(Vx)/sigma_kappa) * u = -Vsx;
-  kappa = u / sigma_kappa;
-  
-  // Low-speed gating
-  // w_speed = abs(Vx) / (abs(Vx) + v_min);
-  
-  // MF52 calls
-  Fx =
-  MF52.Fx_eval(
-    Fz, alpha, kappa, gamma,
-    PCX1, PDX1, PDX2, PDX3,
-    PEX1, PEX2, PEX3, PEX4,
-    PKX1, PKX2, PKX3,
-    PHX1, PHX2,
-    PVX1, PVX2,
-    RBX1, RBX2, RCX1, REX1, REX2, RHX1,
-    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
-    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
-    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
-    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
-    LMX, LVMX, LMY, LIP, FNOMIN, R0);
-  
-  Fy =
-  MF52.Fy_eval(
-    Fz, alpha, kappa, gamma,
-    PCY1, PDY1, PDY2, PDY3,
-    PEY1, PEY2, PEY3, PEY4,
-    PKY1, PKY2, PKY3,
-    PHY1, PHY2, PHY3,
-    PVY1, PVY2, PVY3, PVY4,
-    RBY1, RBY2, RBY3,
-    RCY1, REY1, REY2, RHY1, RHY2,
-    RVY1, RVY2, RVY3, RVY4, RVY5, RVY6,
-    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
-    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
-    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
-    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
-    LMX, LVMX, LMY, LIP, FNOMIN, R0);
-    
-  Mx =
-  MF52.Mx_eval(
-    Fz, Fy, alpha, kappa, gamma,
-    QSX1, QSX2, QSX3,
-    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
-    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
-    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
-    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
-    LMX, LVMX, LMY, LIP, FNOMIN, R0);
-  
-  My = 
-  MF52.My_eval(
-    Fz, alpha, kappa, gamma,
-    QSY1, QSY2, QSY3, QSY4,
-    PKX1, PKX2, PKX3, PHX1,
-    PHX2, PVX1, PVX2,
-    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
-    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
-    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
-    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
-    LMX, LVMX, LMY, LIP, FNOMIN, R0);
-    
-  (Mz, pneu_trail, pneu_scrub) = MF52.Mz_eval(
-    Fz, Fx, Fy, alpha, kappa, gamma,
-    QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ9, QBZ10,
-    QCZ1, QDZ1, QDZ2, QDZ3, QDZ4, QDZ6,
-    QDZ7, QDZ8, QDZ9, QEZ1, QEZ2, QEZ3,
-    QEZ4, QEZ5, QHZ1, QHZ2, QHZ3, QHZ4,
-    SSZ1, SSZ2, SSZ3, SSZ4,
-    PCY1, PDY1, PDY2, PDY3, PKY1, PKY2, PKY3, 
-    PHY1, PHY2, PHY3, PVY1, PVY2, PVY3, PVY4,
-    RVY1, RVY2, RVY3, RVY4, RVY5, RVY6,
-    PKX1, PKX2, PKX3,
-    LFZO, LCX, LMUX, LEX, LKX, LHX, LVX,
-    LXAL, LGAX, LCY, LMUY, LEY, LKY, LHY,
-    LVY, LGAY, LKYG, LTR, LRES, LCZ, LGAZ,
-    LYKA, LVYKA, LS, LSGKP, LSGAL, LGYR,
-    LMX, LVMX, LMY, LIP, FNOMIN, R0);
-  
-  // Apply force
+// Apply force
   F_world = Fx*e_xg + Fy*e_yg;
   force.force = F_world;
-  
-  // Apply moment
+// Apply moment
   e_spin = Modelica.Mechanics.MultiBody.Frames.resolve1(tire2DOF.hub_frame.R, {0, 1, 0});
-  M_world = Mx * e_xg + My * e_spin + Mz * e_z;
+  M_world = Mx*e_xg + My*e_spin + Mz*e_z;
   torque.torque = M_world;
-  
-  // Diagnostics
+// Diagnostics
   P_contact = dot(F_world, v_g);
-  
-  // Connections
+// Connections
   connect(cp_frame, tire2DOF.cp_frame) annotation(
     Line(points = {{0, -100}, {0, -10}}));
   connect(force.frame_b, cp_frame) annotation(
@@ -532,10 +501,9 @@ equation
     Line(points = {{32, 30}, {50, 30}, {50, 0}, {10, 0}}, color = {95, 95, 95}));
   connect(torque.frame_b, cp_frame) annotation(
     Line(points = {{-20, -40}, {0, -40}, {0, -100}}, color = {95, 95, 95}));
-  connect(wheel_body.frame_a, cp_frame) annotation(
+  connect(pointMass.frame_a, cp_frame) annotation(
     Line(points = {{30, -70}, {0, -70}, {0, -100}}, color = {95, 95, 95}));
-
-annotation(
+  annotation(
     Dialog(group = "Mass Properties"));annotation(
   Icon(
   coordinateSystem(extent={{-100,-100},{100,100}}),
@@ -567,33 +535,26 @@ annotation(
           fontSize=12,
           textColor={0,0,0},
           horizontalAlignment=TextAlignment.Center
-        ),
-        // Outer tire
-        Ellipse(
+        ), // Outer tire
+    Ellipse(
           extent={{-90,-90},{90,90}},
           fillPattern=FillPattern.Solid,
           fillColor={40,40,40},
           lineThickness=3
-        ),
-
-        // Inner rim
-        Ellipse(
+        ), // Inner rim
+    Ellipse(
           extent={{-45,-45},{45,45}},
           fillPattern=FillPattern.Solid,
           fillColor={200,200,200},
           lineThickness=2
-        ),
-
-        // Hub
-        Ellipse(
+        ), // Hub
+    Ellipse(
           extent={{-15,-15},{15,15}},
           fillPattern=FillPattern.Solid,
           fillColor={160,160,160},
           lineThickness=2
-        ),
-
-        // Spokes (default black)
-        Line(points={{0,0},{0,45}},   thickness=2),
+        ), // Spokes (default black)
+    Line(points={{0,0},{0,45}},   thickness=2),
         Line(points={{0,0},{0,-45}},  thickness=2),
         Line(points={{0,0},{45,0}},   thickness=2),
         Line(points={{0,0},{-45,0}},  thickness=2),

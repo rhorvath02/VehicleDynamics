@@ -2,11 +2,9 @@ within VehicleDynamics.TestVehicle.TestChassis;
 model TestChassisBase
   inner Modelica.Mechanics.MultiBody.World world(n={0, 0, -1}) annotation(
     Placement(transformation(origin = {-90, -90}, extent = {{-10, -10}, {10, 10}})));
-  
   // Chassis
   VehicleDynamics.Vehicle.Chassis.ChassisBase chassisBase annotation(
     Placement(transformation(extent = {{-20, -20}, {20, 20}})));
-  
   // Wheel torques
   Modelica.Blocks.Sources.Constant FL_torque_in(k = 0) annotation(
     Placement(transformation(origin = {-50, 30}, extent = {{-10, -10}, {10, 10}})));
@@ -15,11 +13,10 @@ model TestChassisBase
   Modelica.Blocks.Sources.Ramp RL_torque_in(height = 100, duration = 3, startTime = 1) annotation(
     Placement(transformation(origin = {-50, -30}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.Ramp RR_torque_in(height = 100, duration = 3, startTime = 1) annotation(
-    Placement(transformation(origin = {50, -30}, extent = {{10, -10}, {-10, 10}}, rotation = -0)));
-  
+    Placement(transformation(origin = {50, -30}, extent = {{10, -10}, {-10, 10}})));
   // Steer input
   Modelica.Blocks.Sources.Ramp steer_input(duration = 2, height = 0.25*0.0254, startTime = 3.5) annotation(
-    Placement(transformation(origin = {-20, 60}, extent = {{-10, -10}, {10, 10}})));
+    Placement(transformation(origin = {-20, 50}, extent = {{-10, -10}, {10, 10}})));
 
   Real a_body[3];
 
@@ -35,7 +32,9 @@ equation
   connect(RR_torque_in.y, chassisBase.RR_torque) annotation(
     Line(points = {{40, -30}, {24, -30}, {24, -13}}, color = {0, 0, 127}));
   connect(steer_input.y, chassisBase.rack_input) annotation(
-    Line(points = {{-8, 60}, {0, 60}, {0, 24}}, color = {0, 0, 127}));
+    Line(points = {{-9, 50}, {0.5, 50}, {0.5, 24}, {0, 24}}, color = {0, 0, 127}));
+  connect(world.frame_b, chassisBase.world_frame) annotation(
+    Line(points = {{-80, -90}, {0, -90}, {0, -20}}, color = {95, 95, 95}));
 
 annotation(
     experiment(StartTime = 0, StopTime = 6, Tolerance = 1e-06, Interval = 0.001),

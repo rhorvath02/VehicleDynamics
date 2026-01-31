@@ -6,21 +6,25 @@ model Upright
   parameter SIunits.Position upper[3] "Upper node coordinates";
   parameter SIunits.Position tie[3] "Tie node coordinates";
   
-  Modelica.Mechanics.MultiBody.Interfaces.Frame_a lower_frame annotation(
+  // Frames
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_a mass_frame annotation(
+    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, 0}, extent = {{-16, -16}, {16, 16}})));
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_b lower_frame annotation(
     Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Interfaces.Frame_a tie_frame annotation(
+  Modelica.Mechanics.MultiBody.Interfaces.Frame_b tie_frame annotation(
     Placement(transformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {100, 0}, extent = {{-16, -16}, {16, 16}})));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b upper_frame annotation(
     Placement(transformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = -90), iconTransformation(origin = {0, 100}, extent = {{-16, -16}, {16, 16}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_to_upper(r = upper - lower)  annotation(
+  
+protected
+  // Fixed translations
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_to_upper(r = upper - lower, animation = false)  annotation(
     Placement(transformation( extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_to_tie(r = tie - lower)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_to_tie(r = tie - lower, animation = false)  annotation(
     Placement(transformation(origin = {50, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
-  Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_to_center(r = (upper + lower)/2 - lower)  annotation(
+  Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_to_center(r = (upper + lower)/2 - lower, animation = false)  annotation(
     Placement(transformation(origin = {-30, -50}, extent = {{10, -10}, {-10, 10}}, rotation = -90)));
-  Modelica.Mechanics.MultiBody.Interfaces.Frame_b mass_frame annotation(
-    Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}}), iconTransformation(origin = {0, 0}, extent = {{-16, -16}, {16, 16}})));
-    
+
 equation
   connect(lower_frame, lower_to_upper.frame_a) annotation(
     Line(points = {{0, -100}, {0, -10}}));

@@ -1,5 +1,7 @@
 within VehicleDynamics.Vehicle.Chassis.Tires.MF52;
+
 function Mz_eval
+  import VehicleDynamics.Vehicle.Chassis.Tires.MF52.Records.Mz_record;
   import Modelica.SIunits;
   
   // Tire inputs
@@ -112,10 +114,8 @@ function Mz_eval
   input Real R0;
 
   // Outputs
-  output SIunits.Force Mz;
-  output SIunits.Length pneu_trail;
-  output SIunits.Length pneu_scrub;
-
+  output Mz_record Mz_out;
+  
 protected
   Real df_z;
   Real IA_z;
@@ -205,10 +205,10 @@ algorithm
   
     s := (SSZ1 + SSZ2 * (Fy / FNOMIN) + (SSZ3 + SSZ4 * df_z) * gamma) * R0 * LS;
     
-    pneu_trail := t_adj;
-    pneu_scrub := s;
+    Mz_out.pneu_trail := t_adj;
+    Mz_out.pneu_scrub := s;
     
-    Mz := -t_adj * F_y_IA_adj + M_zr + s * Fx;
+    Mz_out.Mz := -t_adj * F_y_IA_adj + M_zr + s * Fx;
   else
     df_z := 0;
     IA_z := 0;
@@ -243,7 +243,10 @@ algorithm
     M_zr := 0;
     s := 0;
     
-    Mz := 0;
+    Mz_out.pneu_trail := 0;
+    Mz_out.pneu_scrub := 0;
+    
+    Mz_out.Mz := 0;
   end if;
   
 end Mz_eval;
