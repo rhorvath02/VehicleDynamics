@@ -1,4 +1,4 @@
 within VehicleDynamics.Resources.Records;
-package TIRES
+package TEMPLATES
   // TODO: add contents
-end TIRES;
+end TEMPLATES;
