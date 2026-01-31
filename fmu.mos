@@ -10,6 +10,7 @@ setCommandLineOptions(
   + "-d=initialization "
   + "-d=aliasConflicts "
   + "--fmuRuntimeDepends=modelica "
+  + "-d=LSanalyticJacobian "
   + "-d=failtrace "
 );
 
@@ -59,16 +60,27 @@ cd("Build/fmu");
 //   fileNamePrefix = "TestFrRigidDoubleWishbone"
 // );
 
-res := buildModelFMU(
-  VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrRigidAxleBellcrank,
-  version = "2.0",
-  fmuType = "me_cs",
-  // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
-  // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
-  //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
-  platforms = {"dynamic"},
-  fileNamePrefix = "TestFrRigidAxleBellcrank"
-);
+// res := buildModelFMU(
+//   VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestFrRigidAxleBellcrank,
+//   version = "2.0",
+//   fmuType = "me_cs",
+//   // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
+//   // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
+//   //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
+//   platforms = {"dynamic"},
+//   fileNamePrefix = "TestFrRigidAxleBellcrank"
+// );
+
+// res := buildModelFMU(
+//   VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestRrRigidAxleBellcrank,
+//   version = "2.0",
+//   fmuType = "me_cs",
+//   // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
+//   // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
+//   //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
+//   platforms = {"dynamic"},
+//   fileNamePrefix = "TestRrRigidAxleBellcrank"
+// );
 
 // res := buildModelFMU(
 //   VehicleDynamics.TestVehicle.TestChassis.TestSuspension.TestRrRigidAxleBellcrank,
@@ -114,16 +126,16 @@ res := buildModelFMU(
 //   fileNamePrefix = "TestChassisBase"
 // );
 
-// res := buildModelFMU(
-//   VehicleDynamics.TestVehicle.TestChassis.TestRigidChassisBase,
-//   version = "2.0",
-//   fmuType = "me_cs",
-//   // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
-//   // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
-//   //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
-//   platforms = {"dynamic"},
-//   fileNamePrefix = "TestRigidChassisBase"
-// );
+res := buildModelFMU(
+  VehicleDynamics.TestVehicle.TestChassis.TestRigidChassisBase,
+  version = "2.0",
+  fmuType = "me_cs",
+  // platforms = {"x86_64-w64-mingw32 docker run --pull=never multiarch/crossbuild"},
+  // platforms = {"x86_64-linux-gnu docker run --pull=never multiarch/crossbuild",
+  //              "arm-linux-gnueabihf docker run --pull=never multiarch/crossbuild"},
+  platforms = {"dynamic"},
+  fileNamePrefix = "TestRigidChassisBase"
+);
 
 print("buildModelFMU returned: " + String(res));
 print(getErrorString());

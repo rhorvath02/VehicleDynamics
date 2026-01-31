@@ -32,7 +32,7 @@ model FrameBase
   parameter SIunits.Position Fr_effective_center[3];
   parameter SIunits.Position Rr_effective_center[3];
   
-  Real static_rel[3] = Rr_effective_center - Fr_effective_center;
+  parameter SIunits.Position static_rel[3] = Rr_effective_center - Fr_effective_center;
   
   // Internal force and torque
   Modelica.Blocks.Sources.RealExpression forceExpression[3](y = -forceInternal) annotation(
@@ -54,7 +54,7 @@ model FrameBase
   Real forceInternal[3];
   Real torqueInternal[3];
   
-  SIunits.Position r_rel[3](start = {0, 0, 0}) "Spring elongation vector (state)";
+  SIunits.Position r_rel[3](start = static_rel) "Spring elongation vector (state)";
   SIunits.Position v_rel[3](start = {0, 0, 0}) "Derivative of spring elongation vector";
   SIunits.Angle phi_rel[3](start = {0, 0, 0});
   SIunits.AngularVelocity w_rel[3](start = {0, 0, 0});

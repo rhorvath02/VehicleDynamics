@@ -24,9 +24,10 @@ start_time = time.time()
 # )
 
 res = simulate_fmu(
-    './Build/fmu/TestFrRigidAxleBellcrank.fmu',
+    './Build/fmu/TestRigidChassisBase.fmu',
     start_time=0,
     stop_time=6,
+    output_interval=0.001,
     solver='CVode',
     apply_default_start_values=True,
     relative_tolerance=1e-6,
@@ -39,6 +40,6 @@ print(end_time - start_time)
 
 import matplotlib.pyplot as plt
 
-print(len(res['time']))
-# plt.plot(res['time'], res['test'])
-# plt.show()
+# print(len(res['time']))
+plt.plot(res['time'], res['a_x'])
+plt.show()

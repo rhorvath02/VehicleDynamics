@@ -59,15 +59,11 @@ model FrRigidDoubleWishbone
     Placement(transformation(origin = {60, 60}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation upper_rigid_link(height = link_diameter, r = upper_o - (upper_fore_i + upper_aft_i)/2, width = link_diameter, animation = false) annotation(
     Placement(transformation(origin = {30, 60}, extent = {{10, -10}, {-10, 10}})));
-  VehicleDynamics.Vehicle.Chassis.Suspension.Joints.xyzSphericalCompliant upper_xyzSphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true), diameter = joint_diameter) annotation(
-    Placement(transformation(origin = {10, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
   // Lower wisbone
   Modelica.Mechanics.MultiBody.Joints.Revolute lower_inboard_joint(n = normalize(lower_fore_i - lower_aft_i), phi(each fixed = true, start = 0), stateSelect = StateSelect.always, animation = false, w(start = 0, fixed = true)) annotation(
     Placement(transformation(origin = {60, -60}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_rigid_link(height = link_diameter, r = lower_o - (lower_fore_i + lower_aft_i)/2, width = link_diameter, animation = false) annotation(
     Placement(transformation(origin = {30, -60}, extent = {{10, -10}, {-10, 10}})));
-  VehicleDynamics.Vehicle.Chassis.Suspension.Joints.xyzSphericalCompliant lower_xyzSphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true), diameter = joint_diameter) annotation(
-    Placement(transformation(origin = {10, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
   // Upright
   VehicleDynamics.Vehicle.Chassis.Suspension.Linkages.Upright upright(lower = lower_o, upper = upper_o, tie = tie_o) annotation(
     Placement(transformation(origin = {10, 0}, extent = {{-10, -10}, {10, 10}})));
@@ -86,6 +82,10 @@ model FrRigidDoubleWishbone
   // Public steering interface
   Modelica.Blocks.Interfaces.RealInput steer_input annotation(
     Placement(transformation(origin = {120, -30}, extent = {{-20, -20}, {20, 20}}, rotation = 180), iconTransformation(origin = {-66, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90)));
+  VehicleDynamics.Vehicle.Chassis.Suspension.Joints.xyzSphericalCompliant upper_xyzSphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true), diameter = joint_diameter) annotation(
+    Placement(transformation(origin = {10, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
+  VehicleDynamics.Vehicle.Chassis.Suspension.Joints.xyzSphericalCompliant lower_xyzSphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true), diameter = joint_diameter) annotation(
+    Placement(transformation(origin = {10, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
 protected
   // Connect midpoint of kingpin to center of the wheel
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = wheel_center - (upper_o + lower_o)/2, animation = false) annotation(
@@ -101,14 +101,14 @@ protected
   // Set gamma
   Modelica.Blocks.Sources.RealExpression static_gamma_source(y = static_gamma*Modelica.Constants.pi/180) annotation(
     Placement(transformation(origin = {-40, 60}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
-  Modelica.Mechanics.Rotational.Sources.Position x_angle(exact = true)  annotation(
+  Modelica.Mechanics.Rotational.Sources.Position x_angle(exact = true) annotation(
     Placement(transformation(origin = {-40, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Joints.Revolute revolute_x(animation = false, n = {1, 0, 0}, phi(start = static_gamma*Modelica.Constants.pi/180), useAxisFlange = true) annotation(
     Placement(transformation(origin = {-40, 0}, extent = {{10, -10}, {-10, 10}})));
   // Set toe (using alpha sign convention)
   Modelica.Blocks.Sources.RealExpression static_alpha_source(y = static_alpha*Modelica.Constants.pi/180) annotation(
     Placement(transformation(origin = {-70, 60}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
-  Modelica.Mechanics.Rotational.Sources.Position z_angle(exact = true)  annotation(
+  Modelica.Mechanics.Rotational.Sources.Position z_angle(exact = true) annotation(
     Placement(transformation(origin = {-70, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
   Modelica.Mechanics.MultiBody.Joints.Revolute revolute_z(animation = false, n = {0, 0, 1}, phi(start = static_alpha*Modelica.Constants.pi/180), useAxisFlange = true) annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{10, -10}, {-10, 10}})));

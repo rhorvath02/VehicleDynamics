@@ -19,9 +19,13 @@ model TestRigidChassisBase
     Placement(transformation(origin = {-20, 50}, extent = {{-10, -10}, {10, 10}})));
 
   Real a_body[3];
+  
+  output Real a_x;
 
 equation
   a_body = Modelica.Mechanics.MultiBody.Frames.resolve2(chassisBase.sprung_mass.frame_a.R, chassisBase.sprung_mass.a_0);
+  a_x = a_body[1];
+  
   connect(world.frame_b, chassisBase.world_frame) annotation(
     Line(points = {{-80, -90}, {0, -90}, {0, -20}}, color = {95, 95, 95}));
   connect(RL_torque_in.y, chassisBase.RL_torque) annotation(
@@ -35,7 +39,7 @@ equation
   connect(steer_input.y, chassisBase.rack_input) annotation(
     Line(points = {{-8, 50}, {0, 50}, {0, 24}}, color = {0, 0, 127}));  
 annotation(
-    experiment(StartTime = 0, StopTime = 12, Tolerance = 1e-06, Interval = 0.001),
-  __OpenModelica_commandLineOptions = "--matchingAlgorithm=PFPlusExt --indexReductionMethod=dynamicStateSelection -d=initialization,NLSanalyticJacobian",
-  __OpenModelica_simulationFlags(lv = "LOG_STDOUT,LOG_ASSERT,LOG_LS,LOG_STATS", s = "cvode", variableFilter = ".*"));
+    experiment(StartTime = 0, StopTime = 6, Tolerance = 1e-06, Interval = 0.001),
+  __OpenModelica_commandLineOptions = "--matchingAlgorithm=PFPlusExt --indexReductionMethod=dynamicStateSelection -d=initialization,NLSanalyticJacobian --maxSizeLinearTearing=1000",
+  __OpenModelica_simulationFlags(lv = "LOG_STDOUT,LOG_ASSERT,LOG_STATS", s = "cvode", variableFilter = ".*"));
 end TestRigidChassisBase;
