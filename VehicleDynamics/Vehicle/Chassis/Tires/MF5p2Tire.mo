@@ -371,6 +371,9 @@ protected
 public
   Modelica.Mechanics.MultiBody.Parts.PointMass pointMass(m = 1e-3, animation = false) annotation(
     Placement(transformation(origin = {30, -70}, extent = {{-10, -10}, {10, 10}})));
+  
+  parameter Real Vx_relax_max = 8.0;
+  Real relax_rate;
 
 algorithm
   Fx := MF52.Fx_eval(Fz, alpha, kappa, gamma,
@@ -452,24 +455,23 @@ equation
   Vy = dot(v_g, e_yg);
 // Lateral slip
   Vsy = -Vy;
-  der(v) + (abs(Vx)/sigma_alpha)*v = Vsy;
+  
+  relax_rate = min(
+    sqrt(Vx*Vx + v_min*v_min),
+    Vx_relax_max
+  
+  );
+  der(v) + (relax_rate/sigma_alpha)*v = Vsy;
 
-  if time < 1e-2 then
-    alpha = 0;
-  else
-    alpha = atan(v/sigma_alpha);
-  end if;
+  alpha = noEvent(atan(v / max(sigma_alpha, eps)));
+  
 // Kinematic slip definition below
 // alpha = atan2(-Vy, abs(Vx));
 // Longitudinal slip
   Vsx = Vx - R0*tire2DOF.hub_axis.w;
-  der(u) + (abs(Vx)/sigma_kappa)*u = -Vsx;
+  der(u) + (relax_rate/sigma_kappa)*u = -Vsx;
 
-  if time < 1e-2 then
-    kappa = 0;
-  else
-    kappa = u/sigma_kappa;
-  end if;
+  kappa = noEvent(u / max(sigma_kappa, eps));
 // Low-speed gating
 // w_speed = abs(Vx) / (abs(Vx) + v_min);
   

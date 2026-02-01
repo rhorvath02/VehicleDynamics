@@ -26,11 +26,12 @@ start_time = time.time()
 res = simulate_fmu(
     './Build/fmu/TestRigidChassisBase.fmu',
     start_time=0,
-    stop_time=6,
-    output_interval=0.001,
+    stop_time=12,
+    output_interval=0.02,
     solver='CVode',
     apply_default_start_values=True,
-    relative_tolerance=1e-6,
+    output=['time', 'a_x', 'a_y'],
+    relative_tolerance=1e-7,
     fmi_type='ModelExchange',
 )
 
@@ -41,5 +42,7 @@ print(end_time - start_time)
 import matplotlib.pyplot as plt
 
 # print(len(res['time']))
-plt.plot(res['time'], res['a_x'])
+plt.plot(res['time'], res['a_y'])
+plt.xlabel('Time (s)')
+plt.ylabel(r'Lateral Acceleration $\left(m/s^2\right)$')
 plt.show()
