@@ -1,0 +1,50 @@
+.nav {
+  position: sticky;
+  top: 0;
+  background: #0e1116;
+  border-bottom: 1px solid #242a38;
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-title {
+  font-weight: 600;
+  color: #e6e8eb;
+}
+
+.nav-links a {
+  margin-left: 1.25rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  color: #aeb4c0;
+  text-decoration: none;
+}
+
+.nav-links a.active {
+  background: rgba(78, 161, 255, 0.12);
+  color: #4ea1ff;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.nav .brand img {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
