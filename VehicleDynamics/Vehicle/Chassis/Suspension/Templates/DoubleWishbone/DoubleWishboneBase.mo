@@ -72,18 +72,21 @@ partial model DoubleWishboneBase
                                                                    stateSelect = StateSelect.always) annotation(
     Placement(transformation(origin = {60, 60}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation upper_rigid_link(animation = false,
-                                                                       r = upper_o - (upper_fore_i + upper_aft_i)/2) annotation(
+                                                                       final shapeType = "cylinder",
+                                                                       r = upper_o - (upper_fore_i + upper_aft_i)/2,
+                                                                       final extra = 0.0) annotation(
     Placement(transformation(origin = {30, 60}, extent = {{10, -10}, {-10, 10}})));
   
   // Lower wisbone
   Modelica.Mechanics.MultiBody.Joints.Revolute lower_inboard_joint(animation = false,
                                                                    n = normalize(lower_fore_i - lower_aft_i),
                                                                    phi(start = 0, fixed = true),
-                                                                   w(start = 0, fixed = true),
-                                                                   stateSelect = StateSelect.always) annotation(
+                                                                   w(start = 0, fixed = true), stateSelect = StateSelect.always) annotation(
     Placement(transformation(origin = {60, -60}, extent = {{10, -10}, {-10, 10}})));
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation lower_rigid_link(animation = false,
-                                                                       r = lower_o - (lower_fore_i + lower_aft_i)/2) annotation(
+                                                                       r = lower_o - (lower_fore_i + lower_aft_i)/2,
+                                                                       final shapeType = "cylinder",
+                                                                       final extra = 0.0) annotation(
     Placement(transformation(origin = {30, -60}, extent = {{10, -10}, {-10, 10}})));
   
   // Upright
@@ -113,7 +116,10 @@ partial model DoubleWishboneBase
                                                      enforceStates = true,
                                                      useQuaternions = false,
                                                      sphereDiameter = joint_diameter,
-                                                     cylinderDiameter = link_diameter) annotation(
+                                                     cylinderDiameter = link_diameter,
+                                                     final angles_start = {0, 0, 0},
+                                                     final w_0_start = {0, 0, 0},
+                                                     final z_0_start = {0, 0, 0}) annotation(
     Placement(transformation(origin = {-20, -30}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
   
   // UCA mass + inertia
@@ -128,7 +134,10 @@ partial model DoubleWishboneBase
                                                    I_32 = uca_mass.I[3, 2],
                                                    useQuaternions = false,
                                                    sphereDiameter = joint_diameter,
-                                                   cylinderDiameter = link_diameter) annotation(
+                                                   cylinderDiameter = link_diameter,
+                                                   final angles_start = {0, 0, 0},
+                                                   final w_0_start = {0, 0, 0},
+                                                   final z_0_start = {0, 0, 0}) annotation(
     Placement(transformation(origin = {-10, 60}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
   
   // LCA mass + inertia
@@ -142,34 +151,48 @@ partial model DoubleWishboneBase
                                                    I_32 = lca_mass.I[3, 2],
                                                    useQuaternions = false,
                                                    sphereDiameter = joint_diameter,
-                                                   cylinderDiameter = link_diameter) annotation(
+                                                   cylinderDiameter = link_diameter,
+                                                   final angles_start = {0, 0, 0},
+                                                   final w_0_start = {0, 0, 0},
+                                                   final z_0_start = {0, 0, 0}) annotation(
     Placement(transformation(origin = {-10, -60}, extent = {{-10, -10}, {10, 10}}, rotation = 180)));
-  
-  // Compliant spherical joints
-  VehicleDynamics.Vehicle.Chassis.Suspension.Joints.xyzSphericalCompliant upper_xyzSphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true), diameter = joint_diameter) annotation(
-    Placement(transformation(origin = {10, 30}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
-  VehicleDynamics.Vehicle.Chassis.Suspension.Joints.xyzSphericalCompliant lower_xyzSphericalCompliant(r_rel(start = {0, 0, 0}, each fixed = true), diameter = joint_diameter) annotation(
+
+  // Spherical joints
+  Joints.xyzSphericalCompliant upper_spherical(final trans_x_stiffness = 1e8,
+                                               final trans_y_stiffness = 1e8,
+                                               final trans_z_stiffness = 1e8,
+                                               final trans_x_damping = 1e4,
+                                               final trans_y_damping = 1e4,
+                                               final trans_z_damping = 1e4,
+                                               final diameter = joint_diameter,
+                                               r_rel(start = {0, 0, 0}, each fixed = true))  annotation(
+    Placement(transformation(origin = {10, 30}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
+  Joints.xyzSphericalCompliant lower_spherical(final trans_x_stiffness = 1e8,
+                                               final trans_y_stiffness = 1e8,
+                                               final trans_z_stiffness = 1e8,
+                                               final trans_x_damping = 1e4,
+                                               final trans_y_damping = 1e4,
+                                               final trans_z_damping = 1e4,
+                                               final diameter = joint_diameter,
+                                               r_rel(start = {0, 0, 0}, each fixed = true))  annotation(
     Placement(transformation(origin = {10, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 90)));
 
   // Public steering interface
   Modelica.Blocks.Interfaces.RealInput steer_input annotation(
     Placement(transformation(origin = {120, -30}, extent = {{-20, -20}, {20, 20}}, rotation = 180), iconTransformation(origin = {-66, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90)));
-
+  
 protected
   // Connect midpoint of kingpin to center of the wheel
   Modelica.Mechanics.MultiBody.Parts.FixedTranslation fixedTranslation(r = wheel_center - (upper_o + lower_o)/2, animation = false) annotation(
     Placement(transformation(origin = {-10, 0}, extent = {{10, -10}, {-10, 10}})));
-  
   // Private steering interface
   Modelica.Mechanics.Translational.Sources.Position position(useSupport = true) annotation(
     Placement(transformation(origin = {74, -30}, extent = {{-10, -10}, {10, 10}}, rotation = -180)));
   Modelica.Mechanics.MultiBody.Joints.Prismatic prismatic_rack(n = {0, 1, 0}, useAxisFlange = true, animation = false) annotation(
     Placement(transformation(origin = {70, 0}, extent = {{-10, -10}, {10, 10}}, rotation = -180)));
-  
   // ==================================================
   // === I dare you to find a better way to do this ===
   // ==================================================
-  
   // Set gamma
   Modelica.Blocks.Sources.RealExpression static_gamma_source(y = static_gamma * Modelica.Constants.pi / 180) annotation(
     Placement(transformation(origin = {-40, 60}, extent = {{10, -10}, {-10, 10}}, rotation = 90)));
@@ -180,7 +203,6 @@ protected
                                                           phi(start = static_gamma * Modelica.Constants.pi / 180),
                                                           useAxisFlange = true) annotation(
     Placement(transformation(origin = {-40, 0}, extent = {{10, -10}, {-10, 10}})));
-  
   // Set toe (using alpha sign convention)
   Modelica.Blocks.Sources.RealExpression static_alpha_source(y = static_alpha * Modelica.Constants.pi / 180) annotation(
     Placement(transformation(origin = {-70, 60}, extent = {{-10, -10}, {10, 10}}, rotation = -90)));
@@ -191,7 +213,6 @@ protected
                                                           phi(start = static_alpha * Modelica.Constants.pi / 180),
                                                           useAxisFlange = true) annotation(
     Placement(transformation(origin = {-70, 0}, extent = {{10, -10}, {-10, 10}})));
-  
   // Rod visualizers
   Modelica.Mechanics.MultiBody.Visualizers.Advanced.Shape upper_fore_shape(shapeType = "cylinder",
                                                                            r = upper_i_frame.r_0 + Modelica.Mechanics.MultiBody.Frames.resolve1(upper_i_frame.R, (upper_fore_i - upper_aft_i)/2),
@@ -221,7 +242,6 @@ protected
                                                                           width = link_diameter,
                                                                           color = Modelica.Mechanics.MultiBody.Types.Defaults.RodColor) annotation(
     Placement(transformation(origin = {-50, -90}, extent = {{-10, -10}, {10, 10}})));
-  
   // Joint visualizers
   Modelica.Mechanics.MultiBody.Visualizers.Advanced.Shape upper_fore_i_shape(shapeType = "sphere",
                                                                              r = upper_i_frame.r_0 + Modelica.Mechanics.MultiBody.Frames.resolve1(upper_i_frame.R, (upper_fore_i - upper_aft_i)/2),
@@ -247,7 +267,6 @@ protected
                                                                             length = joint_diameter,
                                                                             color = Modelica.Mechanics.MultiBody.Types.Defaults.JointColor) annotation(
     Placement(transformation(origin = {90, -90}, extent = {{-10, -10}, {10, 10}})));
-
 equation
   connect(tie_i_frame, prismatic_rack.frame_a) annotation(
     Line(points = {{100, 0}, {80, 0}}));
@@ -257,20 +276,12 @@ equation
     Line(points = {{100, 60}, {70, 60}}));
   connect(upper_inboard_joint.frame_b, upper_rigid_link.frame_a) annotation(
     Line(points = {{50, 60}, {40, 60}}, color = {95, 95, 95}));
-  connect(upper_rigid_link.frame_b, upper_xyzSphericalCompliant.frame_a) annotation(
-    Line(points = {{20, 60}, {10, 60}, {10, 40}}, color = {95, 95, 95}));
-  connect(upper_xyzSphericalCompliant.frame_b, upright.upper_frame) annotation(
-    Line(points = {{10, 20}, {10, 10}}, color = {95, 95, 95}));
   connect(upper_wishbone_frame, upper_rigid_link.frame_b) annotation(
     Line(points = {{10, 100}, {10, 60}, {20, 60}}));
   connect(lower_i_frame, lower_inboard_joint.frame_a) annotation(
     Line(points = {{100, -60}, {70, -60}}));
   connect(lower_inboard_joint.frame_b, lower_rigid_link.frame_a) annotation(
     Line(points = {{50, -60}, {40, -60}}, color = {95, 95, 95}));
-  connect(lower_rigid_link.frame_b, lower_xyzSphericalCompliant.frame_a) annotation(
-    Line(points = {{20, -60}, {10, -60}, {10, -40}}, color = {95, 95, 95}));
-  connect(lower_xyzSphericalCompliant.frame_b, upright.lower_frame) annotation(
-    Line(points = {{10, -20}, {10, -10}}, color = {95, 95, 95}));
   connect(lower_wishbone_frame, lower_rigid_link.frame_b) annotation(
     Line(points = {{10, -100}, {10, -60}, {20, -60}}));
   connect(static_gamma_source.y, x_angle.phi_ref) annotation(
@@ -299,4 +310,12 @@ equation
     Line(points = {{20, -60}, {0, -60}}, color = {95, 95, 95}));
   connect(steer_input, position.s_ref) annotation(
     Line(points = {{120, -30}, {86, -30}}, color = {0, 0, 127}));
+  connect(upper_rigid_link.frame_b, upper_spherical.frame_a) annotation(
+    Line(points = {{20, 60}, {10, 60}, {10, 40}}, color = {95, 95, 95}));
+  connect(upper_spherical.frame_b, upright.upper_frame) annotation(
+    Line(points = {{10, 20}, {10, 10}}, color = {95, 95, 95}));
+  connect(lower_spherical.frame_a, lower_rigid_link.frame_b) annotation(
+    Line(points = {{10, -40}, {10, -60}, {20, -60}}, color = {95, 95, 95}));
+  connect(upright.lower_frame, lower_spherical.frame_b) annotation(
+    Line(points = {{10, -10}, {10, -20}}, color = {95, 95, 95}));
 end DoubleWishboneBase;
