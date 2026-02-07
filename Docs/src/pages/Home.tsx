@@ -4,32 +4,39 @@ export default function Home() {
       <h1>BobDynamics</h1>
 
       <p>
-        BobDynamics is a reference and analysis framework for understanding,
-        defining, and evaluating vehicle behavior. The focus is on first-principles
-        physical interpretation of vehicle dynamics rather than test-specific
-        procedures or prescriptive design targets.
+        BobDynamics is a reference framework for defining, interpreting, and
+        evaluating vehicle behavior using first-principles vehicle dynamics.
+        The emphasis is on physically meaningful descriptions of vehicle response,
+        independent of any specific test procedure, competition rule set, or
+        prescriptive design target.
       </p>
 
       <p>
-        This site documents the conceptual performance metrics used to describe
-        vehicle handling, stability, and dynamic response. These metrics are
-        intended to form a common language that can be applied across simulation,
-        physical testing, and design workflows.
+        This site documents a canonical set of vehicle performance metrics used
+        to describe handling, stability, and dynamic response. These metrics are
+        intended to form a common technical language that bridges simulation,
+        physical testing, and vehicle design workflows.
       </p>
 
       <h2>Design Philosophy</h2>
 
       <p>
         Rather than prescribing what a vehicle <em>should</em> be optimized for,
-        BobDynamics defines what a vehicle <em>does</em> physically. The
-        relevance of any given metric depends on the intended application,
-        operating environment, and design objectives.
+        BobDynamics defines what a vehicle <em>does</em> physically. Each metric
+        is grounded in vehicle dynamics theory and describes an observable
+        aspect of system behavior.
+      </p>
+
+      <p>
+        The relative importance of any metric is intentionally left unspecified.
+        Weighting and prioritization depend on the intended application,
+        operating environment, and design objectives of a given team or program.
       </p>
 
       <p>
         By separating physical behavior from prioritization, the same framework
-        can be used for motorsport, production vehicles, research, or educational
-        purposes without modification.
+        can be applied to motorsport, production vehicles, research programs, or
+        education without modification.
       </p>
 
       <h2>What This Site Contains</h2>
@@ -40,27 +47,28 @@ export default function Home() {
           behaviors they represent
         </li>
         <li>
-          Explanations of why these metrics are commonly used in vehicle design
-          and analysis
+          Explanations of why these metrics are commonly used to evaluate vehicle
+          handling, stability, and dynamic response
         </li>
         <li>
           A consistent vocabulary for discussing steady-state, transient, and
-          dynamic vehicle behavior
+          frequency-domain vehicle behavior
         </li>
       </ul>
 
       <h2>What This Site Does Not Do</h2>
 
       <ul>
-        <li>Prescribe design targets or numerical thresholds</li>
-        <li>Rank metrics by importance</li>
-        <li>Recommend specific test procedures or standards</li>
-        <li>Provide tuning guidance or control strategies</li>
+        <li>Prescribe numerical targets or design requirements</li>
+        <li>Rank metrics by importance or assign weights</li>
+        <li>Recommend specific test standards or procedures</li>
+        <li>Provide tuning rules, control strategies, or optimization guidance</li>
       </ul>
 
       <p className="closing-note">
-        The intent is to provide a clear, physics-based foundation upon which
-        application-specific decisions can be made.
+        The intent of BobDynamics is to provide a clear, physics-based foundation
+        upon which application-specific decisions can be made using objective,
+        reproducible metrics.
       </p>
     </div>
   );
