@@ -1,12 +1,12 @@
 // ============================================================================
 // AUTO-GENERATED FILE — DO NOT EDIT
-// Source: /home/rober/shared/VehicleDynamics/BobDynamics/Resources/JSONs/TIRES/MF52_Tire.tir
+// Source: /home/rober/shared/VehicleDynamics/BobDynamics/Resources/JSONs/TIRES/Rr_tire.tir
 // Tool: Tools/tires/convert_tir_to_mf52_record.py
 // ============================================================================
 
 within BobDynamics.Resources.Records.TIRES;
 
-record MF52_Tire
+record Rr_tire
   "Auto-generated MF5p2 tire record (PAC2002)"
 
   import Modelica.SIunits;
@@ -139,4 +139,4 @@ record MF52_Tire
   parameter Real SSZ3 = 0;
   parameter Real SSZ4 = 0;
 
-end MF52_Tire;
+end Rr_tire;

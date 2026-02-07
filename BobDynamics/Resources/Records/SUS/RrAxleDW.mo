@@ -6,7 +6,7 @@ within BobDynamics.Resources.Records.SUS;
 // Tool: convert_suspension_json_to_record.py
 // ============================================================================
 
-record RrAxleBase
+record RrAxleDW
   "Auto-generated suspension parameter record"
 
   import Modelica.SIunits;
@@ -19,8 +19,12 @@ record RrAxleBase
   parameter SIunits.Position lower_outboard[3] = {-1.55448, 0.57658, 0.116078};
   parameter SIunits.Position tie_inboard[3] = {-1.3763498, 0.2897124, 0.1700022};
   parameter SIunits.Position tie_outboard[3] = {-1.45796, 0.5823966, 0.2143506};
+  parameter Real free_length = 0.254;
+  parameter Real spring_table[2, 2] = [0, 0; 1, 70000];
+  parameter Real damper_table[11, 2] = [0, 0; 0.002, 40; 0.005, 100; 0.01, 200; 0.02, 350; 0.05, 600; 0.1, 850; 0.2, 1100; 0.3, 1250; 0.5, 1450; 1, 1750];
   parameter SIunits.Position wheel_center[3] = {-1.5494, 0.60611077, 0.199898};
   parameter SIunits.Angle static_gamma = 0;
   parameter SIunits.Angle static_alpha = 0;
+  parameter Real ride_height = 0.0254;
 
-end RrAxleBase;
+end RrAxleDW;

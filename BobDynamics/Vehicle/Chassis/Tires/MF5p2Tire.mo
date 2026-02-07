@@ -22,7 +22,7 @@ model MF5p2Tire
   import BobDynamics.Vehicle.Chassis.Tires.MF52.Mz_eval;
   
   // Parameters - Tire defn
-  final parameter BobDynamics.Resources.Records.TIRES.MF52_Tire tire "MF52 tire parameter record" annotation(
+  final parameter BobDynamics.Resources.Records.TIRES.Fr_tire tire "MF52 tire parameter record" annotation(
     );
   
   // Parameters - Dimensions
@@ -302,7 +302,6 @@ model MF5p2Tire
                                 rim_R0 = rim_R0,
                                 tire_c = tire_c,
                                 tire_d = tire_d,
-                                wheel_m = wheel_m,
                                 wheel_J = wheel_J) annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
   

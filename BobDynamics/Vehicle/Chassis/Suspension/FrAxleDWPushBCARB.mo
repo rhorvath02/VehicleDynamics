@@ -7,15 +7,15 @@ model FrAxleDWPushBCARB
   // Modelica linalg
   import Modelica.Math.Vectors.norm;
   
-  final parameter BobDynamics.Resources.Records.SUS.FrAxleBase FrAxle;
-  final parameter BobDynamics.Resources.Records.SUS.FrAxleBellcrank FrAxleBC;
+  final parameter BobDynamics.Resources.Records.SUS.FrAxleDW FrAxle;
+  final parameter BobDynamics.Resources.Records.SUS.FrAxleDWPushBCARB FrAxleBC;
   
   final parameter BobDynamics.Resources.Records.MASSPROPS.FrUnsprung unsprung_mass;
   final parameter BobDynamics.Resources.Records.MASSPROPS.FrUCA uca_mass;
   final parameter BobDynamics.Resources.Records.MASSPROPS.FrLCA lca_mass;
   final parameter BobDynamics.Resources.Records.MASSPROPS.FrTie tie_mass;
   
-  final parameter BobDynamics.Resources.Records.TIRES.MF52_Tire Fr_tire;
+  final parameter BobDynamics.Resources.Records.TIRES.Fr_tire Fr_tire;
   
   extends BobDynamics.Vehicle.Chassis.Suspension.Templates.AxleDoubleWishboneBase(left_upper_fore_i = FrAxle.upper_fore_i,
                                                                                   left_upper_aft_i = FrAxle.upper_aft_i,
@@ -154,22 +154,22 @@ model FrAxleDWPushBCARB
   final Modelica.Mechanics.MultiBody.Parts.FixedTranslation FL_bellcrank_mount(r = FL_bellcrank_pivot - effective_center) annotation(
     Placement(transformation(origin = {-30, 40}, extent = {{10, -10}, {-10, 10}})));
   final BobDynamics.Vehicle.Chassis.Suspension.Linkages.Bellcrank3pu1p FL_bellcrank(pickup_1 = FL_bellcrank_pickup_1,
-                                                                                        pickup_2 = FL_bellcrank_pickup_2,
-                                                                                        pickup_3 = FL_bellcrank_pickup_3,
-                                                                                        pivot = FL_bellcrank_pivot,
-                                                                                        pivot_ref = FL_bellcrank_pivot_ref) annotation(
+                                                                                    pickup_2 = FL_bellcrank_pickup_2,
+                                                                                    pickup_3 = FL_bellcrank_pickup_3,
+                                                                                    pivot = FL_bellcrank_pivot,
+                                                                                    pivot_ref = FL_bellcrank_pivot_ref) annotation(
     Placement(transformation(origin = {-60, 40}, extent = {{10, -10}, {-10, 10}})));
   
   // FL shock
   final Modelica.Mechanics.MultiBody.Parts.FixedTranslation FL_shock_pickup(r = FL_shock_mount - effective_center) annotation(
     Placement(transformation(origin = {-20, 70}, extent = {{10, -10}, {-10, 10}})));
-  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularSpring tabularSpring(spring_table = [0, 0; 1, 70000],
-                                                                                        free_length = 7.5*0.0254,
+  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularSpring FL_tabular_spring(spring_table = FrAxle.spring_table,
+                                                                                        free_length = FrAxle.free_length,
                                                                                         spring_diameter = 0.050)  annotation(
     Placement(transformation(origin = {50, 70}, extent = {{-10, -10}, {10, 10}})));
-  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularDamper tabularDamper(damper_table = [0.000, 0; 0.002, 40; 0.005, 100; 0.010, 200; 0.020, 350; 0.050, 600; 0.100, 850; 0.200, 1100; 0.300, 1250; 0.500, 1450; 1.000, 1750],
-                                       inner_diameter = 0.004,
-                                       outer_diameter = 0.008)  annotation(
+  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularDamper FL_tabular_damper(damper_table = FrAxle.damper_table,
+                                                                                        inner_diameter = 0.004,
+                                                                                        outer_diameter = 0.008)  annotation(
     Placement(transformation(origin = {-50, 130}, extent = {{10, -10}, {-10, 10}})));
   
   // FR apex geometry
@@ -186,22 +186,22 @@ model FrAxleDWPushBCARB
   final Modelica.Mechanics.MultiBody.Parts.FixedTranslation FR_bellcrank_mount(r = {FL_bellcrank_pivot[1], -FL_bellcrank_pivot[2], FL_bellcrank_pivot[3]} - effective_center) annotation(
     Placement(transformation(origin = {30, 40}, extent = {{-10, -10}, {10, 10}})));
   final BobDynamics.Vehicle.Chassis.Suspension.Linkages.Bellcrank3pu1p FR_bellcrank(pickup_1 = {FL_bellcrank_pickup_1[1], -FL_bellcrank_pickup_1[2], FL_bellcrank_pickup_1[3]},
-                                                                                        pickup_2 = {FL_bellcrank_pickup_2[1], -FL_bellcrank_pickup_2[2], FL_bellcrank_pickup_2[3]},
-                                                                                        pickup_3 = {FL_bellcrank_pickup_3[1], -FL_bellcrank_pickup_3[2], FL_bellcrank_pickup_3[3]},
-                                                                                        pivot = {FL_bellcrank_pivot[1], -FL_bellcrank_pivot[2], FL_bellcrank_pivot[3]},
-                                                                                        pivot_ref = {FL_bellcrank_pivot_ref[1], -FL_bellcrank_pivot_ref[2], FL_bellcrank_pivot_ref[3]}) annotation(
+                                                                                    pickup_2 = {FL_bellcrank_pickup_2[1], -FL_bellcrank_pickup_2[2], FL_bellcrank_pickup_2[3]},
+                                                                                    pickup_3 = {FL_bellcrank_pickup_3[1], -FL_bellcrank_pickup_3[2], FL_bellcrank_pickup_3[3]},
+                                                                                    pivot = {FL_bellcrank_pivot[1], -FL_bellcrank_pivot[2], FL_bellcrank_pivot[3]},
+                                                                                    pivot_ref = {FL_bellcrank_pivot_ref[1], -FL_bellcrank_pivot_ref[2], FL_bellcrank_pivot_ref[3]}) annotation(
     Placement(transformation(origin = {60, 40}, extent = {{-10, -10}, {10, 10}})));
   
   // FR shock
   final Modelica.Mechanics.MultiBody.Parts.FixedTranslation FR_shock_pickup(r = {FL_shock_mount[1], -FL_shock_mount[2], FL_shock_mount[3]} - effective_center) annotation(
     Placement(transformation(origin = {20, 70}, extent = {{-10, -10}, {10, 10}})));
-  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularSpring tabularSpring1(spring_table = [0, 0; 1, 70000],
-                                                                                         free_length = 7.5*0.0254,
-                                                                                         spring_diameter = 0.050) annotation(
+  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularSpring FR_tabular_spring(spring_table = FrAxle.spring_table,
+                                                                                        free_length = FrAxle.free_length,
+                                                                                        spring_diameter = 0.050) annotation(
     Placement(transformation(origin = {-50, 70}, extent = {{10, -10}, {-10, 10}})));
-  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularDamper tabularDamper1(damper_table = [0.000, 0; 0.002, 40; 0.005, 100; 0.010, 200; 0.020, 350; 0.050, 600; 0.100, 850; 0.200, 1100; 0.300, 1250; 0.500, 1450; 1.000, 1750],
-                                                                                         inner_diameter = 0.004,
-                                                                                         outer_diameter = 0.008) annotation(
+  final BobDynamics.Vehicle.Chassis.Suspension.Linkages.TabularDamper FR_tabular_damper(damper_table = FrAxle.damper_table,
+                                                                                        inner_diameter = 0.004,
+                                                                                        outer_diameter = 0.008) annotation(
     Placement(transformation(origin = {50, 130}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   
   // Steering interface
@@ -215,9 +215,9 @@ equation
     Line(points = {{-110, 0}, {-110, 40}, {-100, 40}}, color = {95, 95, 95}));
   connect(FL_pushrod.frame_b, FL_bellcrank.pickup_2_frame) annotation(
     Line(points = {{-80, 40}, {-70, 40}}, color = {95, 95, 95}));
-  connect(FL_bellcrank.pickup_3_frame, tabularSpring1.frame_b) annotation(
+  connect(FL_bellcrank.pickup_3_frame, FR_tabular_spring.frame_b) annotation(
     Line(points = {{-60, 50}, {-60, 70}}, color = {95, 95, 95}));
-  connect(tabularSpring1.frame_a, FL_shock_pickup.frame_b) annotation(
+  connect(FR_tabular_spring.frame_a, FL_shock_pickup.frame_b) annotation(
     Line(points = {{-40, 70}, {-30, 70}}, color = {95, 95, 95}));
   connect(FL_bellcrank.mount_frame, FL_bellcrank_mount.frame_b) annotation(
     Line(points = {{-50, 40}, {-40, 40}}, color = {95, 95, 95}));
@@ -231,9 +231,9 @@ equation
     Line(points = {{110, 0}, {110, 40}, {100, 40}}, color = {95, 95, 95}));
   connect(FR_pushrod.frame_b, FR_bellcrank.pickup_2_frame) annotation(
     Line(points = {{80, 40}, {70, 40}}, color = {95, 95, 95}));
-  connect(FR_bellcrank.pickup_3_frame, tabularSpring.frame_b) annotation(
+  connect(FR_bellcrank.pickup_3_frame, FL_tabular_spring.frame_b) annotation(
     Line(points = {{60, 50}, {60, 70}}, color = {95, 95, 95}));
-  connect(tabularSpring.frame_a, FR_shock_pickup.frame_b) annotation(
+  connect(FL_tabular_spring.frame_a, FR_shock_pickup.frame_b) annotation(
     Line(points = {{40, 70}, {30, 70}}, color = {95, 95, 95}));
   connect(FR_bellcrank.mount_frame, FR_bellcrank_mount.frame_b) annotation(
     Line(points = {{50, 40}, {40, 40}}, color = {95, 95, 95}));
@@ -241,13 +241,13 @@ equation
     Line(points = {{10, 70}, {0, 70}, {0, -100}}, color = {95, 95, 95}));
   connect(FR_bellcrank_mount.frame_a, axle_frame) annotation(
     Line(points = {{20, 40}, {0, 40}, {0, -100}}, color = {95, 95, 95}));
-  connect(tabularDamper.frame_b, tabularSpring1.frame_b) annotation(
+  connect(FL_tabular_damper.frame_b, FR_tabular_spring.frame_b) annotation(
     Line(points = {{-60, 130}, {-60, 70}}, color = {95, 95, 95}));
-  connect(tabularDamper.frame_a, tabularSpring1.frame_a) annotation(
+  connect(FL_tabular_damper.frame_a, FR_tabular_spring.frame_a) annotation(
     Line(points = {{-40, 130}, {-40, 70}}, color = {95, 95, 95}));
-  connect(tabularDamper1.frame_a, tabularSpring.frame_a) annotation(
+  connect(FR_tabular_damper.frame_a, FL_tabular_spring.frame_a) annotation(
     Line(points = {{40, 130}, {40, 70}}, color = {95, 95, 95}));
-  connect(tabularDamper1.frame_b, tabularSpring.frame_b) annotation(
+  connect(FR_tabular_damper.frame_b, FL_tabular_spring.frame_b) annotation(
     Line(points = {{60, 130}, {60, 70}}, color = {95, 95, 95}));
   connect(left_double_wishbone.steer_input, steer_input) annotation(
     Line(points = {{-90, -14}, {-90, 90}, {0, 90}, {0, 120}}, color = {0, 0, 127}));

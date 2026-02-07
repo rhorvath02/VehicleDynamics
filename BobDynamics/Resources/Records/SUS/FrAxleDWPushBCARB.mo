@@ -6,12 +6,12 @@ within BobDynamics.Resources.Records.SUS;
 // Tool: convert_suspension_json_to_record.py
 // ============================================================================
 
-record FrAxleBellcrank
+record FrAxleDWPushBCARB
   "Auto-generated suspension parameter record"
 
   import Modelica.SIunits;
 
-  extends FrAxleBase;
+  extends FrAxleDW;
 
   parameter SIunits.Position bellcrank_pivot[3] = {-0.042144464098, 0.250754351932, 0.370010000136};
   parameter SIunits.Position bellcrank_pivot_ref[3] = {-0.017822781728, 0.244001173922, 0.36717974316};
@@ -21,4 +21,4 @@ record FrAxleBellcrank
   parameter SIunits.Position rod_mount[3] = {0.006762552642, 0.525610676234, 0.134465050856};
   parameter SIunits.Position shock_mount[3] = {-0.020673469702, 0.247847085458, 0.561456926868};
 
-end FrAxleBellcrank;
+end FrAxleDWPushBCARB;
