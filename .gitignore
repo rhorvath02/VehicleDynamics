@@ -1,6 +1,10 @@
-# Modelica - an object-oriented language for modeling of cyber-physical systems
-# https://modelica.org/
-# Ignore temporary files, build results, simulation files
+## OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
 
 ## Modelica-specific files
 *~
@@ -11,11 +15,27 @@
 *.moe
 *.mol
 
-## Build artefacts
+## OpenModelica
+OMEdit/
+*.mos~
+*.log
+*.tmp
+*.plt
+
+## Build artifacts
 *.exe
 *.exp
 *.o
 *.pyc
+*.fmu
+*.so
+*.dll
+*.dylib
+*_FMU.*
+*_info.json
+*_res.mat
+*_log.txt
+*_tmp/
 
 ## Simulation files
 *.mat
@@ -42,5 +62,20 @@ success
 *.
 
 ## Python
-*.venv
-*.__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.dist-info/
+.env
+.venv/
+venv/
+
+## Node / Vite / Docs
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

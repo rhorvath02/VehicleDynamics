@@ -25,13 +25,13 @@ start_time = time.time()
 
 res = simulate_fmu(
     './Build/fmu/TestRigidChassisBase.fmu',
-    start_time=0,
-    stop_time=12,
+    start_time=4,
+    stop_time=20,
     output_interval=0.02,
     solver='CVode',
     apply_default_start_values=True,
     output=['time', 'a_x', 'a_y'],
-    relative_tolerance=1e-7,
+    relative_tolerance=1e-6,
     fmi_type='ModelExchange',
 )
 

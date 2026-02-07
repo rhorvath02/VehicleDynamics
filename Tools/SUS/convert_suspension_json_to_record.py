@@ -135,7 +135,7 @@ def emit_record(
     extends: str | None = None,
 ):
     lines = [
-        "within VehicleDynamics.Resources.Records.SUS;",
+        "within BobDynamics.Resources.Records.SUS;",
         "",
         "// ============================================================================",
         "// AUTO-GENERATED FILE — DO NOT EDIT",
@@ -226,7 +226,7 @@ def main():
     src = Path(sys.argv[1]).resolve()
     data = json.loads(src.read_text())
 
-    out_dir = Path("VehicleDynamics/Resources/Records/SUS")
+    out_dir = Path("BobDynamics/Resources/Records/SUS")
 
     emit_axle(data, axle="Front", prefix="Fr", out_dir=out_dir, src=src)
     emit_axle(data, axle="Rear",  prefix="Rr", out_dir=out_dir, src=src)

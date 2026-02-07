@@ -73,7 +73,7 @@ def emit_mass_record(
     validate_block(name, data)
 
     lines = [
-        "within VehicleDynamics.Resources.Records.MASSPROPS;",
+        "within BobDynamics.Resources.Records.MASSPROPS;",
         "",
         "// ============================================================================",
         "// AUTO-GENERATED FILE — DO NOT EDIT",
@@ -120,7 +120,7 @@ def main():
     src = Path(sys.argv[1]).resolve()
     data = json.loads(src.read_text())
 
-    out_dir = Path("VehicleDynamics/Resources/Records/MASSPROPS")
+    out_dir = Path("BobDynamics/Resources/Records/MASSPROPS")
 
     for name, block in data.items():
         emit_mass_record(

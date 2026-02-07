@@ -1,4 +1,4 @@
-# VehicleDynamics
+# BobDynamics
 
 Modelica-based templates and components for vehicle dynamics analysis.
 
@@ -10,7 +10,7 @@ an emphasis on correctness, reproducibility, and FMU export.
 
 ## Overview
 
-The `VehicleDynamics` package is a reusable Modelica library containing:
+The `BobDynamics` package is a reusable Modelica library containing:
 
 - Vehicle subsystems (chassis, suspension, tires, powertrain)
 - Reusable mathematical and mechanical utilities
@@ -32,7 +32,7 @@ files to ensure deterministic behavior and FMU portability.
 ├── README.md
 ├── requirements.txt
 ├── Tools/
-└── VehicleDynamics/
+└── BobDynamics/
     ├── package.mo
     ├── package.order
     ├── Resources/
@@ -75,13 +75,13 @@ Example:
 
 ```bash
 python Tools/tires/convert_tir_to_mf52_record.py \
-  VehicleDynamics/Resources/JSONs/TIRES/hoosier_r25b.tir
+  BobDynamics/Resources/JSONs/TIRES/hoosier_r25b.tir
 ```
 
 Generated records are written to:
 
 ```
-VehicleDynamics/Resources/Records/TIRES/
+BobDynamics/Resources/Records/TIRES/
 ```
 
 Once generated, simulations and FMUs depend only on Modelica source files.
