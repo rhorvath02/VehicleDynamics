@@ -1,13 +1,12 @@
-#!/usr/bin/env python3
 """
 convert_tir_to_mf52_record.py
 
-Build-time tool for converting PAC2002 `.tir` tire files into
+Build-time tool for converting PAC2002 '.tir' files into
 static Modelica MF5.2 parameter records.
 
 - No runtime file I/O in Modelica
 - Fully typed MF5.2 schema
-- Deterministic, diff-stable code generation
+- Code generation
 """
 
 from __future__ import annotations
@@ -20,7 +19,7 @@ import re
 import difflib
 from decimal import Decimal, getcontext
 
-# high precision, but we control formatting explicitly
+# high precision, but we control
 getcontext().prec = 28
 
 
@@ -44,7 +43,10 @@ def fmt_float(x: float) -> str:
 
 TYPEMAP: dict[str, str] = {
     "UNLOADED_RADIUS": "SIunits.Length",
+    "RIM_RADIUS": "SIunits.Length",
+    "RIM_WIDTH": "SIunits.Length",
     "FNOMIN": "SIunits.Force",
+    "INERTIA": "SIunits.MomentOfInertia",
     "VERTICAL_STIFFNESS": "SIunits.TranslationalSpringConstant",
     "VERTICAL_DAMPING": "SIunits.TranslationalDampingConstant",
 }
@@ -56,6 +58,11 @@ TYPEMAP: dict[str, str] = {
 
 @dataclass(frozen=True, slots=True)
 class MF52Tire:
+    # DIMENSIONS / WHEEL
+    RIM_RADIUS: float
+    RIM_WIDTH: float
+    INERTIA: float
+
     # DIMENSIONS / VERTICAL
     UNLOADED_RADIUS: float
     FNOMIN: float

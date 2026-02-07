@@ -1,15 +1,18 @@
 within BobDynamics.Vehicle.Chassis.Tires;
 
 model MF5p2Tire
+  // Modelica units
+  import Modelica.SIunits;
+  
+  // Modelica linalg
+  import Modelica.Math.Vectors.normalize;
+  import Modelica.Math.Vectors.norm;
+  
   // Custom linalg
   import BobDynamics.Utilities.Math.Vector.angle_between;
   import BobDynamics.Utilities.Math.Vector.cross;
   import BobDynamics.Utilities.Math.Vector.dot;
-  // Modelica linalg
-  import Modelica.Math.Vectors.normalize;
-  import Modelica.Math.Vectors.norm;
-  // Modelica units
-  import Modelica.SIunits;
+  
   // MF52 functions
   import BobDynamics.Vehicle.Chassis.Tires.MF52.Records.Mz_record;
   import BobDynamics.Vehicle.Chassis.Tires.MF52.Fx_eval;
@@ -23,16 +26,14 @@ model MF5p2Tire
     );
   
   // Parameters - Dimensions
-  parameter SIunits.Length rim_width = 7*0.0254 "Rim width" annotation(
+  parameter SIunits.Length rim_width = tire.RIM_WIDTH "Rim width" annotation(
     Dialog(group = "Dimensions"));
-  parameter SIunits.Length rim_R0 = 5*0.0254 "Rim unloaded static radius" annotation(
+  parameter SIunits.Length rim_R0 = tire.RIM_RADIUS "Rim unloaded static radius" annotation(
     Dialog(group = "Dimensions"));
   
   // Parameters - Mass properties
-  parameter SIunits.Inertia wheel_inertia[3, 3] = [0, 0, 0; 0, 0.2, 0; 0, 0, 0] "Wheel + hub inertia tensor (y-axis as spindle)";
-  parameter SIunits.Mass wheel_m = 1 "" annotation(
-    Placement(visible = false, transformation(extent = {{0, 0}, {0, 0}})));
-
+  parameter SIunits.Inertia wheel_J = tire.INERTIA "Wheel + hub inertia tensor (y-axis as spindle)";
+  
   // General .tir parameters
   parameter Real R0 = tire.UNLOADED_RADIUS "Unloaded tire radius";
   parameter Real tire_c = tire.VERTICAL_STIFFNESS "Wheel vertical stiffness";
@@ -289,34 +290,29 @@ model MF5p2Tire
   parameter Real LIP = tire.LIP annotation(
     Dialog(tab = "Tire Coeffs", group = "Scaling"));
 
-// Frames
+  // Frames
   Modelica.Mechanics.MultiBody.Interfaces.Frame_a cp_frame annotation(
     Placement(transformation(origin = {0, -100}, extent = {{-16, -16}, {16, 16}}, rotation = -90)));
   Modelica.Mechanics.MultiBody.Interfaces.Frame_b chassis_frame annotation(
     Placement(transformation(origin = {-100, 0}, extent = {{-16, -16}, {16, 16}})));
 
-// 2DOF Tire physics
-  TirePhysics.Tire2DOF tire2DOF(final R0 = R0,
-                                final rim_width = rim_width,
-                                final rim_R0 = rim_R0,
-                                final tire_c = tire_c,
-                                final tire_d = tire_d,
-                                final wheel_m = wheel_m,
-                                final wheel_inertia = wheel_inertia) annotation(
+  // 2DOF Tire physics
+  TirePhysics.Tire2DOF tire2DOF(R0 = R0,
+                                rim_width = rim_width,
+                                rim_R0 = rim_R0,
+                                tire_c = tire_c,
+                                tire_d = tire_d,
+                                wheel_m = wheel_m,
+                                wheel_J = wheel_J) annotation(
     Placement(transformation(extent = {{-10, -10}, {10, 10}})));
+  
   // Torque input
   Modelica.Mechanics.MultiBody.Forces.Torque input_torque(animation = false)  annotation(
     Placement(transformation(origin = {22, 30}, extent = {{-10, -10}, {10, 10}}, rotation = -0)));
   Modelica.Blocks.Interfaces.RealInput hub_torque annotation(
     Placement(transformation(origin = {16, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90), iconTransformation(origin = {25, 120}, extent = {{-20, -20}, {20, 20}}, rotation = -90)));
 
-// Body for state selection... Don't worry about it
-  // Slip quantities
-  Real alpha;
-  Real kappa;
-  Real gamma;
-
-// Loads / forces
+  // Loads / forces
   Real Fx "Longitudinal force in global frame";
   Real Fy "Lateral force in global frame";
   Real Fz "Normal load in global frame";
@@ -328,26 +324,36 @@ model MF5p2Tire
   Real pneu_trail "Pneumatic trail";
   Real pneu_scrub "Pneumatic scrub";
   
+  // General States
+  Real alpha;
+  Real kappa;
+  Real gamma;
+  
   // Relaxation lengths
   Real sigma_kappa = 0.5;
   Real sigma_alpha = 0.3;
+  
 protected
   // Numerical stability
   parameter Real v_min = 0.1 "Low-speed threshold for force gating (m/s)" annotation(Dialog(group = "Numerical Conditions"));
   parameter Real eps = 1e-6 "Small constant to prevent division by zero" annotation(Dialog(group = "Numerical Conditions"));
+  
   // Diagnostics
   Real P_contact;
-    // Off-axis torque input
+  
+  // Off-axis torque input
   Modelica.Blocks.Sources.RealExpression zeroX(y = 0)  annotation(
     Placement(transformation(origin = {-10, 60}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Blocks.Sources.RealExpression zeroZ(y = 0)  annotation(
     Placement(transformation(origin = {-10, 80}, extent = {{-10, -10}, {10, 10}})));
+  
   // MF52 load application
   Modelica.Mechanics.MultiBody.Forces.WorldForce force(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world, animation = true) annotation(
     Placement(transformation(origin = {-30, -70}, extent = {{-10, -10}, {10, 10}})));
   Modelica.Mechanics.MultiBody.Forces.WorldTorque torque(resolveInFrame = Modelica.Mechanics.MultiBody.Types.ResolveInFrameB.world)  annotation(
     Placement(transformation(origin = {-30, -40}, extent = {{-10, -10}, {10, 10}})));
-    // World / ground unit vectors
+
+  // World / ground unit vectors
   Real[3] e_z = {0, 0, 1};
   Real[3] ez_w;
   Real[3] e_xw;
@@ -356,19 +362,21 @@ protected
   Real[3] M_world;
   Real[3] e_spin;
 
-// Velocity vectors
+  // Velocity vectors
   Real[3] v_cp;
   Real[3] v_g;
+  
   // Velocity components
   Real Vx;
   Real Vy;
+  
   // Protected loads
   Real[3] F_world;
+  
   // Long and lat slip velocities
   Real Vsx;
   Real Vsy;
-  // Low-speed gating
-  // Real w_speed;
+  
   // Transient slip states
   Real u(start = 0, fixed = true) "Longitudinal slip state";
   Real v(start = 0, fixed = true) "Lateral slip state";
@@ -443,52 +451,53 @@ algorithm
     pneu_scrub := Mz_out.pneu_scrub;
 
 equation
-// Normal load
+  // Normal load
   Fz = max(0, cp_frame.f[3]);
-// World basis
+  
+  // World basis
   e_xw = Modelica.Mechanics.MultiBody.Frames.resolve1(cp_frame.R, {1, 0, 0});
   e_xg = normalize({e_xw[1], e_xw[2], 0});
   e_yg = normalize(cross(e_z, e_xg));
-// Inclination angle
+  
+  // Inclination angle
   ez_w = tire2DOF.hub_frame.R.T[:, 3];
   gamma = Modelica.Math.asin(max(-1.0, min(1.0, ez_w[2])));
-// Contact velocity
+  
+  // Contact velocity
   v_cp = tire2DOF.wheel_vel.v;
   v_g = {v_cp[1], v_cp[2], 0};
   Vx = dot(v_g, e_xg);
   Vy = dot(v_g, e_yg);
-// Lateral slip
+  
+  // Lateral slip
   Vsy = -Vy;
-  
-  relax_rate = min(
-    sqrt(Vx*Vx + v_min*v_min),
-    Vx_relax_max
-  
-  );
+  relax_rate = min(sqrt(Vx*Vx + v_min*v_min), Vx_relax_max);
   der(v) + (relax_rate/sigma_alpha)*v + 1.5 * v = Vsy;
-
   alpha = noEvent(atan(v / max(sigma_alpha, eps)));
   
-// Kinematic slip definition below
-// alpha = atan2(-Vy, abs(Vx));
-// Longitudinal slip
+  // Kinematic slip definition below
+  // alpha = atan2(-Vy, abs(Vx));
+
+  // Longitudinal slip
   Vsx = Vx - R0*tire2DOF.hub_axis.w;
   der(u) + (relax_rate/sigma_kappa)*u + 1 * u = -Vsx;
-
   kappa = noEvent(u / max(sigma_kappa, eps));
-// Low-speed gating
-// w_speed = abs(Vx) / (abs(Vx) + v_min);
   
-// Apply force
+  // Low-speed gating
+  // w_speed = abs(Vx) / (abs(Vx) + v_min);
+  
+  // Apply force
   F_world = Fx*e_xg + Fy*e_yg;
   force.force = F_world;
-// Apply moment
+  
+  // Apply moment
   e_spin = Modelica.Mechanics.MultiBody.Frames.resolve1(tire2DOF.hub_frame.R, {0, 1, 0});
   M_world = Mx*e_xg + My*e_spin + Mz*e_z;
   torque.torque = M_world;
-// Diagnostics
+  
+  // Diagnostics
   P_contact = dot(F_world, v_g);
-// Connections
+
   connect(cp_frame, tire2DOF.cp_frame) annotation(
     Line(points = {{0, -100}, {0, -10}}));
   connect(force.frame_b, cp_frame) annotation(
@@ -509,8 +518,8 @@ equation
     Line(points = {{-20, -40}, {0, -40}, {0, -100}}, color = {95, 95, 95}));
   connect(pointMass.frame_a, cp_frame) annotation(
     Line(points = {{30, -70}, {0, -70}, {0, -100}}, color = {95, 95, 95}));
+  
   annotation(
-    Dialog(group = "Mass Properties"));annotation(
   Icon(
   coordinateSystem(extent={{-100,-100},{100,100}}),
   graphics = {
