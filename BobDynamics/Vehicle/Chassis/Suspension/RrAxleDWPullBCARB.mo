@@ -1,6 +1,6 @@
-within BobDynamics.Vehicle.Chassis.Suspension.Templates;
+within BobDynamics.Vehicle.Chassis.Suspension;
 
-model RrAxleDoubleWishbone
+model RrAxleDWPullBCARB
   import Modelica.Math.Vectors.norm;
   import Modelica.SIunits;
   
@@ -256,4 +256,4 @@ equation
     Line(points = {{60, 70}, {70, 70}, {70, 40}}, color = {95, 95, 95}));
   annotation(
     experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-06, Interval = 0.002));
-end RrAxleDoubleWishbone;
+end RrAxleDWPullBCARB;

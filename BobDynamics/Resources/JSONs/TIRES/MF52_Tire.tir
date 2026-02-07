@@ -68,7 +68,8 @@ RIM_RADIUS               =  0.127                   $Nominal rim radius
 RIM_WIDTH                =  0.1778                  $Rim width
 $-----------------------------------------------------------------STRUCTURAL
 [STRUCTURAL]
-LATERAL_STIFFNESS        = 1e30                     $Lateral Stiffness (Added as a placeholder by rhorvath@utexas.edu)
+INERTIA                  = 0.2                      $Wheel rotational inertia (placeholder)
+LATERAL_STIFFNESS        = 1e30                     $Lateral Stiffness (placeholder)
 $-----------------------------------------------------------------PARAMETER
 [VERTICAL]
 FNOMIN                   =  654                     $Nominal wheel load

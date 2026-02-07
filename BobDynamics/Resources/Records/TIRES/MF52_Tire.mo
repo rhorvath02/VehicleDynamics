@@ -1,6 +1,6 @@
 // ============================================================================
 // AUTO-GENERATED FILE — DO NOT EDIT
-// Source: /home/rhorvath2002/Documents/Github/BobDynamics/BobDynamics/Resources/JSONs/TIRES/MF52_Tire.tir
+// Source: /home/rober/shared/VehicleDynamics/BobDynamics/Resources/JSONs/TIRES/MF52_Tire.tir
 // Tool: Tools/tires/convert_tir_to_mf52_record.py
 // ============================================================================
 
@@ -11,6 +11,9 @@ record MF52_Tire
 
   import Modelica.SIunits;
 
+  parameter SIunits.Length RIM_RADIUS = 0.127;
+  parameter SIunits.Length RIM_WIDTH = 0.1778;
+  parameter SIunits.MomentOfInertia INERTIA = 0.2;
   parameter SIunits.Length UNLOADED_RADIUS = 0.2045;
   parameter SIunits.Force FNOMIN = 654;
   parameter SIunits.TranslationalSpringConstant VERTICAL_STIFFNESS = 98947;
