@@ -34,6 +34,15 @@ def fmt(x) -> str:
 def fmt_vec(v):
     return "{" + ", ".join(fmt(x) for x in v) + "}"
 
+def fmt_vec(v):
+    return "{" + ", ".join(fmt(x) for x in v) + "}"
+
+
+def fmt_2d_vec(v):
+    raw_rows = [fmt_vec(row) for row in v]
+    formatted_rows = [row.replace("{", "").replace("}", "") for row in raw_rows]
+    return "[" + "; ".join(formatted_rows) + "]"
+
 
 # =============================================================================
 # RECORD SCHEMAS (AXLE-INDEPENDENT)
@@ -55,10 +64,18 @@ RECORD_SCHEMAS = {
         "tie_inboard",
         "tie_outboard",
 
+        # Shock
+        "free_length",
+        "spring_table",
+        "damper_table",
+
         # Tire
         "wheel_center",
         "static_gamma",
         "static_alpha",
+
+        # Settings
+        "ride_height",
     ],
 
     "Bellcrank": [
@@ -70,7 +87,7 @@ RECORD_SCHEMAS = {
         "bellcrank_pickup_3",
 
         # Push / pull rod
-        "rod_mount",     # normalized name
+        "rod_mount",
         "shock_mount",
     ],
 }
@@ -112,14 +129,22 @@ def extract_axle_left(data: dict, axle: str) -> dict:
         "bellcrank_pickup_2": al["bellcrank"]["pickup_2"],
         "bellcrank_pickup_3": al["bellcrank"]["pickup_3"],
 
-        # Push / pull rod (normalized)
+        # Push / pull rod
         "rod_mount": rod_mount,
         "shock_mount": rod["shock_mount"],
+        
+        # Shock
+        "free_length": al["shock"]["free_length"],
+        "spring_table": al["shock"]["spring_table"],
+        "damper_table": al["shock"]["damper_table"],
 
         # Tire
         "wheel_center": al["tire"]["wheel_center"],
         "static_gamma": al["tire"]["static_gamma"],
         "static_alpha": al["tire"]["static_alpha"],
+
+        # Settings
+        "ride_height": al["settings"]["ride_height"],
     }
 
 
@@ -156,11 +181,22 @@ def emit_record(
 
     for k, v in params.items():
         if isinstance(v, list):
-            if len(v) != 3:
-                raise ValueError(f"Expected 3-vector for {k}")
-            lines.append(
-                f"  parameter SIunits.Position {k}[3] = {fmt_vec(v)};"
-            )
+            if len(v) == 3:
+                lines.append(
+                    f"  parameter SIunits.Position {k}[3] = {fmt_vec(v)};"
+                )
+            elif len(list(v[0])) > 1:
+                lines.append(
+                    f"  parameter Real {k}[{len(v)}, {len(v[0])}] = {fmt_2d_vec(v)};"
+                )
+            else:
+                lines.append(
+                    f"  parameter Real {k}[{len(v)}] = {fmt_vec(v)};"
+                )
+        elif isinstance(v, float):
+                lines.append(
+                    f"  parameter Real {k} = {fmt(v)};"
+                )
         else:
             lines.append(
                 f"  parameter SIunits.Angle {k} = {fmt(v)};"
@@ -193,8 +229,12 @@ def emit_axle(data: dict, axle: str, prefix: str, out_dir: Path, src: Path):
     base_params = {k: all_params[k] for k in RECORD_SCHEMAS["Base"]}
     bellcrank_params = {k: all_params[k] for k in RECORD_SCHEMAS["Bellcrank"]}
 
-    base_name = f"{prefix}AxleBase"
-    bellcrank_name = f"{prefix}AxleBellcrank"
+    base_name = f"{prefix}AxleDW"
+
+    if prefix == "Fr":
+        bellcrank_name = f"{prefix}AxleDWPushBCARB"
+    else:
+        bellcrank_name = f"{prefix}AxleDWPullBCARB"
 
     emit_record(
         name=base_name,
@@ -232,10 +272,10 @@ def main():
     emit_axle(data, axle="Rear",  prefix="Rr", out_dir=out_dir, src=src)
 
     print("Generated:")
-    print(f"  - {out_dir / 'FrAxleBase.mo'}")
-    print(f"  - {out_dir / 'FrAxleBellcrank.mo'}")
-    print(f"  - {out_dir / 'RrAxleBase.mo'}")
-    print(f"  - {out_dir / 'RrAxleBellcrank.mo'}")
+    print(f"  - {out_dir / 'FrAxleDW.mo'}")
+    print(f"  - {out_dir / 'FrAxleDWPPBCARB.mo'}")
+    print(f"  - {out_dir / 'RrAxleDW.mo'}")
+    print(f"  - {out_dir / 'RrAxleDWPPBCARB.mo'}")
 
 
 if __name__ == "__main__":
