@@ -1,10 +1,10 @@
 export default function Home() {
   return (
     <div className="page">
-      <h1>BobDynamics</h1>
+      <h1>BobDyn</h1>
 
       <p>
-        BobDynamics is a reference framework for defining, interpreting, and
+        BobDyn is a reference framework for defining, interpreting, and
         evaluating vehicle behavior using first-principles vehicle dynamics.
         The emphasis is on physically meaningful descriptions of vehicle response,
         independent of any specific test procedure, competition rule set, or
@@ -22,7 +22,7 @@ export default function Home() {
 
       <p>
         Rather than prescribing what a vehicle <em>should</em> be optimized for,
-        BobDynamics defines what a vehicle <em>does</em> physically. Each metric
+        BobDyn defines what a vehicle <em>does</em> physically. Each metric
         is grounded in vehicle dynamics theory and describes an observable
         aspect of system behavior.
       </p>
@@ -66,7 +66,7 @@ export default function Home() {
       </ul>
 
       <p className="closing-note">
-        The intent of BobDynamics is to provide a clear, physics-based foundation
+        The intent of BobDyn is to provide a clear, physics-based foundation
         upon which application-specific decisions can be made using objective,
         reproducible metrics.
       </p>

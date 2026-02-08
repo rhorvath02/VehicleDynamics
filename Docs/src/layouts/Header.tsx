@@ -6,8 +6,8 @@ export default function MainLayout() {
     <>
       <header className="topbar">
         <Link to="/" className="brand">
-          <img src={bobIcon} alt="BobDynamics logo" />
-          <span>BobDynamics</span>
+          <img src={bobIcon} alt="BobDyn logo" />
+          <span>BobDyn</span>
         </Link>
 
         <nav>

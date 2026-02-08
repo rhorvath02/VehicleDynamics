@@ -1,3 +1,3 @@
 export default function App() {
-  return <div>BobDynamics Docs</div>;
+  return <div>BobDyn Docs</div>;
 }
